@@ -196,7 +196,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
         .password-toggle:hover {
             color: #224abe;
         }
@@ -224,7 +224,7 @@
         }
 
         .modal-footer {
-            border-top: 1px solid rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
             padding: 1rem 1.5rem;
         }
 
@@ -300,11 +300,11 @@
             .login-box {
                 width: 90%;
             }
-            
+
             .card-header {
                 padding: 20px 15px 60px;
             }
-            
+
             .card-body {
                 padding: 25px 15px;
             }
@@ -335,11 +335,14 @@
                 </div>
                 <a href="#" class="h1"><b>SEBASA</b></a><br>
                 <span class="brand-subtext">Sekolah Bahasa Polri</span>
-                
+
                 <!-- Wave effect -->
                 <div class="wave-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none" class="wave">
-                        <path d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none"
+                        class="wave">
+                        <path
+                            d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+                        </path>
                     </svg>
                 </div>
             </div>
@@ -370,7 +373,7 @@
                 <form action="{{ route('actionLogin') }}" method="post" name="login-form">
                     @csrf
                     <div class="input-group mb-4">
-                        <input type="text" class="form-control" name="nip" placeholder="NIP" required>
+                        <input type="text" class="form-control" name="email" placeholder="email" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-id-card"></span>
@@ -378,7 +381,8 @@
                         </div>
                     </div>
                     <div class="input-group mb-4">
-                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                        <input type="password" class="form-control" name="password" id="password"
+                            placeholder="Password" required>
                         <div class="input-group-append">
                             <div class="input-group-text password-toggle" id="togglePassword">
                                 <span class="fas fa-eye"></span>
@@ -418,7 +422,8 @@
                         <i class="fas fa-user-lock fa-3x text-danger mb-3"></i>
                         <h5>Akses Ditolak</h5>
                     </div>
-                    <p>{{ session('inactive') ?: 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator untuk informasi lebih lanjut.' }}</p>
+                    <p>{{ session('inactive') ?: 'Akun Anda sedang dinonaktifkan. Silakan hubungi administrator untuk informasi lebih lanjut.' }}
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -427,16 +432,16 @@
         </div>
     </div>
 
-    @if(session('inactive'))
-    <script>
-    $(document).ready(function() {
-        $('#inactiveAccountModal').modal({
-            backdrop: 'static',
-            keyboard: false
-        });
-        $('#inactiveAccountModal').modal('show');
-    });
-    </script>
+    @if (session('inactive'))
+        <script>
+            $(document).ready(function() {
+                $('#inactiveAccountModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                $('#inactiveAccountModal').modal('show');
+            });
+        </script>
     @endif
 
     <!-- jQuery -->
@@ -445,18 +450,18 @@
     <script src="{{ url('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ url('dist/js/adminlte.js') }}"></script>
-    
+
     <!-- Password Toggle Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
-            
+
             togglePassword.addEventListener('click', function() {
                 // Toggle password visibility
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                 password.setAttribute('type', type);
-                
+
                 // Toggle eye icon
                 this.querySelector('span').classList.toggle('fa-eye');
                 this.querySelector('span').classList.toggle('fa-eye-slash');

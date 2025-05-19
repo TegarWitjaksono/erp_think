@@ -26,50 +26,17 @@ class LoginController extends Controller
 
     public function actionLogin(Request $request)
     {
-        try {
-            $user = User::where('nip', $request->nip)->first();
+        $datalogin = [
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
 
-            if ($user) {
-                // Check User status
-                if ($user->status == 0) {
-                    Session::flash('inactive', 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator untuk informasi lebih lanjut.');
-                    return redirect('/login');
-                }
-
-                $datalogin = [
-                    'email' => $user->email, // Use the email associated with the NIP
-                    'password' => $request->password,
-                ];
-
-                if (Auth::attempt($datalogin)) {
-                    // Check if password is still default
-                    if ($user->first_login == 1) {
-                        //check user apakah baru pertama login bukan
-                        //kalo pertama login first loginnya 1
-                        //kalo user udah ganti password maka first loginnya jadi 0
-                        return redirect()->route('change.view');
-                    }
-
-                    // Jika role siswa, cek status siswa
-                    if (Auth::user()->role == 0) {
-                        $siswa = MasterSiswa::where('email', $user->email)->first();
-                        if ($siswa && $siswa->sts == 0) {
-                            Auth::logout();
-                            Session::flash('inactive', 'Akun siswa Anda telah dinonaktifkan. Silakan hubungi administrator untuk informasi lebih lanjut.');
-                            return redirect('/login');
-                        }
-                        return redirect('/siswaIn');
-                    }
-
-                    return redirect('/home');
-                }
-            }
-
-            Session::flash('error', 'NIP / Password Salah !');
+        if (Auth::attempt($datalogin)) {
+            return redirect('/');
+        } else {
+            Session::flash('error', 'Email / Password Salah !');
             return redirect('/login');
-        } catch (\Exception $e) {
-            Session::flash('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
-            return redirect('/login');
+            //return redirect('/');
         }
     }
 
