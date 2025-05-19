@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SEBASA - Sekolah Bahasa Polri</title>
+    <title>ERP THINK - Sistem ERP Coffee</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ url('img/favicon.png') }}" type="image/png">
-    <link rel="shortcut icon" href="{{ url('img/favicon.png') }}" type="image/png">
-    <link rel="apple-touch-icon" href="{{ url('img/favicon.png') }}">
+    <link rel="icon" href="{{ url('img/coffe.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ url('img/coffe.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url('img/coffe.png') }}">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -38,13 +38,33 @@
     @yield('style')
 
     <style>
+        /* Modern Coffee Theme Variables */
+        :root {
+            --coffee-primary: #6f4e37;
+            --coffee-secondary: #4b2e23;
+            --coffee-light: #f3ece7;
+            --coffee-accent: #a98467;
+            --coffee-cream: #f8f5f0;
+            --coffee-text: #5a5c69;
+            --coffee-text-light: #858796;
+            --coffee-danger: #dc3545;
+            --coffee-success: #28a745;
+            --coffee-warning: #ffc107;
+            --coffee-info: #17a2b8;
+            --coffee-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            --coffee-shadow-hover: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.15);
+            --coffee-gradient: linear-gradient(135deg, var(--coffee-primary) 0%, var(--coffee-secondary) 100%);
+            --coffee-gradient-reverse: linear-gradient(135deg, var(--coffee-secondary) 0%, var(--coffee-primary) 100%);
+        }
+
         /* Core minimalist styling */
         body {
             font-family: 'Source Sans Pro', sans-serif;
+            background-color: var(--coffee-light);
+            color: var(--coffee-text);
         }
 
         /* Elegant brand styling */
-        /* Wrapper utama */
         .brand {
             display: flex;
             align-items: center;
@@ -52,60 +72,69 @@
             gap: 12px;
         }
 
-        /* Link brand (logo + teks) */
         .brand-link {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #fff;
+            background: white;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
         }
 
-        /* Logo */
         .brand-logo {
-            width: 36px;
+            width: 42px;
             height: auto;
+            transition: transform 0.3s ease;
         }
 
-        /* Kontainer teks */
+        .brand:hover .brand-logo {
+            transform: scale(1.05);
+        }
+
         .brand-text-container {
             display: flex;
             flex-direction: column;
         }
 
-        /* Teks utama */
         .brand-text {
             font-weight: 700;
             letter-spacing: 0.5px;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin: 0;
             line-height: 1.2;
-            color: #333;
+            color: var(--coffee-primary);
+            transition: color 0.3s ease;
         }
 
-        /* Subteks */
+        .brand:hover .brand-text {
+            color: var(--coffee-secondary);
+        }
+
         .brand-subtext {
             font-size: 0.8rem;
-            opacity: 0.7;
             letter-spacing: 0.3px;
-            color: #555;
+            color: var(--coffee-text-light);
         }
 
-        /* Info pengguna */
+        /* User info styling */
         .user-info {
             display: flex;
             justify-content: center;
-            /* Pusatkan horizontal */
             align-items: center;
-            padding-top: 0.2rem;
-            padding-bottom: 0.2rem;
-            width: 100%;
-            margin-top: 0.5rem;
-            background-color: #191970;
-            border-radius: 20px;
+            padding: 0.5rem;
+            width: 90%;
+            margin: 0.8rem auto;
+            background: var(--coffee-gradient);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(111, 78, 55, 0.3);
+            transition: all 0.3s ease;
         }
 
-        /* Nama pengguna */
+        .user-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(111, 78, 55, 0.4);
+        }
+
         .user-name {
             font-size: 0.9rem;
             font-weight: 600;
@@ -128,9 +157,7 @@
             overflow-y: auto;
             padding: 0.5rem 0;
             margin-bottom: 65px;
-            /* Space for logout button */
             max-height: calc(100vh - 200px);
-            /* Adjust based on header + footer height */
         }
 
         /* Fixed logout button at bottom */
@@ -139,12 +166,18 @@
             bottom: 0;
             left: 0;
             width: 250px;
-            /* Match sidebar width */
             padding: 1rem;
-            background: #fff;
+            background: white;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
             z-index: 1000;
+            transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+        }
+
+        /* Adjust sidebar footer when sidebar is collapsed */
+        .sidebar-collapse .sidebar-footer {
+            width: 4.6rem;
+            padding: 0.5rem;
         }
 
         /* Enhanced logout button */
@@ -154,23 +187,45 @@
             justify-content: center;
             width: 100%;
             padding: 0.75rem;
-            border-radius: 6px;
-            color: #dc3545;
-            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 8px;
+            color: var(--coffee-light);
+            background: var(--coffee-gradient);
             transition: all 0.3s ease;
             font-weight: 500;
+            box-shadow: 0 2px 8px rgba(111, 78, 55, 0.2);
         }
 
         .logout-button:hover {
-            background-color: #dc3545;
-            color: #fff;
+            background: var(--coffee-gradient-reverse);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(111, 78, 55, 0.3);
             text-decoration: none;
-            transform: translateY(-1px);
+            color: var(--coffee-light);
+        }
+
+        .logout-button i,
+        .logout-button span {
+            color: var(--coffee-light);
         }
 
         .logout-button i {
-            margin-right: 8px;
+            margin-right: 10px;
             font-size: 1rem;
+        }
+
+        /* Adjust logout button for collapsed sidebar */
+        .sidebar-collapse .logout-button {
+            justify-content: center;
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-collapse .logout-button i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-collapse .logout-button span {
+            display: none;
         }
 
         /* Add fade effect above logout button */
@@ -195,34 +250,35 @@
         }
 
         .menu-area::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: var(--coffee-accent);
             border-radius: 20px;
+            opacity: 0.5;
+        }
+
+        .menu-area::-webkit-scrollbar-thumb:hover {
+            background-color: var(--coffee-primary);
         }
 
         /* Enhanced hover animations for sidebar items */
         .nav-sidebar .nav-item {
             margin: 4px 8px;
             width: calc(100% - 16px);
-            /* Account for margins */
         }
 
         .nav-sidebar .nav-link {
             position: relative;
             overflow: hidden;
-            padding: 0.65rem 1rem;
-            border-radius: 6px;
-            color: #555;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: var(--coffee-text);
             transition: all 0.3s ease;
             white-space: nowrap;
-            /* Prevent text wrapping */
             text-overflow: ellipsis;
-            /* Add ellipsis for overflowing text */
             max-width: 100%;
-            /* Ensure content doesn't exceed container width */
         }
 
         .nav-sidebar .nav-link:not(.active):hover {
-            background-color: rgba(0, 123, 255, 0.05);
+            background-color: var(--coffee-light);
             transform: translateX(3px);
         }
 
@@ -233,7 +289,7 @@
             bottom: 0;
             height: 2px;
             width: 0;
-            background-color: #007bff;
+            background-color: var(--coffee-primary);
             transition: width 0.3s ease;
         }
 
@@ -242,53 +298,49 @@
         }
 
         .nav-sidebar .nav-link:not(.active):hover i {
-            color: #007bff;
+            color: var(--coffee-primary);
             transform: scale(1.1);
             transition: all 0.3s ease;
         }
 
         .nav-sidebar .nav-link:not(.active):hover p {
-            color: #007bff;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .nav-sidebar .nav-link:before {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 2px;
-            width: 0;
-            background-color: #007bff;
-            transition: width 0.3s ease;
-        }
-
-        .nav-sidebar .nav-link:hover {
-            background-color: rgba(0, 123, 255, 0.05);
-            transform: translateX(3px);
-        }
-
-        .nav-sidebar .nav-link:hover:before {
-            width: 100%;
-        }
-
-        .nav-sidebar .nav-link:hover i {
-            color: #007bff;
-            transform: scale(1.1);
-            transition: all 0.3s ease;
-        }
-
-        .nav-sidebar .nav-link:hover p {
-            color: rgb(255, 255, 255);
+            color: var(--coffee-primary);
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .nav-sidebar .nav-link.active {
-            background-color: #007bff;
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+            background: var(--coffee-gradient);
+            color: white;
+            box-shadow: 0 2px 8px rgba(111, 78, 55, 0.4);
+            position: relative;
+        }
+        
+        /* Active menu indicator */
+        .nav-sidebar .nav-link.active::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
         }
 
         .nav-sidebar .nav-link.active:before {
@@ -296,7 +348,7 @@
         }
 
         .nav-sidebar .nav-link.active i {
-            color: #fff;
+            color: white;
         }
 
         /* Smooth transitions for all elements */
@@ -308,8 +360,9 @@
         .nav-sidebar .nav-link i {
             width: 22px;
             text-align: center;
-            margin-right: 8px;
-            font-size: 0.9rem;
+            margin-right: 10px;
+            font-size: 1rem;
+            color: var(--coffee-accent);
         }
 
         .nav-sidebar .nav-link p {
@@ -318,36 +371,143 @@
             overflow: hidden;
             text-overflow: ellipsis;
             margin-right: 15px;
-            /* Add margin to prevent text from touching the edge */
         }
 
         #masterMenu {
             padding-left: 15px;
             max-width: 100%;
-            /* Ensure content doesn't exceed container width */
         }
 
         #masterMenu .nav-item {
             width: calc(100% - 15px);
-            /* Account for padding */
         }
 
         /* Section headers with subtle styling */
         .nav-header {
             font-size: 0.75rem;
             padding: 0.75rem 1.3rem 0.5rem;
-            color: #aaa;
+            color: var(--coffee-text-light);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.7px;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         /* Refined navbar */
         .main-header {
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            background: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+            background: white;
+            box-shadow: var(--coffee-shadow);
+        }
+
+        /* Content wrapper styling */
+        .content-wrapper {
+            background-color: var(--coffee-light);
+            background-image: 
+                radial-gradient(var(--coffee-accent) 0.5px, transparent 0.5px),
+                radial-gradient(var(--coffee-accent) 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            background-attachment: fixed;
+            opacity: 0.8;
+        }
+
+        /* Card styling */
+        .card {
+            border-radius: 12px;
+            box-shadow: var(--coffee-shadow);
+            border: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--coffee-shadow-hover);
+        }
+
+        .card-header {
+            background: var(--coffee-gradient);
+            color: white;
+            border-bottom: none;
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        /* Footer styling */
+        .main-footer {
+            background: white;
+            color: var(--coffee-text);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        /* Button styling */
+        .btn-coffee {
+            background: var(--coffee-gradient);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(111, 78, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-coffee:hover {
+            background: var(--coffee-gradient-reverse);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(111, 78, 55, 0.4);
+            color: white;
+        }
+
+        /* Form controls */
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--coffee-primary);
+            box-shadow: 0 0 0 0.2rem rgba(111, 78, 55, 0.25);
+        }
+
+        /* Table styling */
+        .table {
+            color: var(--coffee-text);
+        }
+
+        .table thead th {
+            border-bottom: 2px solid var(--coffee-light);
+            color: var(--coffee-primary);
+            font-weight: 600;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: var(--coffee-light);
+        }
+
+        /* DataTables styling */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--coffee-gradient) !important;
+            border-color: var(--coffee-primary) !important;
+            color: white !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--coffee-light) !important;
+            border-color: var(--coffee-accent) !important;
         }
     </style>
 </head>
@@ -406,10 +566,10 @@
         <!-- Brand Logo -->
         <div class="brand-link">
             <a href="#" class="brand">
-                <img src="{{ url('img/image.png') }}" alt="Logo" class="brand-logo">
+                <img src="{{ url('img/coffe.png') }}" alt="Logo" class="brand-logo">
                 <div class="brand-text-container">
-                    <span class="brand-text">SEBASA</span>
-                    <span class="brand-subtext">Sekolah Bahasa Polri</span>
+                    <span class="brand-text">ERP THINK</span>
+                    <span class="brand-subtext">Sistem ERP Coffee</span>
                 </div>
             </a>
             <div class="user-info">
@@ -434,23 +594,35 @@
                         </li>
                         <li class="nav-header">Master</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-toggle="collapse" data-target="#masterMenu">
+                            <a href="#" class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'active' : '' }}" data-toggle="collapse" data-target="#masterMenu">
                                 <i class="fas fa-cogs"></i>
                                 <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
                             </a>
-                            <ul id="masterMenu" class="collapse nav flex-column">
+                            <ul id="masterMenu" class="collapse nav flex-column {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'show' : '' }}">
 
                                 <li class="nav-item">
                                     <a href="/master_suppliers"
-                                        class="nav-link {{ request()->is('master_suppliers.*') ? 'active' : '' }}">
+                                        class="nav-link {{ request()->is('master_suppliers*') ? 'active' : '' }}">
                                         <i class="fas fa-box"></i>
-
                                         <p>Master Suppliers</p>
                                     </a>
                                 </li>
-
-
-
+                                
+                                <li class="nav-item">
+                                    <a href="/finished_products"
+                                        class="nav-link {{ request()->is('finished_products*') ? 'active' : '' }}">
+                                        <i class="fas fa-coffee"></i>
+                                        <p>Finished Products</p>
+                                    </a>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <a href="/sales"
+                                        class="nav-link {{ request()->is('sales*') ? 'active' : '' }}">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <p>Sales Records</p>
+                                    </a>
+                                </li>
 
                             </ul>
                         </li>
@@ -465,7 +637,7 @@
             <!-- Footer Section for Logout -->
             <div class="sidebar-footer">
                 <a href="{{ route('actionLogout') }}" class="logout-button">
-                    <i class="fas fa-power-off"></i> Logout
+                    <i class="fas fa-power-off"></i> <span>Logout</span>
                 </a>
             </div>
         </div>
@@ -513,33 +685,53 @@
                     }
                 }
             }
-        });
 
-        // Alternative approach: Force dashboard active on specific pages
-        // This helps if the user refreshes the page after login
-        (function() {
-            const currentPath = window.location.pathname;
-            // If we're on login page or root
-            if (currentPath === '/' || currentPath === '/login') {
-                // Mark for redirect on next page load
-                sessionStorage.setItem('redirectToDashboard', 'true');
+            // Handle sidebar toggle for logout button
+            const sidebarToggleBtn = document.querySelector('[data-widget="pushmenu"]');
+            if (sidebarToggleBtn) {
+                sidebarToggleBtn.addEventListener('click', function() {
+                    // Add a small delay to match AdminLTE's sidebar animation
+                    setTimeout(function() {
+                        if (document.body.classList.contains('sidebar-collapse')) {
+                            document.querySelector('.sidebar-footer').style.width = '4.6rem';
+                        } else {
+                            document.querySelector('.sidebar-footer').style.width = '250px';
+                        }
+                    }, 50);
+                });
             }
 
-            // Check if we need to redirect
-            if (sessionStorage.getItem('redirectToDashboard') === 'true') {
-                // Clear the flag
-                sessionStorage.removeItem('redirectToDashboard');
+            // Check initial state on page load
+            if (document.body.classList.contains('sidebar-collapse')) {
+                document.querySelector('.sidebar-footer').style.width = '4.6rem';
+            }
 
-                // Force dashboard active
-                const dashboardLink = document.querySelector('a[href="/home"]');
-                if (dashboardLink) {
-                    document.querySelectorAll('.nav-link.active').forEach(function(el) {
-                        el.classList.remove('active');
-                    });
-                    dashboardLink.classList.add('active');
+            // Alternative approach: Force dashboard active on specific pages
+            // This helps if the user refreshes the page after login
+            (function() {
+                const currentPath = window.location.pathname;
+                // If we're on login page or root
+                if (currentPath === '/' || currentPath === '/login') {
+                    // Mark for redirect on next page load
+                    sessionStorage.setItem('redirectToDashboard', 'true');
                 }
-            }
-        })();
+
+                // Check if we need to redirect
+                if (sessionStorage.getItem('redirectToDashboard') === 'true') {
+                    // Clear the flag
+                    sessionStorage.removeItem('redirectToDashboard');
+
+                    // Force dashboard active
+                    const dashboardLink = document.querySelector('a[href="/home"]');
+                    if (dashboardLink) {
+                        document.querySelectorAll('.nav-link.active').forEach(function(el) {
+                            el.classList.remove('active');
+                        });
+                        dashboardLink.classList.add('active');
+                    }
+                }
+            })();
+        });
     </script>
 
     @yield('script')

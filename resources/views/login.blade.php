@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - SEBASA</title>
+    <title>Login - ERP THINK - Sistem ERP Coffee</title>
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ url('img/favicon.png') }}" type="image/png">
-    <link rel="shortcut icon" href="{{ url('img/favicon.png') }}" type="image/png">
-    <link rel="apple-touch-icon" href="{{ url('img/favicon.png') }}">
+    <link rel="icon" href="{{ url('img/coffe.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ url('img/coffe.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url('img/coffe.png') }}">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
