@@ -432,6 +432,28 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
+                        <li class="nav-header">Master</li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="collapse" data-target="#masterMenu">
+                                <i class="fas fa-cogs"></i>
+                                <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
+                            </a>
+                            <ul id="masterMenu" class="collapse nav flex-column">
+
+                                <li class="nav-item">
+                                    <a href="/master_suppliers"
+                                        class="nav-link {{ request()->is('master_suppliers.*') ? 'active' : '' }}">
+                                        <i class="fas fa-box"></i>
+
+                                        <p>Master Suppliers</p>
+                                    </a>
+                                </li>
+
+
+
+
+                            </ul>
+                        </li>
 
 
 

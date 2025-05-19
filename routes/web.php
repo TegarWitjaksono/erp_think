@@ -11,7 +11,7 @@ use App\Http\Controllers\FdController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\LoginController;
-
+use App\Http\Controllers\MasterSuppliersController;
 use App\Http\Controllers\RegisterController;
 
 
@@ -36,5 +36,6 @@ Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::post('/actionLogin', [LoginController::class, 'actionLogin'])->name('actionLogin');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('master_suppliers', MasterSuppliersController::class);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });

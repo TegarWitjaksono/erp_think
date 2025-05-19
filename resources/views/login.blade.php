@@ -23,7 +23,7 @@
     <style>
         /* Base styles matching dashboard */
         body {
-            background-color: #f8f9fc;
+            background-color: #f3ece7;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -56,7 +56,7 @@
 
         /* Header styling */
         .card-header {
-            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            background: linear-gradient(135deg, #6f4e37 0%, #4b2e23 100%);
             color: white;
             border-bottom: none;
             padding: 25px 20px 70px;
@@ -119,8 +119,8 @@
         }
 
         .form-control:focus {
-            border-color: #4e73df;
-            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+            border-color: #6f4e37;
+            box-shadow: 0 0 0 0.2rem rgba(111, 78, 55, 0.25);
         }
 
         .input-group-text {
@@ -128,12 +128,12 @@
             background-color: #f8f9fc;
             border: 1px solid #d1d3e2;
             border-left: none;
-            color: #4e73df;
+            color: #6f4e37;
         }
 
         /* Button styling matching dashboard */
         .btn-primary {
-            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            background: linear-gradient(135deg, #6f4e37 0%, #4b2e23 100%);
             border: none;
             border-radius: 10px;
             padding: 12px;
@@ -144,7 +144,8 @@
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #224abe 0%, #4e73df 100%);
+            background: linear-gradient(135deg, #4b2e23 0%, #6f4e37 100%);
+
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(78, 115, 223, 0.25);
         }
@@ -172,7 +173,7 @@
         }
 
         .logo-container img {
-            width: 80px;
+            width: 100px;
             height: auto;
             object-fit: contain;
         }
@@ -331,10 +332,10 @@
                 </div>
                 <!-- Updated logo container with white background -->
                 <div class="logo-container">
-                    <img src="{{ url('img/image.png') }}" alt="Logo">
+                    <img src="{{ url('img/coffe.png') }}" alt="Logo">
                 </div>
-                <a href="#" class="h1"><b>SEBASA</b></a><br>
-                <span class="brand-subtext">Sekolah Bahasa Polri</span>
+                <a href="#" class="h1"><b>ERP THINK</b></a><br>
+                <span class="brand-subtext">Sistem ERP Coffee</span>
 
                 <!-- Wave effect -->
                 <div class="wave-container">
