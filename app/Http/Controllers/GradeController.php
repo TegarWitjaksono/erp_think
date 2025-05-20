@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class GradeController extends Controller
 {
@@ -80,5 +81,41 @@ class GradeController extends Controller
     {
         DB::table('grade')->where('id_grade', $id)->delete();
         return redirect()->route('master_grade.index')->with('success', 'Grade deleted successfully');
+    }
+
+    /**
+     * Get grades with product count.
+     *
+     * @param  int  $limit
+     * @return array
+     */
+    public function getGradesWithCount($limit = 4)
+    {
+        try {
+            $grades = DB::table('grade')
+                ->leftJoin('finished_products', 'grade.id_grade', '=', 'finished_products.id_grade')
+                ->select(
+                    'grade.id_grade',
+                    'grade.nama_grade',
+                    DB::raw('COUNT(finished_products.id) as product_count')
+                )
+                ->groupBy('grade.id_grade', 'grade.nama_grade')
+                ->orderBy('product_count', 'desc')
+                ->limit($limit)
+                ->get();
+
+            $maxCount = $grades->max('product_count');
+
+            return [
+                'grades' => $grades,
+                'maxCount' => $maxCount ?: 1 // Prevent division by zero
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Error in getGradesWithCount: ' . $e->getMessage());
+            return [
+                'grades' => collect([]),
+                'maxCount' => 1
+            ];
+        }
     }
 }

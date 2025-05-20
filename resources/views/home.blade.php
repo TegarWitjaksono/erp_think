@@ -34,7 +34,7 @@
                                     <i class="fas fa-coffee"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <h3 class="counter">{{ rand(10, 50) }}</h3>
+                                    <h3 class="counter">{{ Schema::hasTable('varietas') ? DB::table('varietas')->count() : 0 }}</h3>
                                     <p>Coffee Varieties</p>
                                 </div>
                             </div>
@@ -43,8 +43,8 @@
                                     <i class="fas fa-box"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <h3 class="counter">{{ rand(100, 500) }}</h3>
-                                    <p>Inventory Items</p>
+                                    <h3 class="counter">{{ Schema::hasTable('finished_products') ? DB::table('finished_products')->count() : 0 }}</h3>
+                                    <p>Finished Products</p>
                                 </div>
                             </div>
                             <div class="stat-item">
@@ -52,8 +52,8 @@
                                     <i class="fas fa-chart-line"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <h3>Rp {{ number_format(rand(5000000, 20000000), 0, ',', '.') }}</h3>
-                                    <p>Monthly Revenue</p>
+                                    <h3>Rp {{ Schema::hasTable('sales') ? number_format(DB::table('sales')->sum('total_price'), 0, ',', '.') : '0' }}</h3>
+                                    <p>Total Revenue</p>
                                 </div>
                             </div>
                             <div class="stat-item">
@@ -61,7 +61,7 @@
                                     <i class="fas fa-users"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <h3 class="counter">{{ rand(5, 20) }}</h3>
+                                    <h3 class="counter">{{ Schema::hasTable('suppliers') ? DB::table('suppliers')->count() : 0 }}</h3>
                                     <p>Active Suppliers</p>
                                 </div>
                             </div>
@@ -73,8 +73,168 @@
                 <div class="row mt-4">
                     <!-- Left Column -->
                     <div class="col-lg-8">
+                        <!-- Recent Products -->
+                        <div class="dashboard-card mb-4 fade-in-card">
+                            <div class="dashboard-card-header">
+                                <h2><i class="fas fa-coffee"></i> Recent Products</h2>
+                                <div class="card-actions">
+                                    <button class="btn-card-action"><i class="fas fa-sync-alt"></i></button>
+                                    <button class="btn-card-action"><i class="fas fa-ellipsis-v"></i></button>
+                                </div>
+                            </div>
+                            <div class="dashboard-card-body">
+                                <div class="production-timeline">
+                                    @php
+                                        $products = [];
+                                        if (Schema::hasTable('finished_products')) {
+                                            $query = DB::table('finished_products');
+                                            
+                                            // Join with jenis table if exists and has the required columns
+                                            if (Schema::hasTable('jenis') && 
+                                                Schema::hasColumn('finished_products', 'jenis_id')) {
+                                                $query->leftJoin('jenis', 'finished_products.jenis_id', '=', 'jenis.id_jenis');
+                                                $select[] = 'jenis.nama_jenis as jenis'; // Change deskripsi to nama_jenis
+                                            }
+                                            
+                                            // Join with varietas table if exists
+                                            if (Schema::hasTable('varietas') && 
+                                                Schema::hasColumn('finished_products', 'varietas_id')) {
+                                                $query->leftJoin('varietas', 'finished_products.varietas_id', '=', 'varietas.id_varietas');
+                                                $select[] = 'varietas.nama_varietas as varietas'; // Change deskripsi to nama_varietas
+                                            }
+                                            
+                                            // Join with origin table if exists
+                                            if (Schema::hasTable('origin') && 
+                                                Schema::hasColumn('finished_products', 'origin_id')) {
+                                                $query->leftJoin('origin', 'finished_products.origin_id', '=', 'origin.id_origin');
+                                                $select[] = 'origin.nama_origin as origin'; // Change deskripsi to nama_origin
+                                            }
+                                            
+                                            // Join with grade table if exists
+                                            if (Schema::hasTable('grade') && 
+                                                Schema::hasColumn('finished_products', 'grade_id')) {
+                                                $query->leftJoin('grade', 'finished_products.grade_id', '=', 'grade.id_grade');
+                                                $select[] = 'grade.nama_grade as grade'; // Change deskripsi to nama_grade
+                                            }
+                                            
+                                            try {
+                                                $products = $query->select(array_merge(['finished_products.*'], $select ?? []))
+                                                    ->orderBy('finished_products.id', 'desc')
+                                                    ->limit(4)
+                                                    ->get();
+                                            } catch (\Exception $e) {
+                                                $products = collect([]); // Return empty collection on error
+                                            }
+                                        }
+                                    @endphp
 
+                                    <!-- Display Products -->
+                                    @if(count($products) > 0)
+                                        @foreach($products as $product)
+                                            <div class="timeline-item animate-timeline">
+                                                <div class="timeline-point {{ isset($product->stock_status) && $product->stock_status == 'ready' ? 'completed' : (isset($product->stock_status) && $product->stock_status == 'reserved' ? 'in-progress' : 'pending') }}"></div>
+                                                <div class="timeline-content">
+                                                    <h4>
+                                                        {{ $product->varietas ?? 'Unknown Variety' }} 
+                                                        {{ isset($product->origin) ? '- ' . $product->origin : '' }}
+                                                    </h4>
+                                                    <p>
+                                                        {{ $product->jenis ?? 'Coffee Product' }} | 
+                                                        {{ isset($product->grade) ? 'Grade: ' . $product->grade : '' }}
+                                                    </p>
+                                                    <div class="timeline-meta">
+                                                        <span>Weight: {{ $product->weight_final ?? 0 }} kg</span>
+                                                        <span>Price: Rp {{ number_format($product->harga_jual ?? 0, 0, ',', '.') }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="empty-state">
+                                            <i class="fas fa-coffee"></i>
+                                            <p>No products available yet</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="dashboard-card-footer">
+                                <a href="{{ route('finished_products.index') }}" class="btn-view-all">View All Products <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
 
+                        <!-- Recent Sales -->
+                        <div class="dashboard-card mb-4 fade-in-card">
+                            <div class="dashboard-card-header">
+                                <h2><i class="fas fa-shopping-cart"></i> Recent Sales</h2>
+                                <div class="card-actions">
+                                    <button class="btn-card-action"><i class="fas fa-sync-alt"></i></button>
+                                    <button class="btn-card-action"><i class="fas fa-ellipsis-v"></i></button>
+                                </div>
+                            </div>
+                            <div class="dashboard-card-body">
+                                <div class="transactions-table-wrapper">
+                                    <table class="transactions-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                                $sales = [];
+                                                if (Schema::hasTable('sales')) {
+                                                    $query = DB::table('sales');
+                                                    
+                                                    if (Schema::hasTable('finished_products') && 
+                                                        Schema::hasColumn('sales', 'finished_product_id')) {
+                                                        $query->leftJoin('finished_products', 'sales.finished_product_id', '=', 'finished_products.id');
+                                                    }
+                                                    
+                                                    if (Schema::hasTable('varietas') && 
+                                                        Schema::hasColumn('finished_products', 'varietas_id')) {
+                                                        $query->leftJoin('varietas', 'finished_products.varietas_id', '=', 'varietas.id_varietas');
+                                                        // Change deskripsi to nama_varietas
+                                                        $select[] = 'varietas.nama_varietas as product_name';
+                                                    }
+                                                    
+                                                    try {
+                                                        $sales = $query->select(array_merge(['sales.*'], $select ?? []))
+                                                            ->orderBy('sales.id', 'desc')
+                                                            ->limit(5)
+                                                            ->get();
+                                                    } catch (\Exception $e) {
+                                                        $sales = collect([]); // Return empty collection on error
+                                                    }
+                                                }
+                                            @endphp
+                                            
+                                            @if(count($sales) > 0)
+                                                @foreach($sales as $index => $sale)
+                                                    <tr class="animate-table-row" style="animation-delay: {{ $index * 0.1 }}s">
+                                                        <td>{{ isset($sale->sale_date) ? date('d M Y', strtotime($sale->sale_date)) : '-' }}</td>
+                                                        <td>{{ $sale->product_name ?? 'Product #' . $sale->finished_product_id }}</td>
+                                                        <td>{{ $sale->qty_sold ?? 0 }}</td>
+                                                        <td>Rp {{ number_format($sale->total_price ?? 0, 0, ',', '.') }}</td>
+                                                        <td><span class="badge badge-soft-success">Completed</span></td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="5" class="text-center">No sales records available</td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="dashboard-card-footer">
+                                <a href="{{ route('sales.index') }}" class="btn-view-all">View All Sales <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Right Column -->
@@ -96,16 +256,16 @@
                             <div class="user-profile-body">
                                 <div class="user-stats">
                                     <div class="user-stat-item">
-                                        <span class="stat-value">{{ rand(5, 30) }}</span>
-                                        <span class="stat-label">Tasks</span>
+                                        <span class="stat-value">{{ Schema::hasTable('finished_products') ? DB::table('finished_products')->count() : 0 }}</span>
+                                        <span class="stat-label">Products</span>
                                     </div>
                                     <div class="user-stat-item">
-                                        <span class="stat-value">{{ rand(1, 10) }}</span>
-                                        <span class="stat-label">Projects</span>
+                                        <span class="stat-value">{{ Schema::hasTable('sales') ? DB::table('sales')->count() : 0 }}</span>
+                                        <span class="stat-label">Sales</span>
                                     </div>
                                     <div class="user-stat-item">
-                                        <span class="stat-value">{{ rand(10, 100) }}</span>
-                                        <span class="stat-label">Activities</span>
+                                        <span class="stat-value">{{ Schema::hasTable('suppliers') ? DB::table('suppliers')->count() : 0 }}</span>
+                                        <span class="stat-label">Suppliers</span>
                                     </div>
                                 </div>
                                 <div class="user-actions">
@@ -114,92 +274,37 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Inventory Status -->
-                        <div class="dashboard-card mt-4">
-                            <div class="dashboard-card-header">
-                                <h2><i class="fas fa-cubes"></i> Inventory Status</h2>
-                                <div class="card-actions">
-                                    <button class="btn-card-action"><i class="fas fa-sync-alt"></i></button>
-                                </div>
-                            </div>
-                            <div class="dashboard-card-body">
-                                <div class="inventory-item">
-                                    <div class="inventory-info">
-                                        <div class="inventory-name">
-                                            <h4>Arabica Aceh Gayo</h4>
-                                            <span class="inventory-quantity">15 kg remaining</span>
-                                        </div>
-                                        <div class="inventory-percentage">75%</div>
-                                    </div>
-                                    <div class="inventory-progress">
-                                        <div class="progress-bar" style="width: 75%; background-color: #28a745;"></div>
-                                    </div>
-                                </div>
-                                <div class="inventory-item">
-                                    <div class="inventory-info">
-                                        <div class="inventory-name">
-                                            <h4>Robusta Lampung</h4>
-                                            <span class="inventory-quantity">9 kg remaining</span>
-                                        </div>
-                                        <div class="inventory-percentage">45%</div>
-                                    </div>
-                                    <div class="inventory-progress">
-                                        <div class="progress-bar" style="width: 45%; background-color: #17a2b8;"></div>
-                                    </div>
-                                </div>
-                                <div class="inventory-item">
-                                    <div class="inventory-info">
-                                        <div class="inventory-name">
-                                            <h4>Sumatra Mandheling</h4>
-                                            <span class="inventory-quantity">4 kg remaining</span>
-                                        </div>
-                                        <div class="inventory-percentage">20%</div>
-                                    </div>
-                                    <div class="inventory-progress">
-                                        <div class="progress-bar" style="width: 20%; background-color: #ffc107;"></div>
-                                    </div>
-                                </div>
-                                <div class="inventory-item">
-                                    <div class="inventory-info">
-                                        <div class="inventory-name">
-                                            <h4>Java Preanger</h4>
-                                            <span class="inventory-quantity">2 kg remaining</span>
-                                        </div>
-                                        <div class="inventory-percentage">10%</div>
-                                    </div>
-                                    <div class="inventory-progress">
-                                        <div class="progress-bar" style="width: 10%; background-color: #dc3545;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="dashboard-card-footer">
-                                <a href="#" class="btn-view-all">Manage Inventory <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="dashboard-card mt-4">
+                        
+                        <!-- Quick Actions Card -->
+                        <div class="dashboard-card mb-4 fade-in-card">
                             <div class="dashboard-card-header">
                                 <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
                             </div>
                             <div class="dashboard-card-body">
                                 <div class="quick-actions">
-                                    <a href="#" class="quick-action-btn">
-                                        <i class="fas fa-plus-circle"></i>
-                                        <span>New Order</span>
+                                    <a href="{{ route('finished_products.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-box"></i>
+                                        <span>Products</span>
                                     </a>
-                                    <a href="#" class="quick-action-btn">
+                                    <a href="{{ route('sales.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span>Sales</span>
+                                    </a>
+                                    <a href="{{ route('master_suppliers.index') }}" class="quick-action-btn pulse-on-hover">
                                         <i class="fas fa-truck"></i>
-                                        <span>Deliveries</span>
+                                        <span>Suppliers</span>
                                     </a>
-                                    <a href="#" class="quick-action-btn">
-                                        <i class="fas fa-file-invoice"></i>
-                                        <span>Invoices</span>
+                                    <a href="{{ route('master_varietas.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-leaf"></i>
+                                        <span>Varieties</span>
                                     </a>
-                                    <a href="#" class="quick-action-btn">
-                                        <i class="fas fa-chart-bar"></i>
-                                        <span>Reports</span>
+                                    <a href="{{ route('master_origin.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>Origins</span>
+                                    </a>
+                                    <a href="{{ route('master_grade.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-star"></i>
+                                        <span>Grades</span>
                                     </a>
                                 </div>
                             </div>
@@ -231,6 +336,63 @@
             --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
             --transition-speed: 0.3s;
         }
+        
+        /* Grade Distribution */
+        .grade-distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .grade-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .grade-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        .grade-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .grade-count {
+            color: var(--text-medium);
+        }
+
+        .grade-progress-container {
+            height: 8px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .grade-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--coffee-medium), var(--coffee-light));
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Animation for progress bars */
+        .animate-progress {
+            opacity: 0;
+            animation: fadeInRight 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
 
         .content-wrapper {
             background-color: var(--coffee-bg);
@@ -238,6 +400,110 @@
             background-size: 300px 300px;
             padding: 1.5rem;
             min-height: 100vh;
+        }
+
+        /* Animation Classes */
+        .fade-in-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .fade-in-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .animate-timeline {
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideInRight 0.5s ease-out forwards;
+        }
+
+        .animate-timeline:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .animate-timeline:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .animate-timeline:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .animate-timeline:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .animate-table-row {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .pulse-on-hover {
+            transition: all 0.3s ease;
+        }
+
+        .pulse-on-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--coffee-light);
+            opacity: 0.5;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulseEffect {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         /* Header Styles */
@@ -712,8 +978,9 @@
         /* Quick Actions */
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
+            padding: 0.5rem;
         }
 
         .quick-action-btn {
@@ -721,34 +988,106 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.25rem;
+            padding: 1.25rem 1rem;
             background-color: rgba(0, 0, 0, 0.02);
-            border-radius: 8px;
+            border-radius: 12px;
             color: var(--text-dark);
             text-decoration: none;
-            transition: all var(--transition-speed);
-        }
-
-        .quick-action-btn:hover {
-            background-color: var(--coffee-medium);
-            color: white;
-            text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .quick-action-btn i {
             font-size: 1.5rem;
             margin-bottom: 0.75rem;
             color: var(--coffee-medium);
-            transition: all var(--transition-speed);
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background-color: var(--coffee-medium);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-decoration: none;
         }
 
         .quick-action-btn:hover i {
             color: white;
-            transform: translateY(-3px);
+            transform: scale(1.1);
         }
 
-        .quick-action-btn span {
-            font-weight: 500;
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Pulse Animation */
+        .pulse-on-hover {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pulse-on-hover::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease-out, height 0.3s ease-out;
+        }
+
+        .pulse-on-hover:hover::after {
+            width: 120%;
+            height: 120%;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation for pulse effect */
+        .pulse-on-hover {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pulse-on-hover::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease-out, height 0.3s ease-out;
+        }
+
+        .pulse-on-hover:hover::after {
+            width: 120%;
+            height: 120%;
         }
 
         /* Badges */
@@ -922,6 +1261,52 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effect to timeline items
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.querySelector('.timeline-content').style.transform = 'translateX(5px)';
+                    this.querySelector('.timeline-content').style.transition = 'transform 0.3s ease';
+                    this.querySelector('.timeline-content').style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.querySelector('.timeline-content').style.transform = 'translateX(0)';
+                    this.querySelector('.timeline-content').style.boxShadow = 'none';
+                });
+            });
+
+            // Add hover effects to quick action buttons
+            const quickActions = document.querySelectorAll('.quick-action-btn');
+            quickActions.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.querySelector('i').style.animation = 'pulseEffect 1s infinite';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.querySelector('i').style.animation = 'none';
+                });
+            });
+
+            // Animate grade progress bars on scroll
+            const animateOnScroll = () => {
+                const gradeItems = document.querySelectorAll('.grade-item');
+                gradeItems.forEach(item => {
+                    const position = item.getBoundingClientRect();
+                    if(position.top < window.innerHeight) {
+                        const progressBar = item.querySelector('.grade-progress');
+                        if(progressBar && !progressBar.classList.contains('animated')) {
+                            progressBar.classList.add('animated');
+                            const width = progressBar.style.width;
+                            progressBar.style.width = '0';
+                            setTimeout(() => {
+                                progressBar.style.width = width;
+                            }, 100);
+                        }
+                    }
+                });
+            };
+
             // Animate counters
             const counters = document.querySelectorAll('.counter');
             counters.forEach(counter => {
@@ -1034,6 +1419,9 @@
                 }
             `;
             document.head.appendChild(style);
+            window.addEventListener('scroll', animateOnScroll);
+            // Trigger once on load
+            setTimeout(animateOnScroll, 500);
         });
     </script>
 @endsection
