@@ -61,9 +61,8 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <!-- Updated Delete Button -->
-                                                <button type="button" class="btn btn-danger btn-sm delete-btn" 
-                                                    data-id="{{ $sale->id }}" 
-                                                    data-toggle="modal" 
+                                                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                    data-id="{{ $sale->id }}" data-toggle="modal"
                                                     data-target="#deleteModal">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
@@ -80,8 +79,7 @@
     </div>
 
     <!-- Add Sale Modal -->
-    <div class="modal fade" id="addSaleModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="addSaleModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -98,9 +96,10 @@
                             <select name="finished_product_id" id="finished_product_id"
                                 class="form-control @error('finished_product_id') is-invalid @enderror" required>
                                 <option value="">Select a product</option>
-                                @foreach($products as $product)
-                                    <option value="{{ $product->id }}" {{ old('finished_product_id') == $product->id ? 'selected' : '' }}>
-                                        {{ $product->product_name ?? $product->name ?? $product->title ?? 'Product #'.$product->id }}
+                                @foreach ($products as $product)
+                                    <option value="{{ $product->id }}"
+                                        {{ old('finished_product_id') == $product->id ? 'selected' : '' }}>
+                                        {{ $product->product_name ?? ($product->name ?? ($product->title ?? 'Product #' . $product->id)) }}
                                     </option>
                                 @endforeach
                             </select>
@@ -175,7 +174,7 @@
             $('.datatable').DataTable({
                 responsive: true
             });
-            
+
             // Handle delete button click
             $('.delete-btn').click(function() {
                 var id = $(this).data('id');
@@ -197,14 +196,14 @@
             function calculateTotal() {
                 var productId = $('#finished_product_id').val();
                 var quantity = $('#qty_sold').val();
-                
-                if(productId && quantity) {
+
+                if (productId && quantity) {
                     // Get product data using AJAX
                     $.ajax({
                         url: "{{ route('sales.getProductPrice', ':id') }}".replace(':id', productId),
                         type: 'GET',
                         success: function(response) {
-                            if(response.harga_jual) {
+                            if (response.harga_jual) {
                                 var total = parseFloat(response.harga_jual) * parseFloat(quantity);
                                 $('#total_price').val(total.toFixed(2));
                             }

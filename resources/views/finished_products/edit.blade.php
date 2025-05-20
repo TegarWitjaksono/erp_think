@@ -10,7 +10,8 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('finished_products.index') }}">Finished Products</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('finished_products.index') }}">Finished Products</a>
+                            </li>
                             <li class="breadcrumb-item active">Edit</li>
                         </ol>
                     </div>
@@ -71,9 +72,15 @@
                                         <select name="stock_status" id="stock_status"
                                             class="form-control @error('stock_status') is-invalid @enderror" required>
                                             <option value="">Select status</option>
-                                            <option value="avail" {{ old('stock_status', $product->stock_status) == 'avail' ? 'selected' : '' }}>Available</option>
-                                            <option value="sold" {{ old('stock_status', $product->stock_status) == 'sold' ? 'selected' : '' }}>Sold</option>
-                                            <option value="resv" {{ old('stock_status', $product->stock_status) == 'resv' ? 'selected' : '' }}>Reserved</option>
+                                            <option value="ready"
+                                                {{ old('stock_status', $product->stock_status) == 'ready' ? 'selected' : '' }}>
+                                                ready</option>
+                                            <option value="sold"
+                                                {{ old('stock_status', $product->stock_status) == 'sold' ? 'selected' : '' }}>
+                                                Sold</option>
+                                            <option value="reserved"
+                                                {{ old('stock_status', $product->stock_status) == 'reserved' ? 'selected' : '' }}>
+                                                Reserved</option>
                                         </select>
                                         @error('stock_status')
                                             <span class="text-danger">{{ $message }}</span>

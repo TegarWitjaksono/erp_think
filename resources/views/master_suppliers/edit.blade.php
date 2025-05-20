@@ -35,7 +35,7 @@
                                     value="{{ $data->contact_info }}" required>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <button type="submit" class="btn btn-coffee">Simpan</button>
                                 <a href="{{ route('master_suppliers.index') }}" class="btn btn-secondary">Batal</a>
                             </div>
                         </form>

@@ -315,7 +315,7 @@
             box-shadow: 0 2px 8px rgba(111, 78, 55, 0.4);
             position: relative;
         }
-        
+
         /* Active menu indicator */
         .nav-sidebar .nav-link.active::after {
             content: '';
@@ -330,14 +330,16 @@
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
             animation: pulse 1.5s infinite;
         }
-        
+
         @keyframes pulse {
             0% {
                 box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
             }
+
             70% {
                 box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
             }
@@ -403,7 +405,7 @@
         /* Content wrapper styling */
         .content-wrapper {
             background-color: var(--coffee-light);
-            background-image: 
+            background-image:
                 radial-gradient(var(--coffee-accent) 0.5px, transparent 0.5px),
                 radial-gradient(var(--coffee-accent) 0.5px, transparent 0.5px);
             background-size: 20px 20px;
@@ -594,11 +596,14 @@
                         </li>
                         <li class="nav-header">Master</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'active' : '' }}" data-toggle="collapse" data-target="#masterMenu">
+                            <a href="#"
+                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'active' : '' }}"
+                                data-toggle="collapse" data-target="#masterMenu">
                                 <i class="fas fa-cogs"></i>
                                 <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
                             </a>
-                            <ul id="masterMenu" class="collapse nav flex-column {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'show' : '' }}">
+                            <ul id="masterMenu"
+                                class="collapse nav flex-column {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'show' : '' }}">
 
                                 <li class="nav-item">
                                     <a href="/master_suppliers"
@@ -607,7 +612,7 @@
                                         <p>Master Suppliers</p>
                                     </a>
                                 </li>
-                                
+
                                 <li class="nav-item">
                                     <a href="/finished_products"
                                         class="nav-link {{ request()->is('finished_products*') ? 'active' : '' }}">
@@ -615,10 +620,9 @@
                                         <p>Finished Products</p>
                                     </a>
                                 </li>
-                                
+
                                 <li class="nav-item">
-                                    <a href="/sales"
-                                        class="nav-link {{ request()->is('sales*') ? 'active' : '' }}">
+                                    <a href="/sales" class="nav-link {{ request()->is('sales*') ? 'active' : '' }}">
                                         <i class="fas fa-shopping-cart"></i>
                                         <p>Sales Records</p>
                                     </a>

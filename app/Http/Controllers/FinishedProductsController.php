@@ -17,7 +17,7 @@ class FinishedProductsController extends Controller
     {
         // Get all finished products without joining
         $data = DB::table('finished_products')->get();
-        
+
         // Map shortened status values to full names for display
         foreach ($data as $item) {
             if ($item->stock_status === 'avail') {
@@ -28,7 +28,7 @@ class FinishedProductsController extends Controller
                 $item->stock_status_display = $item->stock_status;
             }
         }
-        
+
         return view('finished_products.index', compact('data'));
     }
 
@@ -45,7 +45,7 @@ class FinishedProductsController extends Controller
             'weight_final' => 'required|numeric|min:0',
             'hpp' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
-            'stock_status' => 'required|in:avail,sold,resv', // Update validation rule
+            'stock_status' => 'required|in:ready,sold,reserved', // Update validation rule
         ]);
 
         if ($validator->fails()) {
@@ -87,14 +87,14 @@ class FinishedProductsController extends Controller
         $id = base64_decode($id);
         // Find the record using DB facade
         $product = DB::table('finished_products')->where('id', $id)->first();
-        
+
         if (!$product) {
             abort(404);
         }
-        
+
         // Get all roast batches for the dropdown
         $roastBatches = DB::table('roast_batches')->get();
-        
+
         return view('finished_products.edit', compact('product', 'roastBatches'));
     }
 
@@ -112,7 +112,7 @@ class FinishedProductsController extends Controller
             'weight_final' => 'required|numeric|min:0',
             'hpp' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
-            'stock_status' => 'required|in:avail,sold,resv', // Update validation rule
+            'stock_status' => 'required|in:ready,sold,reserved', // Update validation rule
         ]);
 
         if ($validator->fails()) {
@@ -153,12 +153,12 @@ class FinishedProductsController extends Controller
     {
         // Check if this product is used in sales
         $usedInSales = DB::table('sales')->where('finished_product_id', $id)->exists();
-        
+
         if ($usedInSales) {
             return redirect()->route('finished_products.index')
                 ->with('error', 'Cannot delete this product as it is used in sales records');
         }
-        
+
         // Delete using DB facade
         DB::table('finished_products')->where('id', $id)->delete();
 

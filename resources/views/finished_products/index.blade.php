@@ -62,11 +62,11 @@
                                             <td>{{ number_format($product->hpp, 2) }}</td>
                                             <td>{{ number_format($product->harga_jual, 2) }}</td>
                                             <td>
-                                                @if($product->stock_status == 'avail')
-                                                    <span class="badge badge-success">Available</span>
+                                                @if ($product->stock_status == 'ready')
+                                                    <span class="badge badge-success">ready</span>
                                                 @elseif($product->stock_status == 'sold')
                                                     <span class="badge badge-danger">Sold</span>
-                                                @elseif($product->stock_status == 'resv')
+                                                @elseif($product->stock_status == 'reserved')
                                                     <span class="badge badge-warning">Reserved</span>
                                                 @else
                                                     <span class="badge badge-secondary">{{ $product->stock_status }}</span>
@@ -77,9 +77,8 @@
                                                     class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-danger btn-sm delete-btn" 
-                                                    data-id="{{ $product->id }}" 
-                                                    data-toggle="modal" 
+                                                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                    data-id="{{ $product->id }}" data-toggle="modal"
                                                     data-target="#deleteModal">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
@@ -175,9 +174,12 @@
                             <select name="stock_status" id="stock_status"
                                 class="form-control @error('stock_status') is-invalid @enderror" required>
                                 <option value="">Select status</option>
-                                <option value="avail" {{ old('stock_status') == 'avail' ? 'selected' : '' }}>Available</option>
+                                <option value="ready" {{ old('stock_status') == 'ready' ? 'selected' : '' }}>Available
+                                </option>
                                 <option value="sold" {{ old('stock_status') == 'sold' ? 'selected' : '' }}>Sold</option>
-                                <option value="resv" {{ old('stock_status') == 'resv' ? 'selected' : '' }}>Reserved</option>
+                                <option value="reserved" {{ old('stock_status') == 'reserved' ? 'selected' : '' }}>
+                                    Reserved
+                                </option>
                             </select>
                             @error('stock_status')
                                 <span class="text-danger">{{ $message }}</span>
@@ -198,7 +200,7 @@
             $('.datatable').DataTable({
                 responsive: true
             });
-            
+
             // Handle delete button click
             $('.delete-btn').click(function() {
                 var id = $(this).data('id');
