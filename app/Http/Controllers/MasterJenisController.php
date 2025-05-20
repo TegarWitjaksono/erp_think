@@ -10,7 +10,7 @@ class MasterJenisController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory
      */
     public function index()
     {
@@ -21,18 +21,18 @@ class MasterJenisController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory
      */
     public function create()
     {
-        //
+        return view('jenis.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -52,7 +52,8 @@ class MasterJenisController extends Controller
      */
     public function show($id)
     {
-        //
+        // You can implement this as needed, for now return a 404 response
+        abort(404, 'Not implemented');
     }
 
     /**
@@ -60,6 +61,7 @@ class MasterJenisController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory
      */
     public function edit($id)
     {
@@ -75,6 +77,7 @@ class MasterJenisController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
@@ -94,6 +97,7 @@ class MasterJenisController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {

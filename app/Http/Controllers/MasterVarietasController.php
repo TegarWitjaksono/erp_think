@@ -11,6 +11,7 @@ class MasterVarietasController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -23,10 +24,11 @@ class MasterVarietasController extends Controller
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function create()
     {
-        //
+        return view('varietas.create');
     }
 
     /**
@@ -34,6 +36,7 @@ class MasterVarietasController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -50,10 +53,12 @@ class MasterVarietasController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * 
      */
     public function show($id)
     {
-        //
+        // You can customize this as needed, e.g., fetch and show a varietas
+        abort(404, 'Not implemented');
     }
 
     /**
@@ -61,6 +66,7 @@ class MasterVarietasController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
@@ -76,6 +82,7 @@ class MasterVarietasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
@@ -95,6 +102,7 @@ class MasterVarietasController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
