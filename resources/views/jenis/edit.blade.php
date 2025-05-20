@@ -26,7 +26,7 @@
                             @method('PUT')
                             <div class="form-group">
                                 <label for="Deskripsi">Deskripsi</label>
-                                <textarea name="deskripsi" id="Deskripsi" class="form-control @error('deskripsi') is-invalid @enderror">{{ $data->deskripsi, old('deskripsi') }}</textarea>
+                                <textarea name="deskripsi" id="Deskripsi" class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi', $data->deskripsi) }}</textarea>
                                 @error('deskripsi')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

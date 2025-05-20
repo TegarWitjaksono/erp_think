@@ -597,13 +597,13 @@
                         <li class="nav-header">Master</li>
                         <li class="nav-item">
                             <a href="#"
-                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'active' : '' }}"
+                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') ? 'active' : '' }}"
                                 data-toggle="collapse" data-target="#masterMenu">
                                 <i class="fas fa-cogs"></i>
                                 <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
                             </a>
                             <ul id="masterMenu"
-                                class="collapse nav flex-column {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') ? 'show' : '' }}">
+                                class="collapse nav flex-column {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') ? 'show' : '' }}">
 
                                 <li class="nav-item">
                                     <a href="/master_suppliers"
@@ -627,12 +627,10 @@
                                         <p>Sales Records</p>
                                     </a>
                                 </li>
-
                                 <li class="nav-item">
                                     <a href="/master_jenis"
                                         class="nav-link {{ request()->is('master_jenis*') ? 'active' : '' }}">
                                         <i class="fas fa-tags"></i>
-
                                         <p>Master Type/Jenis</p>
                                     </a>
                                 </li>
@@ -640,11 +638,23 @@
                                     <a href="/master_varietas"
                                         class="nav-link {{ request()->is('master_varietas*') ? 'active' : '' }}">
                                         <i class="fas fa-seedling"></i>
-
                                         <p>Master Varietas</p>
                                     </a>
                                 </li>
-
+                                <li class="nav-item">
+                                    <a href="/master_origin"
+                                        class="nav-link {{ request()->is('master_origin*') ? 'active' : '' }}">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <p>Master Origin</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/master_grade"
+                                        class="nav-link {{ request()->is('master_grade*') ? 'active' : '' }}">
+                                        <i class="fas fa-star"></i>
+                                        <p>Master Grade</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 

@@ -25,7 +25,7 @@
         <section class="content">
             <div class="container-fluid">
                 <button type="button" class="btn btn-coffee mb-3" data-toggle="modal" data-target="#tambahSuppliers">
-                    Add Varietas
+                    <i class="fas fa-plus-circle mr-2"></i> Add Varietas
                 </button>
 
 

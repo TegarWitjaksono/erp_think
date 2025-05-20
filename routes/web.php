@@ -4,6 +4,7 @@
 use App\Exports\JurusanExport;
 use App\Exports\TemplateJurusanExport;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OriginController;
 use App\Imports\JurusanImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ use App\Http\Controllers\MasterSuppliersController;
 use App\Http\Controllers\MasterVarietasController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\GradeController;
 
 
 /*
@@ -62,3 +64,9 @@ Route::get('/', function () {
 Route::resource('finished_products', FinishedProductsController::class);
 Route::resource('sales', SalesController::class);
 Route::get('/sales/get-product-price/{id}', [SalesController::class, 'getProductPrice'])->name('sales.getProductPrice');
+
+
+// Add these routes with your other resource routes
+Route::resource('master_origin', OriginController::class);
+
+Route::resource('master_grade', GradeController::class);

@@ -6,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Jenis/Type</h1>
+                        <h1 class="m-0">Grade</h1>
                     </div>
                 </div>
             </div>
@@ -16,7 +16,7 @@
             <div class="col-12">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show floating-alert" role="alert">
-                        <strong>Berhasil!</strong> {{ session('success') }}
+                        <strong>Success!</strong> {{ session('success') }}
                     </div>
                 @endif
             </div>
@@ -24,15 +24,14 @@
 
         <section class="content">
             <div class="container-fluid">
-                <button type="button" class="btn btn-coffee mb-3" data-toggle="modal" data-target="#tambahSuppliers">
-                    <i class="fas fa-plus-circle mr-2"></i> Add Jenis/Type
+                <button type="button" class="btn btn-coffee mb-3" data-toggle="modal" data-target="#tambahGrade">
+                    <i class="fas fa-plus-circle mr-2"></i> Add Grade
                 </button>
-
 
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
-                        Data Jenis/Type
+                        Data Grade
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -40,9 +39,8 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>deskripsi</th>
+                                        <th>Deskripsi</th>
                                         <th>Action</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,14 +49,13 @@
                                         <tr>
                                             <td>{{ $no++ }}</td>
                                             <td>{{ $s->deskripsi }}</td>
-
                                             <td>
-                                                <a href="{{ route('master_jenis.edit', base64_encode($s->id_jenis)) }}"
+                                                <a href="{{ route('master_grade.edit', base64_encode($s->id_grade)) }}"
                                                     class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <button type="button" class="btn btn-danger btn-sm delete-btn"
-                                                    data-id="{{ $s->id_jenis }}" data-toggle="modal"
+                                                    data-id="{{ $s->id_grade }}" data-toggle="modal"
                                                     data-target="#deleteModal">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
@@ -70,25 +67,22 @@
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
         </section>
     </div>
 
-    <!-- Modal Tambah Jurusan -->
-    <div class="modal fade" id="tambahSuppliers" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+    <!-- Modal Tambah Grade -->
+    <div class="modal fade" id="tambahGrade" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Add The Varietas</h5>
+                    <h5 class="modal-title" id="modalLabel">Add New Grade</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('master_jenis.store') }}" method="POST">
+                <form action="{{ route('master_grade.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -104,7 +98,6 @@
                         <button type="submit" class="btn btn-coffee">Save</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
@@ -120,7 +113,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete this sale record? This action cannot be undone.
+                    Are you sure you want to delete this grade record? This action cannot be undone.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -134,7 +127,6 @@
         </div>
     </div>
 
-
     <script type="text/javascript">
         $(document).ready(function() {
             $('.datatable').DataTable({
@@ -144,7 +136,7 @@
             // Handle delete button click
             $('.delete-btn').click(function() {
                 var id = $(this).data('id');
-                var url = "{{ route('master_jenis.destroy', ':id') }}";
+                var url = "{{ route('master_grade.destroy', ':id') }}";
                 url = url.replace(':id', id);
                 $('#deleteForm').attr('action', url);
             });

@@ -1,4 +1,3 @@
-<!-- View: jurusan.edit -->
 @extends('dashboard')
 
 @section('konten')
@@ -7,7 +6,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Edit Varietas</h1>
+                        <h1 class="m-0">Edit Origin</h1>
                     </div>
                 </div>
             </div>
@@ -18,10 +17,10 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-edit me-1"></i>
-                        Edit Varietas
+                        Edit Origin
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('master_varietas.update', $data->id_varietas) }}" method="POST">
+                        <form action="{{ route('master_origin.update', $data->id_origin) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="form-group">
@@ -34,12 +33,11 @@
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-coffee">Simpan</button>
-                        <a href="{{ route('master_varietas.index') }}" class="btn btn-secondary">Batal</a>
+                        <a href="{{ route('master_origin.index') }}" class="btn btn-secondary">Batal</a>
                     </div>
                     </form>
                 </div>
             </div>
-    </div>
-    </section>
+        </section>
     </div>
 @endsection
