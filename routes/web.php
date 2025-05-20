@@ -12,7 +12,9 @@ use App\Http\Controllers\FinishedProductsController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MasterJenisController;
 use App\Http\Controllers\MasterSuppliersController;
+use App\Http\Controllers\MasterVarietasController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SalesController;
 
@@ -39,6 +41,8 @@ Route::post('/actionLogin', [LoginController::class, 'actionLogin'])->name('acti
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('master_suppliers', MasterSuppliersController::class);
+    Route::resource('master_jenis', MasterJenisController::class);
+    Route::resource('master_varietas', MasterVarietasController::class);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });
 

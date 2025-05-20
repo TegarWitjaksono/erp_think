@@ -628,6 +628,23 @@
                                     </a>
                                 </li>
 
+                                <li class="nav-item">
+                                    <a href="/master_jenis"
+                                        class="nav-link {{ request()->is('master_jenis*') ? 'active' : '' }}">
+                                        <i class="fas fa-tags"></i>
+
+                                        <p>Master Type/Jenis</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/master_varietas"
+                                        class="nav-link {{ request()->is('master_varietas*') ? 'active' : '' }}">
+                                        <i class="fas fa-seedling"></i>
+
+                                        <p>Master Varietas</p>
+                                    </a>
+                                </li>
+
                             </ul>
                         </li>
 
