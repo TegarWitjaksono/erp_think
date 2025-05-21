@@ -644,7 +644,7 @@
                                 <li class="nav-item">
                                     <a href="/master_origin"
                                         class="nav-link {{ request()->is('master_origin*') ? 'active' : '' }}">
-                                        <i class="fas fa-map-marker-alt"></i>
+                                        <i class="fas fa-globe-americas"></i>
                                         <p>Master Origin</p>
                                     </a>
                                 </li>

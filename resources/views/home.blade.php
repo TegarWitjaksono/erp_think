@@ -306,6 +306,14 @@
                                         <i class="fas fa-star"></i>
                                         <span>Grades</span>
                                     </a>
+                                    <a href="{{ route('master_jenis.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-tags"></i>
+                                        <span>Jenis</span>
+                                    </a>
+                                    <a href="{{ route('master_barang.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-boxes"></i>
+                                        <span>Barang</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
