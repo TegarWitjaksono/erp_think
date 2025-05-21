@@ -143,7 +143,7 @@
                                                         {{ isset($product->grade) ? 'Grade: ' . $product->grade : '' }}
                                                     </p>
                                                     <div class="timeline-meta">
-                                                        <span>Weight: {{ $product->weight_final ?? 0 }} kg</span>
+                                                        <span>Weight: {{ $product->weight_final ?? 0 }} g</span>
                                                         <span>Price: Rp {{ number_format($product->harga_jual ?? 0, 0, ',', '.') }}</span>
                                                     </div>
                                                 </div>
