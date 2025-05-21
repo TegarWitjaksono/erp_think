@@ -30,12 +30,13 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+                            
+                            <div class="form-group mt-3">
+                                <button type="submit" class="btn btn-coffee">Simpan</button>
+                                <a href="{{ route('master_grade.index') }}" class="btn btn-secondary">Batal</a>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-coffee">Simpan</button>
-                        <a href="{{ route('master_grade.index') }}" class="btn btn-secondary">Batal</a>
-                    </div>
-                    </form>
                 </div>
             </div>
         </section>

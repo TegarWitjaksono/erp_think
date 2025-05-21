@@ -1,4 +1,3 @@
-<!-- View: jurusan.edit -->
 @extends('dashboard')
 
 @section('konten')
@@ -31,15 +30,15 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+                            
+                            <div class="form-group mt-3">
+                                <button type="submit" class="btn btn-coffee">Simpan</button>
+                                <a href="{{ route('master_varietas.index') }}" class="btn btn-secondary">Batal</a>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-coffee">Simpan</button>
-                        <a href="{{ route('master_varietas.index') }}" class="btn btn-secondary">Batal</a>
-                    </div>
-                    </form>
                 </div>
             </div>
-    </div>
-    </section>
+        </section>
     </div>
 @endsection

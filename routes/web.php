@@ -3,6 +3,7 @@
 
 use App\Exports\JurusanExport;
 use App\Exports\TemplateJurusanExport;
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OriginController;
 use App\Imports\JurusanImport;
@@ -70,3 +71,5 @@ Route::get('/sales/get-product-price/{id}', [SalesController::class, 'getProduct
 Route::resource('master_origin', OriginController::class);
 
 Route::resource('master_grade', GradeController::class);
+
+Route::resource('master_barang', BarangController::class);
