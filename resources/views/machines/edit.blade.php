@@ -8,7 +8,7 @@
                     <div class="col-sm-6">
                         <div class="d-flex align-items-center">
                             <div class="mr-3 p-3 rounded-circle" style="background-color: rgba(121, 82, 59, 0.15);">
-                                <i class="fas fa-coffee fa-2x" style="color: #79523B;"></i>
+                                <i class="fas fa-cogs fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
                                 <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Machine</h1>

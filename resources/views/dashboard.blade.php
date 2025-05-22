@@ -669,6 +669,14 @@
                                         <p>Machines</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="/master_sku"
+                                        class="nav-link {{ request()->is('master_sku*') ? 'active' : '' }}">
+                                        <i class="fas fa-cubes"></i>
+
+                                        <p>Master SKU</p>
+                                    </a>
+                                </li>
 
                             </ul>
                         </li>
