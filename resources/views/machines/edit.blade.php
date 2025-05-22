@@ -118,7 +118,7 @@
                                         <label for="plc">PLC</label>
                                         <select name="plc" id="plc"
                                             class="form-control @error('plc') is-invalid @enderror" required>
-                                            <option value="">PLC</option>
+                                            <option value=""></option>
                                             <option value="1" {{ old('plc', $machine->plc) == 1 ? 'selected' : '' }}>
                                                 Yes</option>
                                             <option value="0" {{ old('plc', $machine->plc) == 0 ? 'selected' : '' }}>

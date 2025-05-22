@@ -76,3 +76,11 @@ Route::resource('master_origin', OriginController::class);
 Route::resource('master_grade', GradeController::class);
 
 Route::resource('master_barang', BarangController::class);
+
+// Add these routes for Detail SKU
+Route::get('/detail-sku/{id_sku}', [App\Http\Controllers\DetailSkuController::class, 'index'])->name('detail_sku.index');
+Route::get('/detail-sku/{id_sku}/create', [App\Http\Controllers\DetailSkuController::class, 'create'])->name('detail_sku.create');
+Route::post('/detail-sku', [App\Http\Controllers\DetailSkuController::class, 'store'])->name('detail_sku.store');
+Route::get('/detail-sku/edit/{id}', [App\Http\Controllers\DetailSkuController::class, 'edit'])->name('detail_sku.edit');
+Route::put('/detail-sku/{id}', [App\Http\Controllers\DetailSkuController::class, 'update'])->name('detail_sku.update');
+Route::delete('/detail-sku/{id}', [App\Http\Controllers\DetailSkuController::class, 'destroy'])->name('detail_sku.destroy');

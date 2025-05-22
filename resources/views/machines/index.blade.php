@@ -89,7 +89,7 @@
                                             <td>{{ $machines->kapasitas }}</td>
 
                                             <td>
-                                                @if ($machines->status == '1')
+                                                @if ($machines->plc == '1')
                                                     <span class="badge badge-success">Yes</span>
                                                 @else
                                                     <span class="badge badge-danger">No</span>
@@ -226,7 +226,7 @@
                             <label for="plc">PLC</label>
                             <select name="plc" id="plc" class="form-control @error('plc') is-invalid @enderror"
                                 required>
-                                <option value="">PLC</option>
+                                <option value="">Pilih PLC</option>
                                 <option value="1" {{ old('plc') == 'Yes' ? 'selected' : '' }}>Yes</option>
                                 <option value="0" {{ old('plc') == 'No' ? 'selected' : '' }}>No
                                 </option>

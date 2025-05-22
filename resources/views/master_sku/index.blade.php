@@ -83,7 +83,12 @@
                                             <td>{{ $sku->qty }}</td>
 
 
+                                            <!-- Modify the actions column to include a detail button -->
                                             <td>
+                                                <a href="{{ route('detail_sku.index', base64_encode($sku->id_sku)) }}"
+                                                    class="btn btn-info btn-sm" title="Detail SKU">
+                                                    <i class="fas fa-list"></i>
+                                                </a>
                                                 <a href="{{ route('master_sku.edit', base64_encode($sku->id_sku)) }}"
                                                     class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
