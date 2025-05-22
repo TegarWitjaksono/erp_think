@@ -314,6 +314,10 @@
                                         <i class="fas fa-boxes"></i>
                                         <span>Barang</span>
                                     </a>
+                                    <a href="{{ route('master_sku.index') }}" class="quick-action-btn pulse-on-hover">
+                                        <i class="fas fa-cubes"></i>
+                                        <span>Master SKU</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
