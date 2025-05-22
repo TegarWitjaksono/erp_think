@@ -597,7 +597,7 @@
                         <li class="nav-header">Master</li>
                         <li class="nav-item">
                             <a href="#"
-                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') || request()->is('master_barang*')? 'active' : '' }}"
+                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') || request()->is('master_barang*') ? 'active' : '' }}"
                                 data-toggle="collapse" data-target="#masterMenu">
                                 <i class="fas fa-cogs"></i>
                                 <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
@@ -662,6 +662,14 @@
                                         <p>Master Barang</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="/machines"
+                                        class="nav-link {{ request()->is('machines*') ? 'active' : '' }}">
+                                        <i class="fas fa-cogs"></i>
+                                        <p>Machines</p>
+                                    </a>
+                                </li>
+
                             </ul>
                         </li>
 

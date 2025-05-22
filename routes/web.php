@@ -20,7 +20,7 @@ use App\Http\Controllers\MasterVarietasController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\GradeController;
-
+use App\Http\Controllers\MasterMachinesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('master_suppliers', MasterSuppliersController::class);
     Route::resource('master_jenis', MasterJenisController::class);
     Route::resource('master_varietas', MasterVarietasController::class);
+    Route::resource('machines', MasterMachinesController::class);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });
 
