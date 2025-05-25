@@ -11,11 +11,11 @@
                                 <i class="fas fa-cubes fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit SKU</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Stok</h1>
                                 <div
                                     style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                                 </div>
-                                <p class="text-muted mt-2 mb-0">Manage your roasted coffee SKU inventory</p>
+                                <p class="text-muted mt-2 mb-0">Manage your roasted coffee Stok inventory</p>
                             </div>
                         </div>
                     </div>

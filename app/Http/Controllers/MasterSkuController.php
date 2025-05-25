@@ -49,7 +49,8 @@ class MasterSkuController extends Controller
 
         // Tambahkan id_suppiler = 0 secara manual
         $validated['id_suplier'] = 0;
-
+        // Tambahkan id_varietas = 0 secara manual
+        $validated['id_varietas'] = 0;
 
         DB::table('master_sku')
             ->insert($validated);
@@ -98,6 +99,8 @@ class MasterSkuController extends Controller
 
         // Tambahkan id_suppiler = 0 secara manual
         $validated['id_suplier'] = 0;
+        // Tambahkan id_varietas = 0 secara manual
+        $validated['id_varietas'] = 0;
 
         DB::table('master_sku')
             ->where('id_sku', $id)

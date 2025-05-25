@@ -673,10 +673,16 @@
                                     <a href="/master_sku"
                                         class="nav-link {{ request()->is('master_sku*') ? 'active' : '' }}">
                                         <i class="fas fa-cubes"></i>
-                                        <p>Master SKU</p>
+                                        <p>Stok Barang</p>
                                     </a>
                                 </li>
-
+                                <li class="nav-item">
+                                    <a href="/sku"
+                                        class="nav-link {{ request()->is('sku*') ? 'active' : '' }}">
+                                        <i class="fas fa-tags"></i>
+                                        <p>SKU Management</p>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 
