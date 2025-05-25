@@ -11,11 +11,11 @@
                                 <i class="fas fa-list-alt fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Detail SKU</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Detail Stok Barang</h1>
                                 <div
                                     style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                                 </div>
-                                <p class="text-muted mt-2 mb-0">Manage your SKU stock details</p>
+                                <p class="text-muted mt-2 mb-0">Manage your stock details</p>
                             </div>
                         </div>
                     </div>
@@ -25,8 +25,8 @@
                                 <ol class="breadcrumb bg-transparent p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="/home" style="color: #79523B;"><i
                                                 class="fas fa-home"></i> Home</a></li>
-                                    <li class="breadcrumb-item"><a href="{{ route('master_sku.index') }}" style="color: #79523B;">SKU</a></li>
-                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Detail SKU</li>
+                                    <li class="breadcrumb-item"><a href="{{ route('master_sku.index') }}" style="color: #79523B;">Stok Barang</a></li>
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Detail Stok Barang</li>
                                 </ol>
                             </nav>
                         </div>
@@ -55,7 +55,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-info-circle me-1"></i>
-                        SKU Information
+                        Stok Information
                     </div>
                     <div class="card-body">
                         <div class="row">
