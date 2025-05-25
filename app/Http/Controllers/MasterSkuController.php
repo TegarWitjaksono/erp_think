@@ -11,6 +11,7 @@ class MasterSkuController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -28,17 +29,19 @@ class MasterSkuController extends Controller
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
-        //
+        $barang = DB::table('master_barang')->get();
+        return view('master_sku.create', compact('barang'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -54,7 +57,7 @@ class MasterSkuController extends Controller
 
         DB::table('master_sku')
             ->insert($validated);
-        return redirect()->route('master_sku.index')->with('success', 'SKU created successfully');
+        return redirect()->route('master_sku.index')->with('success', 'Stok created successfully');
     }
 
     /**
@@ -62,10 +65,12 @@ class MasterSkuController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * 
      */
     public function show($id)
     {
-        //
+        // You can customize this as needed, for now just return a 404 or a simple response
+        abort(404, 'Not implemented');
     }
 
     /**
@@ -73,6 +78,7 @@ class MasterSkuController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function edit($id)
     {
@@ -88,7 +94,7 @@ class MasterSkuController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
@@ -105,20 +111,20 @@ class MasterSkuController extends Controller
         DB::table('master_sku')
             ->where('id_sku', $id)
             ->update($validated);
-        return redirect()->route('master_sku.index')->with('success', 'SKU updated successfully');
+        return redirect()->route('master_sku.index')->with('success', 'Stok updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
         DB::table('master_sku')
             ->where('id_sku', $id)
             ->delete();
-        return redirect()->route('master_sku.index')->with('success', 'SKU deleted successfully');
+        return redirect()->route('master_sku.index')->with('success', 'Stok deleted successfully');
     }
 }

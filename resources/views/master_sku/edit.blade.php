@@ -11,7 +11,7 @@
                                 <i class="fas fa-cubes fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Stok</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Stok Barang</h1>
                                 <div
                                     style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                                 </div>
@@ -26,7 +26,9 @@
                                     <li class="breadcrumb-item"><a href="/home" style="color: #79523B;"><i
                                                 class="fas fa-home"></i> Home</a></li>
                                     <li class="breadcrumb-item active font-weight-bold" aria-current="page">
-                                        SKU</li>
+                                        Stok Barang</li>
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">
+                                        Edit Stok Barang</li>
                                 </ol>
                             </nav>
                         </div>
@@ -41,7 +43,7 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Edit data SKU</h3>
+                                <h3 class="card-title">Edit data Stok Barang</h3>
                             </div>
                             <form action="{{ route('master_sku.update', $data->id_sku) }}" method="POST">
                                 @csrf

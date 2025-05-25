@@ -121,7 +121,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete this SKU ? This action cannot be undone.
+                    Are you sure you want to delete this Stok ? This action cannot be undone.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -140,7 +140,7 @@
         <div class="modal-dialog modal-md" role="document"> <!-- modal-md added here -->
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Add New SKU</h5>
+                    <h5 class="modal-title" id="modalLabel">Add New Stok</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
