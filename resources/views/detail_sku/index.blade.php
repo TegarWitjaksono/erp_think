@@ -95,20 +95,23 @@
                                         <th>Stock In</th>
                                         <th>Stock Out</th>
                                         <th>Final Stock</th>
+                                        <th>Keterangan</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
+                                @php
+                                    $total = count($details);
+                                @endphp
                                 <tbody>
-                                    @php $no = 1; @endphp
-                                    @foreach ($details as $detail)
+                                    @foreach ($details as $index => $detail)
                                         <tr>
-                                            <td>{{ $no++ }}</td>
+                                            <td>{{ $total - $index }}</td>
                                             <td>{{ date('d M Y H:i', strtotime($detail->cdate)) }}</td>
                                             <td>{{ $detail->stok_awal }}</td>
                                             <td>{{ $detail->stok_masuk }}</td>
                                             <td>{{ $detail->stok_keluar }}</td>
                                             <td>{{ $detail->stok_akhir }}</td>
-                                            <!-- Replace the actions column in the table (around line 111) -->
+                                            <td>{{ $detail->keterangan ?? '-' }}</td>
                                             <td>
                                                 @if($detail->id_detail_sku == $latestRecordId)
                                                     <a href="{{ route('detail_sku.edit', base64_encode($detail->id_detail_sku)) }}"
@@ -212,6 +215,14 @@
                         <div class="form-group">
                             <label for="stok_akhir">Final Stock (Calculated)</label>
                             <input type="number" id="stok_akhir" class="form-control" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="keterangan">Keterangan</label>
+                            <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" rows="3" placeholder="Tambahkan keterangan (opsional)"></textarea>
+                            @error('keterangan')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
                     <div class="modal-footer">

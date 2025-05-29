@@ -84,6 +84,14 @@
                                         <input type="number" id="stok_akhir" class="form-control" readonly
                                             value="{{ $detail->stok_akhir }}">
                                     </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="keterangan">Keterangan</label>
+                                        <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" rows="3" placeholder="Tambahkan keterangan (opsional)">{{ old('keterangan', $detail->keterangan) }}</textarea>
+                                        @error('keterangan')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <a href="{{ route('detail_sku.index', base64_encode($sku->id_sku)) }}" class="btn btn-secondary">Cancel</a>

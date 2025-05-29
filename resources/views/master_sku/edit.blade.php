@@ -68,6 +68,40 @@
                                     </div>
 
                                     <div class="form-group">
+                                        <label for="id_suplier">Pilih Supplier</label>
+                                        <select name="id_suplier" id="id_suplier"
+                                            class="form-control @error('id_suplier') is-invalid @enderror" required>
+                                            <option value="">Select Supplier</option>
+                                            @foreach ($suppliers as $supplier)
+                                                <option value="{{ $supplier->id }}"
+                                                    {{ old('id_suplier', $data->id_suplier) == $supplier->id ? 'selected' : '' }}>
+                                                    {{ $supplier->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('id_suplier')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="id_varietas">Pilih Varietas</label>
+                                        <select name="id_varietas" id="id_varietas"
+                                            class="form-control @error('id_varietas') is-invalid @enderror" required>
+                                            <option value="">Select Varietas</option>
+                                            @foreach ($varietas as $var)
+                                                <option value="{{ $var->id_varietas }}"
+                                                    {{ old('id_varietas', $data->id_varietas) == $var->id_varietas ? 'selected' : '' }}>
+                                                    {{ $var->deskripsi }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('id_varietas')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
                                         <label for="qty">Quantity</label>
                                         <input type="number" name="qty" id="qty"
                                             class="form-control @error('qty') is-invalid @enderror" required
@@ -76,7 +110,6 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>

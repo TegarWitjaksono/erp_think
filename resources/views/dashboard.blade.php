@@ -548,7 +548,9 @@
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                <a class="nav-link" id="sidebarToggle" href="#" role="button">
+                    <i class="fas fa-bars"></i>
+                </a>
             </li>
         </ul>
 
@@ -685,14 +687,9 @@
                                 </li>
                             </ul>
                         </li>
-
-
-
-
                     </ul>
                 </nav>
             </div>
-
             <!-- Footer Section for Logout -->
             <div class="sidebar-footer">
                 <a href="{{ route('actionLogout') }}" class="logout-button">
@@ -791,6 +788,34 @@
                 }
             })();
         });
+
+        
+// Toggle sidebar and fullscreen layout
+    document.getElementById('sidebarToggle').addEventListener('click', function(e) {
+        e.preventDefault();
+        const body = document.body;
+        
+        if (body.classList.contains('sidebar-collapse') || body.classList.contains('layout-top-nav')) {
+            // Restore normal layout
+            body.classList.remove('layout-top-nav');
+            body.classList.remove('sidebar-collapse');
+            body.classList.add('sidebar-mini', 'layout-fixed');
+            localStorage.setItem('layoutState', 'normal');
+        } else {
+            // Minimize sidebar and enable fullscreen content
+            body.classList.remove('sidebar-mini', 'layout-fixed');
+            body.classList.add('layout-top-nav', 'sidebar-collapse');
+            localStorage.setItem('layoutState', 'minimized');
+        }
+    });
+
+    // Check saved layout state
+    const savedState = localStorage.getItem('layoutState');
+    if (savedState === 'minimized') {
+        document.body.classList.add('layout-top-nav', 'sidebar-collapse');
+        document.body.classList.remove('sidebar-mini', 'layout-fixed');
+    }
+
     </script>
 
     @yield('script')

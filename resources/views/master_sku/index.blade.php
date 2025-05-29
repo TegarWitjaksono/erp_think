@@ -68,8 +68,8 @@
                                         <th>No</th>
                                         <th>Nama Barang</th>
                                         <th>Supplier</th>
+                                        <th>Varietas</th>
                                         <th>Stok / Qty</th>
-
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -79,10 +79,9 @@
                                         <tr>
                                             <td>{{ $no++ }}</td>
                                             <td>{{ $sku->nama_barang ?? 'Belum ada' }}</td>
-                                            <td>{{ $sku->name ?? 'Belum ada' }}</td>
+                                            <td>{{ $sku->supplier_name ?? 'Belum ada' }}</td>
+                                            <td>{{ $sku->varietas_name ?? 'Belum ada' }}</td>
                                             <td>{{ $sku->qty }}</td>
-
-
                                             <!-- Modify the actions column to include a detail button -->
                                             <td>
                                                 <a href="{{ route('detail_sku.index', base64_encode($sku->id_sku)) }}"
@@ -167,7 +166,41 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="serial_number">Quantity</label>
+                            <label for="id_suplier">Pilih Supplier</label>
+                            <select name="id_suplier" id="id_suplier"
+                                class="form-control @error('id_suplier') is-invalid @enderror" required>
+                                <option value="">Select Supplier</option>
+                                @foreach ($suppliers as $supplier)
+                                    <option value="{{ $supplier->id }}"
+                                        {{ old('id_suplier') == $supplier->id ? 'selected' : '' }}>
+                                        {{ $supplier->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_suplier')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_varietas">Pilih Varietas</label>
+                            <select name="id_varietas" id="id_varietas"
+                                class="form-control @error('id_varietas') is-invalid @enderror" required>
+                                <option value="">Select Varietas</option>
+                                @foreach ($varietas as $var)
+                                    <option value="{{ $var->id_varietas }}"
+                                        {{ old('id_varietas') == $var->id_varietas ? 'selected' : '' }}>
+                                        {{ $var->deskripsi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_varietas')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qty">Quantity</label>
                             <input type="number" name="qty" id="qty"
                                 class="form-control @error('qty') is-invalid @enderror" required
                                 value="{{ old('qty') }}">
@@ -175,8 +208,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

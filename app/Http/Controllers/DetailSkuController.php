@@ -73,6 +73,7 @@ class DetailSkuController extends Controller
             'stok_awal' => 'required|integer',
             'stok_masuk' => 'required|integer',
             'stok_keluar' => 'required|integer',
+            'keterangan' => 'nullable|string|max:255', // Add validation for keterangan field
         ]);
         
         // Calculate stok_akhir
@@ -149,6 +150,7 @@ class DetailSkuController extends Controller
             'stok_awal' => 'required|integer',
             'stok_masuk' => 'required|integer',
             'stok_keluar' => 'required|integer',
+            'keterangan' => 'nullable|string|max:255', // Add validation for keterangan field
         ]);
         
         // Calculate stok_akhir

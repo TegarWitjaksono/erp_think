@@ -16,13 +16,17 @@ class MasterSkuController extends Controller
     public function index()
     {
         $barang = DB::table('master_barang')->get();
+        $suppliers = DB::table('suppliers')->get();
+        $varietas = DB::table('varietas')->get();
+        
         $data = DB::table('master_sku')
             ->leftJoin('master_barang', 'master_barang.id_barang', '=', 'master_sku.id_barang')
             ->leftJoin('suppliers', 'suppliers.id', '=', 'master_sku.id_suplier')
-            ->select('master_sku.*', 'master_barang.nama_barang', 'suppliers.name')
+            ->leftJoin('varietas', 'varietas.id_varietas', '=', 'master_sku.id_varietas')
+            ->select('master_sku.*', 'master_barang.nama_barang', 'suppliers.name as supplier_name', 'varietas.deskripsi as varietas_name')
             ->get();
 
-        return view('master_sku.index', compact('data', 'barang'));
+        return view('master_sku.index', compact('data', 'barang', 'suppliers', 'varietas'));
     }
 
     /**
@@ -34,7 +38,10 @@ class MasterSkuController extends Controller
     public function create()
     {
         $barang = DB::table('master_barang')->get();
-        return view('master_sku.create', compact('barang'));
+        $suppliers = DB::table('suppliers')->get();
+        $varietas = DB::table('varietas')->get();
+        
+        return view('master_sku.create', compact('barang', 'suppliers', 'varietas'));
     }
 
     /**
@@ -47,13 +54,10 @@ class MasterSkuController extends Controller
     {
         $validated = $request->validate([
             'id_barang' => 'required|integer',
+            'id_suplier' => 'required|integer',
+            'id_varietas' => 'required|integer',
             'qty' => 'required|integer',
         ]);
-
-        // Tambahkan id_suppiler = 0 secara manual
-        $validated['id_suplier'] = 0;
-        // Tambahkan id_varietas = 0 secara manual
-        $validated['id_varietas'] = 0;
 
         DB::table('master_sku')
             ->insert($validated);
@@ -83,10 +87,13 @@ class MasterSkuController extends Controller
     public function edit($id)
     {
         $barang = DB::table('master_barang')->get();
+        $suppliers = DB::table('suppliers')->get();
+        $varietas = DB::table('varietas')->get();
+        
         $data = DB::table('master_sku')
             ->where('id_sku', base64_decode($id))
             ->first();
-        return view('master_sku.edit', compact('data', 'barang'));
+        return view('master_sku.edit', compact('data', 'barang', 'suppliers', 'varietas'));
     }
 
     /**
@@ -100,13 +107,10 @@ class MasterSkuController extends Controller
     {
         $validated = $request->validate([
             'id_barang' => 'required|integer',
+            'id_suplier' => 'required|integer',
+            'id_varietas' => 'required|integer',
             'qty' => 'required|integer',
         ]);
-
-        // Tambahkan id_suppiler = 0 secara manual
-        $validated['id_suplier'] = 0;
-        // Tambahkan id_varietas = 0 secara manual
-        $validated['id_varietas'] = 0;
 
         DB::table('master_sku')
             ->where('id_sku', $id)
