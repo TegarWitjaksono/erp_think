@@ -228,18 +228,6 @@
             display: none;
         }
 
-        /* Add fade effect above logout button */
-        .menu-area::after {
-            content: '';
-            position: fixed;
-            bottom: 65px;
-            left: 0;
-            width: 250px;
-            height: 20px;
-            background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-            pointer-events: none;
-        }
-
         /* Ensure proper scrollbar styling */
         .menu-area::-webkit-scrollbar {
             width: 4px;
