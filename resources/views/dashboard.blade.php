@@ -587,7 +587,7 @@
                         <li class="nav-header">Master</li>
                         <li class="nav-item">
                             <a href="#"
-                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') || request()->is('master_barang*') || request()->is('machines*') || request()->is('master_sku*') || request()->is('sku*') ? 'active' : '' }}"
+                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') || request()->is('master_barang*') || request()->is('machines*') || request()->is('master_sku*') || request()->is('sku*') || request()->is('master_penerimaan*') ? 'active' : '' }}"
                                 data-toggle="collapse" data-target="#masterMenu">
                                 <i class="fas fa-cogs"></i>
                                 <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
@@ -671,6 +671,15 @@
                                         class="nav-link {{ request()->is('sku*') ? 'active' : '' }}">
                                         <i class="fas fa-tags"></i>
                                         <p>SKU Management</p>
+                                    </a>
+                                </li>
+                                
+                                <!-- Add Master Penerimaan Menu Item -->
+                                <li class="nav-item">
+                                    <a href="/master_penerimaan"
+                                        class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
+                                        <i class="fas fa-truck-loading"></i>
+                                        <p>Master Penerimaan</p>
                                     </a>
                                 </li>
                             </ul>

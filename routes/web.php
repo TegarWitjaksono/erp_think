@@ -86,3 +86,11 @@ Route::post('/detail-sku', [App\Http\Controllers\DetailSkuController::class, 'st
 Route::get('/detail-sku/edit/{id}', [App\Http\Controllers\DetailSkuController::class, 'edit'])->name('detail_sku.edit');
 Route::put('/detail-sku/{id}', [App\Http\Controllers\DetailSkuController::class, 'update'])->name('detail_sku.update');
 Route::delete('/detail-sku/{id}', [App\Http\Controllers\DetailSkuController::class, 'destroy'])->name('detail_sku.destroy');
+
+
+// Master Penerimaan Routes
+Route::get('/master_penerimaan', [App\Http\Controllers\MasterPenerimaanController::class, 'index'])->name('master_penerimaan.index');
+Route::post('/master_penerimaan', [App\Http\Controllers\MasterPenerimaanController::class, 'store'])->name('master_penerimaan.store');
+Route::get('/master_penerimaan/{id}/edit', [App\Http\Controllers\MasterPenerimaanController::class, 'edit'])->name('master_penerimaan.edit');
+Route::put('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'update'])->name('master_penerimaan.update');
+Route::delete('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'destroy'])->name('master_penerimaan.destroy');
