@@ -47,177 +47,24 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="id_batch">Batch ID</label>
-                                                <input type="text" name="id_batch" id="id_batch" class="form-control" 
-                                                    value="{{ $data->id_batch }}" readonly>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="id_suplier">Supplier</label>
-                                                <select name="id_suplier" id="id_suplier"
-                                                    class="form-control @error('id_suplier') is-invalid @enderror" required>
-                                                    <option value="">Select Supplier</option>
-                                                    @foreach ($suppliers as $item)
-                                                        <option value="{{ $item->id }}"
-                                                            {{ old('id_suplier', $data->id_suplier) == $item->id ? 'selected' : '' }}>
-                                                            {{ $item->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('id_suplier')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="id_jenis">Jenis</label>
-                                                <select name="id_jenis" id="id_jenis"
-                                                    class="form-control @error('id_jenis') is-invalid @enderror" required>
-                                                    <option value="">Select Jenis</option>
-                                                    @foreach ($jenis as $item)
-                                                        <option value="{{ $item->id_jenis }}"
-                                                            {{ old('id_jenis', $data->id_jenis) == $item->id_jenis ? 'selected' : '' }}>
-                                                            {{ $item->deskripsi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('id_jenis')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="id_varietas">Varietas</label>
-                                                <select name="id_varietas" id="id_varietas"
-                                                    class="form-control @error('id_varietas') is-invalid @enderror" required>
-                                                    <option value="">Select Varietas</option>
-                                                    @foreach ($varietas as $item)
-                                                        <option value="{{ $item->id_varietas }}"
-                                                            {{ old('id_varietas', $data->id_varietas) == $item->id_varietas ? 'selected' : '' }}>
-                                                            {{ $item->deskripsi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('id_varietas')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="id_grade">Grade</label>
-                                                <select name="id_grade" id="id_grade"
-                                                    class="form-control @error('id_grade') is-invalid @enderror" required>
-                                                    <option value="">Select Grade</option>
-                                                    @foreach ($grade as $item)
-                                                        <option value="{{ $item->id_grade }}"
-                                                            {{ old('id_grade', $data->id_grade) == $item->id_grade ? 'selected' : '' }}>
-                                                            {{ $item->deskripsi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('id_grade')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="id_origin">Origin</label>
-                                                <select name="id_origin" id="id_origin"
-                                                    class="form-control @error('id_origin') is-invalid @enderror" required>
-                                                    <option value="">Select Origin</option>
-                                                    @foreach ($origin as $item)
-                                                        <option value="{{ $item->id_origin }}"
-                                                            {{ old('id_origin', $data->id_origin) == $item->id_origin ? 'selected' : '' }}>
-                                                            {{ $item->deskripsi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('id_origin')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="kadar_air">Kadar Air (%)</label>
-                                                <input type="number" step="0.01" name="kadar_air" id="kadar_air"
-                                                    class="form-control @error('kadar_air') is-invalid @enderror"
-                                                    value="{{ old('kadar_air', $data->kadar_air) }}" required>
-                                                @error('kadar_air')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="bulk">Bulk</label>
-                                                <div class="input-group">
-                                                    <input type="number" step="0.01" name="bulk_value" id="bulk_value"
-                                                        class="form-control @error('bulk_value') is-invalid @enderror"
-                                                        value="{{ old('bulk_value', $data->bulk_value) }}" required placeholder="Value">
-                                                    <div class="input-group-append">
-                                                        <select name="bulk_unit" id="bulk_unit" class="form-control @error('bulk_unit') is-invalid @enderror" required>
-                                                            <option value="kg" {{ old('bulk_unit', $data->bulk_unit) == 'kg' ? 'selected' : '' }}>Kilogram (kg)</option>
-                                                            <option value="liter" {{ old('bulk_unit', $data->bulk_unit) == 'liter' ? 'selected' : '' }}>Liter (L)</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                @error('bulk_value')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                                @error('bulk_unit')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="id_kemasan">Kemasan</label>
-                                                <input type="text" name="id_kemasan" id="id_kemasan"
-                                                    class="form-control @error('id_kemasan') is-invalid @enderror"
-                                                    value="{{ old('id_kemasan', $data->id_kemasan) }}" required>
-                                                @error('id_kemasan')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="id_penerimaan">ID Penerimaan</label>
+                                        <input type="text" name="id_penerimaan" id="id_penerimaan" class="form-control" 
+                                            value="{{ $data->id_penerimaan }}" readonly>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="berat">Berat</label>
-                                                <input type="number" step="0.01" name="berat" id="berat"
-                                                    class="form-control @error('berat') is-invalid @enderror"
-                                                    value="{{ old('berat', $data->berat) }}" required>
-                                                @error('berat')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="jumlah">Jumlah</label>
-                                                <input type="number" name="jumlah" id="jumlah"
-                                                    class="form-control @error('jumlah') is-invalid @enderror"
-                                                    value="{{ old('jumlah', $data->jumlah) }}" required>
-                                                @error('jumlah')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="size">Size</label>
-                                                <input type="text" name="size" id="size"
-                                                    class="form-control @error('size') is-invalid @enderror"
-                                                    value="{{ old('size', $data->size) }}" required>
-                                                @error('size')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="keterangan">Keterangan</label>
+                                        <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" required>{{ old('keterangan', $data->keterangan) }}</textarea>
+                                        @error('keterangan')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="cdate">Tanggal</label>
+                                        <input type="text" name="cdate" id="cdate" class="form-control" 
+                                            value="{{ date('Y-m-d', $data->cdate) }}" readonly>
                                     </div>
                                 </div>
                                 <div class="card-footer">
@@ -231,19 +78,4 @@
             </div>
         </section>
     </div>
-
-    @section('script')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            // Auto calculate jumlah_tot when berat or jumlah changes
-            $('#berat, #jumlah').on('input', function() {
-                const berat = parseFloat($('#berat').val()) || 0;
-                const jumlah = parseInt($('#jumlah').val()) || 0;
-                const jumlah_tot = berat * jumlah;
-                // If you want to display the total somewhere
-                // $('#jumlah_tot').val(jumlah_tot);
-            });
-        });
-    </script>
-    @endsection
 @endsection

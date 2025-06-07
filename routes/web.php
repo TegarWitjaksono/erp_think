@@ -23,6 +23,7 @@ use App\Http\Controllers\GradeController;
 use App\Http\Controllers\MasterMachinesController;
 use App\Http\Controllers\MasterSkuController;
 use App\Http\Controllers\SkuController;
+use App\Http\Controllers\DetailPenerimaanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,8 +90,17 @@ Route::delete('/detail-sku/{id}', [App\Http\Controllers\DetailSkuController::cla
 
 
 // Master Penerimaan Routes
+// Master Penerimaan Routes
 Route::get('/master_penerimaan', [App\Http\Controllers\MasterPenerimaanController::class, 'index'])->name('master_penerimaan.index');
 Route::post('/master_penerimaan', [App\Http\Controllers\MasterPenerimaanController::class, 'store'])->name('master_penerimaan.store');
 Route::get('/master_penerimaan/{id}/edit', [App\Http\Controllers\MasterPenerimaanController::class, 'edit'])->name('master_penerimaan.edit');
 Route::put('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'update'])->name('master_penerimaan.update');
 Route::delete('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'destroy'])->name('master_penerimaan.destroy');
+
+
+// Detail Penerimaan Routes
+Route::resource('detail_penerimaan', DetailPenerimaanController::class);
+Route::get('get-master-penerimaan/{id}', function($id) {
+    $masterPenerimaan = DB::table('master_penerimaan')->where('id_penerimaan', $id)->first();
+    return response()->json($masterPenerimaan);
+});
