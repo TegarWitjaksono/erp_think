@@ -679,7 +679,7 @@
                                     <a href="/master_penerimaan"
                                         class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
                                         <i class="fas fa-truck-loading"></i>
-                                        <p>Master Penerimaan</p>
+                                        <p>Penerimaan</p>
                                     </a>
                                 </li>
                             </ul>
@@ -700,7 +700,7 @@
     @yield('konten')
 
     <footer class="main-footer">
-        <strong>Copyright &copy; 2024 </strong>
+        <strong>Copyright &copy; 2025 </strong>
         All rights reserved.
         <div class="float-right d-none d-sm-inline-block">
             <b>Version</b> 1.0.0

@@ -45,17 +45,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    public function jurusan()
-    {
-        return $this->belongsTo(MasterJurusan::class, 'id_jurusan', 'id_jurusan');
-    }
-    public function masterGuru()
-    {
-        return $this->belongsTo(MasterGuru::class, 'email', 'email');
-    }
-
-    public function masterSiswa()
-    {
-        return $this->belongsTo(MasterSiswa::class, 'email', 'email');
-    }
 }

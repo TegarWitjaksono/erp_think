@@ -377,7 +377,11 @@
             // Handle delete button click
             $('.delete-btn').on('click', function() {
                 const id = $(this).data('id');
-                $('#deleteForm').attr('action', `{{ url('detail_penerimaan') }}/${id}`);
+                const currentUrl = new URL(window.location.href);
+                const id_penerimaan = currentUrl.searchParams.get('id_penerimaan');
+                
+                // Update form action with id_penerimaan as query parameter
+                $('#deleteForm').attr('action', `{{ url('detail_penerimaan') }}/${id}?id_penerimaan=${id_penerimaan}`);
             });
 
             // Auto calculate jumlah_tot when berat or jumlah changes

@@ -228,7 +228,10 @@
                             <input type="hidden" name="id_batch" id="id_batch" value="{{ $data->id_batch }}">
 
                             <div class="mt-4">
-                                <a href="{{ route('detail_penerimaan.index') }}" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('detail_penerimaan.index', ['id_penerimaan' => $data->id_penerimaan]) }}" 
+                                    class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Back
+                                </a>
                                 <button type="submit" class="btn btn-coffee">Update</button>
                             </div>
                         </form>

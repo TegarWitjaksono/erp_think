@@ -34,16 +34,17 @@ class DetailPenerimaanController extends Controller
                 'grade.deskripsi as nama_grade',
                 'origin.deskripsi as nama_origin'
             )
-            ->when($id_penerimaan, function($query, $id_penerimaan) {
+            ->when($id_penerimaan, function($query) use ($id_penerimaan) {
                 return $query->where('detail_penerimaan.id_penerimaan', $id_penerimaan);
             })
             ->orderBy('detail_penerimaan.id_detail_penerimaan', 'desc')
             ->get();
 
-        // Get master_penerimaan data
+        // Get master_penerimaan for the form
         $master_penerimaan = DB::table('master_penerimaan')
-            ->select('id_penerimaan', 'keterangan')
-            ->orderBy('id_penerimaan', 'desc')
+            ->when($id_penerimaan, function($query) use ($id_penerimaan) {
+                return $query->where('id_penerimaan', $id_penerimaan);
+            })
             ->get();
 
         // Get other required data
@@ -55,11 +56,11 @@ class DetailPenerimaanController extends Controller
 
         return view('detail_penerimaan.index', compact(
             'data', 
-            'master_penerimaan', 
-            'suppliers', 
-            'jenis', 
-            'varietas', 
-            'grade', 
+            'master_penerimaan',
+            'suppliers',
+            'jenis',
+            'varietas',
+            'grade',
             'origin'
         ));
     }
@@ -69,6 +70,7 @@ class DetailPenerimaanController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -121,6 +123,7 @@ class DetailPenerimaanController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
@@ -165,6 +168,7 @@ class DetailPenerimaanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
@@ -195,26 +199,28 @@ class DetailPenerimaanController extends Controller
         // Combine bulk_value and bulk_unit into a single bulk field
         $bulk = $request->bulk_value . ' ' . $request->bulk_unit;
 
-        DB::table('detail_penerimaan')->where('id_detail_penerimaan', $id)->update([
-            'id_penerimaan' => $request->id_penerimaan,
-            'id_batch' => $currentDetail->id_batch, // Use existing id_batch
-            'id_suplier' => $request->id_suplier,
-            'id_jenis' => $request->id_jenis,
-            'id_varietas' => $request->id_varietas,
-            'id_grade' => $request->id_grade,
-            'id_origin' => $request->id_origin,
-            'kadar_air' => $request->kadar_air,
-            'bulk' => $bulk,
-            'id_kemasan' => $request->id_kemasan,
-            'berat' => $request->berat,
-            'jumlah' => $request->jumlah,
-            'jumlah_tot' => $jumlah_tot,
-            'size' => $request->size,
-        ]);
+        DB::table('detail_penerimaan')
+            ->where('id_detail_penerimaan', $id)
+            ->update([
+                'id_penerimaan' => $request->id_penerimaan,
+                'id_batch' => $currentDetail->id_batch, // Use existing id_batch
+                'id_suplier' => $request->id_suplier,
+                'id_jenis' => $request->id_jenis,
+                'id_varietas' => $request->id_varietas,
+                'id_grade' => $request->id_grade,
+                'id_origin' => $request->id_origin,
+                'kadar_air' => $request->kadar_air,
+                'bulk' => $bulk,
+                'id_kemasan' => $request->id_kemasan,
+                'berat' => $request->berat,
+                'jumlah' => $request->jumlah,
+                'jumlah_tot' => $jumlah_tot,
+                'size' => $request->size,
+            ]);
 
         return redirect()->route('detail_penerimaan.index', [
             'id_penerimaan' => $request->id_penerimaan
-        ])->with('success', 'Data detail penerimaan berhasil diperbarui');
+        ])->with('success', 'Detail penerimaan berhasil diupdate');
     }
 
     /**
@@ -222,10 +228,19 @@ class DetailPenerimaanController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
-        DB::table('detail_penerimaan')->where('id_detail_penerimaan', $id)->delete();
-        return redirect()->route('detail_penerimaan.index')->with('success', 'Data detail penerimaan berhasil dihapus');
+        try {
+            DB::table('detail_penerimaan')->where('id_detail_penerimaan', $id)->delete();
+            
+            // Redirect back with the id_penerimaan parameter
+            return redirect()->route('detail_penerimaan.index', [
+                'id_penerimaan' => request('id_penerimaan')
+            ])->with('success', 'Detail penerimaan berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 }
