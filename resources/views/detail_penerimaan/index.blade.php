@@ -65,7 +65,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>ID Penerimaan</th>
+                                        <th>ID Penerimaan</th> <!-- label tetap, isi diganti -->
                                         <th>Batch</th>
                                         <th>Supplier</th>
                                         <th>Jenis</th>
@@ -87,7 +87,7 @@
                                     @foreach ($data as $item)
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                            <td>{{ $item->id_penerimaan ?? 'N/A' }}</td>
+                                            <td>{{ $item->id_penerimaan ?? 'N/A' }}</td> <!-- Ganti ke id_pen -->
                                             <td>{{ $item->id_batch ?? 'N/A' }}</td>
                                             <td>{{ $item->nama_suplier ?? 'N/A' }}</td>
                                             <td>{{ $item->nama_jenis ?? 'N/A' }}</td>
@@ -164,35 +164,37 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-6">
+                                {{-- Master Penerimaan --}}
                                 <div class="form-group">
                                     <label>Master Penerimaan</label>
-                                    <input type="text" class="form-control" 
-                                        value="@php
+                                    <input type="text" class="form-control"
+                                        value=@php
                                             $selected = $master_penerimaan->firstWhere('id_penerimaan', request('id_penerimaan'));
                                             echo $selected ? ($selected->keterangan ?? 'No Description') : '';
-                                        @endphp" readonly>
+                                        @endphp readonly>
                                 </div>
+                                {{-- ID Penerimaan --}}
                                 <div class="form-group">
                                     <label>ID Penerimaan</label>
-                                    <input type="text" class="form-control" 
-                                        value="{{ request('id_penerimaan') }}"
+                                    <input type="text" class="form-control"
+                                        value="{{ $id_penerimaan }}"
                                         readonly>
                                     <input type="hidden" name="id_penerimaan" value="{{ request('id_penerimaan') }}">
                                     @error('id_penerimaan')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Batch ID --}}
                                 <div class="form-group">
                                     <label for="id_batch">Batch ID</label>
-                                    <input type="text" name="id_batch" id="id_batch" 
+                                    <input type="text" name="id_batch" id="id_batch"
                                         class="form-control @error('id_batch') is-invalid @enderror"
-                                        value="{{ old('id_batch') }}" required>
+                                        value="{{ old('id_batch', $id_batch_mp ?? '') }}" readonly required>
                                     @error('id_batch')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                
+                                {{-- Supplier --}}
                                 <div class="form-group">
                                     <label for="id_suplier">Supplier</label>
                                     <select name="id_suplier" id="id_suplier"
@@ -209,7 +211,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Jenis --}}
                                 <div class="form-group">
                                     <label for="id_jenis">Jenis</label>
                                     <select name="id_jenis" id="id_jenis"
@@ -226,7 +228,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Varietas --}}
                                 <div class="form-group">
                                     <label for="id_varietas">Varietas</label>
                                     <select name="id_varietas" id="id_varietas"
@@ -243,7 +245,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Grade --}}
                                 <div class="form-group">
                                     <label for="id_grade">Grade</label>
                                     <select name="id_grade" id="id_grade"
@@ -262,6 +264,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
+                                {{-- Origin --}}
                                 <div class="form-group">
                                     <label for="id_origin">Origin</label>
                                     <select name="id_origin" id="id_origin"
@@ -278,7 +281,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Kadar Air --}}
                                 <div class="form-group">
                                     <label for="kadar_air">Kadar Air (%)</label>
                                     <input type="number" step="0.01" name="kadar_air" id="kadar_air"
@@ -288,7 +291,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Bulk --}}
                                 <div class="form-group">
                                     <label for="bulk">Bulk</label>
                                     <div class="input-group">
@@ -309,7 +312,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-
+                                {{-- Kemasan --}}
                                 <div class="form-group">
                                     <label for="id_kemasan">Kemasan</label>
                                     <input type="text" name="id_kemasan" id="id_kemasan"
@@ -319,11 +322,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
+                                {{-- Berat --}}
                                 <div class="form-group">
                                     <label for="berat">Berat</label>
                                     <input type="number" step="0.01" name="berat" id="berat"
@@ -333,8 +332,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-4">
+                                {{-- Jumlah --}}
                                 <div class="form-group">
                                     <label for="jumlah">Jumlah</label>
                                     <input type="number" name="jumlah" id="jumlah"
@@ -344,8 +342,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            </div>
-                            <div class="col-md-4">
+                                {{-- Size --}}
                                 <div class="form-group">
                                     <label for="size">Size</label>
                                     <input type="text" name="size" id="size"

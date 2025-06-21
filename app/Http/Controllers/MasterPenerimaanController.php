@@ -17,7 +17,8 @@ class MasterPenerimaanController extends Controller
     public function index()
     {
         $data = DB::table('master_penerimaan')->get();
-        return view('master_penerimaan.index', compact('data'));
+        $nextBatchId = $this->generateBatchId();
+        return view('master_penerimaan.index', compact('data', 'nextBatchId'));
     }
 
     /**
@@ -27,17 +28,34 @@ class MasterPenerimaanController extends Controller
      * @return \Illuminate\Http\Response
      * @return \Illuminate\Http\RedirectResponse
      */
+    /**
+     * Generate next ID Penerimaan with format P0000
+     */
+
+    private function generateBatchId()
+    {
+        $last = DB::table('master_penerimaan')->orderBy('id_batch_mp', 'desc')->first();
+        if (!$last || !$last->id_batch_mp) {
+            return 'P0001';
+        }
+        $lastNumber = (int) substr($last->id_batch_mp, 1);
+        $nextNumber = $lastNumber + 1;
+        return 'P' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'keterangan' => 'required|string|max:255',
             'cdate' => 'required|date',
+            'id_batch_mp' => 'required|string|max:50', // tambahkan validasi
         ]);
 
-        // Konversi tanggal ke timestamp
+        $idPen = $this->generateBatchId();
         $cdate = strtotime($request->cdate);
 
         DB::table('master_penerimaan')->insert([
+            'id_batch_mp' => $request->id_batch_mp, // simpan batch
             'keterangan' => $request->keterangan,
             'cdate' => $cdate,
         ]);
@@ -76,12 +94,14 @@ class MasterPenerimaanController extends Controller
     {
         $request->validate([
             'keterangan' => 'required|string|max:255',
+            'id_batch_mp' => 'required|string|max:50', // tambahkan validasi
         ]);
 
         DB::table('master_penerimaan')
             ->where('id_penerimaan', $id)
             ->update([
                 'keterangan' => $request->keterangan,
+                'id_batch_mp' => $request->id_batch_mp, // update batch
             ]);
 
         return redirect()->route('master_penerimaan.index')

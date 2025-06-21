@@ -25,7 +25,8 @@
                                 <ol class="breadcrumb bg-transparent p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="/home" style="color: #79523B;"><i
                                                 class="fas fa-home"></i> Home</a></li>
-                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Master Penerimaan</li>
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Master Penerimaan
+                                    </li>
                                 </ol>
                             </nav>
                         </div>
@@ -65,6 +66,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>ID Penerimaan</th>
+                                        <th>ID Batch</th> <!-- Tambahkan ini -->
                                         <th>Keterangan</th>
                                         <th>Tanggal</th>
                                         <th>Actions</th>
@@ -76,6 +78,7 @@
                                         <tr>
                                             <td>{{ $no++ }}</td>
                                             <td>{{ $item->id_penerimaan }}</td>
+                                            <td>{{ $item->id_batch_mp ?? '-' }}</td> <!-- Tampilkan batch -->
                                             <td>{{ $item->keterangan }}</td>
                                             <td>{{ date('Y-m-d', $item->cdate) }}</td>
                                             <td>
@@ -130,6 +133,7 @@
     </div>
 
     <!-- Add Penerimaan Modal -->
+    <!-- Add Penerimaan Modal -->
     <div class="modal fade" id="addModalPenerimaan" tabindex="-1" aria-labelledby="addModalPenerimaanLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -142,6 +146,9 @@
                 <form action="{{ route('master_penerimaan.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> ID Batch akan dibuat otomatis dengan format P0001, P0002, dst.
+                        </div>
                         <div class="form-group">
                             <label for="keterangan">Keterangan</label>
                             <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" required>{{ old('keterangan') }}</textarea>
@@ -153,6 +160,15 @@
                             <label for="cdate">Tanggal</label>
                             <input type="date" name="cdate" id="cdate" class="form-control @error('cdate') is-invalid @enderror" value="{{ old('cdate', date('Y-m-d')) }}" required>
                             @error('cdate')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="id_batch_mp">ID Batch</label>
+                            <input type="text" name="id_batch_mp" id="id_batch_mp"
+                                class="form-control @error('id_batch_mp') is-invalid @enderror"
+                                value="{{ old('id_batch_mp', $nextBatchId ?? '') }}" readonly required>
+                            @error('id_batch_mp')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>

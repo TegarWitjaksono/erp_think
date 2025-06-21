@@ -49,8 +49,19 @@
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label for="id_penerimaan">ID Penerimaan</label>
-                                        <input type="text" name="id_penerimaan" id="id_penerimaan" class="form-control" 
+                                        <input type="text" name="id_penerimaan" id="id_penerimaan" class="form-control"
                                             value="{{ $data->id_penerimaan }}" readonly>
+                                        <small class="text-muted">ID Penerimaan tidak dapat diubah</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="id_batch_mp">ID Batch</label>
+                                        <input type="text" name="id_batch_mp" id="id_batch_mp" class="form-control @error('id_batch_mp') is-invalid @enderror"
+                                            value="{{ old('id_batch_mp', $data->id_batch_mp) }}" readonly>
+                                            <small class="text-muted">ID Batch tidak dapat diubah</small>
+                                        @error('id_batch_mp')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     
                                     <div class="form-group">
@@ -65,6 +76,7 @@
                                         <label for="cdate">Tanggal</label>
                                         <input type="text" name="cdate" id="cdate" class="form-control" 
                                             value="{{ date('Y-m-d', $data->cdate) }}" readonly>
+                                        <small class="text-muted">Tanggal tidak dapat diubah</small>
                                     </div>
                                 </div>
                                 <div class="card-footer">

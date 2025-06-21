@@ -15,7 +15,6 @@ class DetailPenerimaanController extends Controller
      */
     public function index()
     {
-        // Get id_penerimaan from request
         $id_penerimaan = request('id_penerimaan');
 
         $data = DB::table('detail_penerimaan')
@@ -27,6 +26,7 @@ class DetailPenerimaanController extends Controller
             ->join('origin', 'detail_penerimaan.id_origin', '=', 'origin.id_origin')
             ->select(
                 'detail_penerimaan.*',
+                'master_penerimaan.id_penerimaan', // Tambahkan ini
                 'master_penerimaan.keterangan as master_keterangan',
                 'suppliers.name as nama_suplier',
                 'jenis.deskripsi as nama_jenis',
@@ -40,19 +40,25 @@ class DetailPenerimaanController extends Controller
             ->orderBy('detail_penerimaan.id_detail_penerimaan', 'desc')
             ->get();
 
-        // Get master_penerimaan for the form
         $master_penerimaan = DB::table('master_penerimaan')
             ->when($id_penerimaan, function($query) use ($id_penerimaan) {
                 return $query->where('id_penerimaan', $id_penerimaan);
             })
             ->get();
 
-        // Get other required data
         $suppliers = DB::table('suppliers')->get();
         $jenis = DB::table('jenis')->get();
         $varietas = DB::table('varietas')->get();
         $grade = DB::table('grade')->get();
         $origin = DB::table('origin')->get();
+
+        // Cari id_pen yang sesuai id_penerimaan
+        $id_penerimaan = optional($master_penerimaan->first())->id_penerimaan ?? '';
+
+        // Ambil master penerimaan sesuai id_penerimaan dari request
+        $id_penerimaan = request('id_penerimaan');
+        $master = DB::table('master_penerimaan')->where('id_penerimaan', $id_penerimaan)->first();
+        $id_batch_mp = $master->id_batch_mp ?? '';
 
         return view('detail_penerimaan.index', compact(
             'data', 
@@ -61,7 +67,9 @@ class DetailPenerimaanController extends Controller
             'jenis',
             'varietas',
             'grade',
-            'origin'
+            'origin',
+            'id_penerimaan',
+            'id_batch_mp'
         ));
     }
 
@@ -127,24 +135,19 @@ class DetailPenerimaanController extends Controller
      */
     public function edit($id)
     {
-        // Get detail_penerimaan data with all its relations
         $data = DB::table('detail_penerimaan')
             ->join('master_penerimaan', 'detail_penerimaan.id_penerimaan', '=', 'master_penerimaan.id_penerimaan')
-            ->where('detail_penerimaan.id_detail_penerimaan', $id)
+            ->select('detail_penerimaan.*', 'master_penerimaan.id_batch_mp')
+            ->where('id_detail_penerimaan', $id)
             ->first();
-        
-        // Split bulk into value and unit
+
         if ($data) {
             $bulkParts = explode(' ', $data->bulk);
             $data->bulk_value = $bulkParts[0] ?? '';
             $data->bulk_unit = $bulkParts[1] ?? 'kg';
         }
-        
-        // Get master_penerimaan data (no need to select id_batch separately)
-        $master_penerimaan = DB::table('master_penerimaan')
-            ->get();
-    
-        // Get other required data    
+
+        $master_penerimaan = DB::table('master_penerimaan')->get();
         $suppliers = DB::table('suppliers')->get();
         $jenis = DB::table('jenis')->get();
         $varietas = DB::table('varietas')->get();
