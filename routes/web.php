@@ -24,6 +24,14 @@ use App\Http\Controllers\MasterMachinesController;
 use App\Http\Controllers\MasterSkuController;
 use App\Http\Controllers\SkuController;
 use App\Http\Controllers\DetailPenerimaanController;
+use App\Http\Controllers\InventoryBahanBakuController;
+use App\Http\Controllers\BatchProductionController;
+use App\Http\Controllers\BatchProductionResultController;
+use App\Http\Controllers\InventoryFinishGoodController;
+use App\Http\Controllers\PostRoastBlendController;
+use App\Http\Controllers\LogMesinController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -104,3 +112,17 @@ Route::get('get-master-penerimaan/{id}', function($id) {
     $masterPenerimaan = DB::table('master_penerimaan')->where('id_penerimaan', $id)->first();
     return response()->json($masterPenerimaan);
 });
+
+
+
+Route::resource('inventory',InventoryBahanBakuController::class);
+Route::resource('batch-productions',BatchProductionController::class);
+Route::resource('batch-results', BatchProductionResultController::class);
+Route::resource('inventory_fg', InventoryFinishGoodController::class);
+
+Route::resource('/post-roast-blends', PostRoastBlendController::class);
+
+Route::get('log-mesins/import', [LogMesinController::class, 'import'])->name('log-mesins.import');
+Route::post('log-mesins/import', [LogMesinController::class, 'storeImport'])->name('log-mesins.storeImport');
+Route::resource('log-mesin', LogMesinController::class)
+     ->except(['create', 'store', 'edit', 'update']);
