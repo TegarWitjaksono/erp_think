@@ -716,7 +716,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/logs/mesin" class="nav-link {{ request()->is('logs/mesin*') ? 'active' : '' }}">
+                    <a href="/log-mesin" class="nav-link {{ request()->is('logs/mesin*') ? 'active' : '' }}">
                         <i class="fas fa-microchip"></i><p>Log Mesin (IoT/Import)</p>
                     </a>
                 </li>

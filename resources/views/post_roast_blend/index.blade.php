@@ -12,7 +12,7 @@
                             <i class="fas fa-boxes fa-2x" style="color: #79523B;"></i>
                         </div>
                         <div>
-                            <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Batch Production Result</h1>
+                            <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Post Roast Blends</h1>
                             <div
                                 style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                             </div>
@@ -28,7 +28,7 @@
                                     </a>
                                 </li>
                                 <li class="breadcrumb-item active font-weight-bold" aria-current="page">
-                                    Batch Production Result
+                                   Post Roast Blends
                                 </li>
                             </ol>
                         </nav>
@@ -56,19 +56,27 @@
             <div class="container-fluid">
 
                 {{-- Button Tambah --}}
-                <a href="{{ route('batch-results.create') }}" class="btn btn-primary mb-3">Tambah Result</a>
+                <a href="{{ route('post-roast-blends.create') }}" class="btn btn-primary mb-3">Tambah Blend</a>
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
                     <div class="card-header bg-white">
-                        <i class="fas fa-table me-1"></i> Data Batch Production Result
+                        <i class="fas fa-table me-1"></i> DataPost Roast Blends
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table id="inventory-table" class="table datatable table-hover text-nowrap table-striped">
                                 <thead>
                                     <tr>
-                                    <tr><th>ID</th><th>Batch</th><th>Level Roast</th><th>Berat Akhir</th><th>Aksi</th></tr>
+                                    <th>ID</th>
+        <th>Timestamp</th>
+        <th>Est Expired Date</th>
+        <th>Cupping Score</th>
+        <th>Note Flavour</th>
+        <th>Catatan</th>
+        <th>Berat Total</th>
+        <th>Status</th>
+        <th>Aksi</th>
                                     </tr>
                                 </thead>
 

@@ -29,6 +29,7 @@ use App\Http\Controllers\BatchProductionController;
 use App\Http\Controllers\BatchProductionResultController;
 use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\PostRoastBlendController;
+use App\Http\Controllers\LogMesinController;
 
 
 
@@ -120,3 +121,8 @@ Route::resource('batch-results', BatchProductionResultController::class);
 Route::resource('inventory_fg', InventoryFinishGoodController::class);
 
 Route::resource('/post-roast-blends', PostRoastBlendController::class);
+
+Route::get('log-mesins/import', [LogMesinController::class, 'import'])->name('log-mesins.import');
+Route::post('log-mesins/import', [LogMesinController::class, 'storeImport'])->name('log-mesins.storeImport');
+Route::resource('log-mesin', LogMesinController::class)
+     ->except(['create', 'store', 'edit', 'update']);
