@@ -99,8 +99,49 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+    @forelse($items as $key => $item)
+        <tr>
+            {{-- Nomor urut, menyesuaikan paginasi --}}
+            <td>{{ $items->firstItem() + $key }}</td>
 
-                                </tbody>
+            {{-- Nama produk dari relasi master_barang --}}
+            <td>{{ $item->product_name }}</td>
+
+            {{-- Jenis roast (relasi level_roast.name) --}}
+            <td>{{ $item->name }}</td>
+
+            {{-- Masuk: bisa pakai field penerimaan atau debit_qty --}}
+            <td>{{ $item->debit_qty }}</td>
+
+            {{-- Keluar: field credit_qty --}}
+            <td>{{ $item->credit_qty }}</td>
+
+            {{-- Tanggal kadaluarsa --}}
+            <td>{{ date('d M Y', strtotime($item->expired_date)) }}</td>
+
+            {{-- Catatan flavor --}}
+            <td>{{ $item->flavour_note }}</td>
+
+            {{-- Tombol aksi (edit / hapus) --}}
+            <td>
+                <a href="{{ route('inventory.finish_good.edit', $item->id) }}"
+                   class="btn btn-sm btn-warning">
+                    Edit
+                </a>
+                <button data-id="{{ $item->id }}"
+                        data-toggle="modal"
+                        data-target="#deleteModal"
+                        class="btn btn-sm btn-danger delete-btn">
+                    Hapus
+                </button>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="8" class="text-center">Tidak ada data.</td>
+        </tr>
+    @endforelse
+</tbody>
                             </table>
                         </div>
                         {{ $items->links() }}

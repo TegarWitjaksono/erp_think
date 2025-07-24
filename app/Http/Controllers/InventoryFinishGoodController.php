@@ -11,24 +11,29 @@ class InventoryFinishGoodController extends Controller
     {
         $query = DB::table('inventorifinishgood')
             ->join('master_barang', 'inventorifinishgood.id_product', '=', 'master_barang.id_barang')
+            ->join('post_roast_blend', 'post_roast_blend.id', '=', 'inventorifinishgood.Id_postRoastblend')
+            ->join('batchproduction', 'batchproduction.id', '=', 'inventorifinishgood.Id_batch_production')
+            ->join('level_roast', 'level_roast.id', '=', 'batchproduction.id_level_rosting')
+
+            
             ->select(
                 'inventorifinishgood.*',
-                'master_barang.nama_barang as product_name'
-                // 'master_barang.level_roast',
-                // 'master_barang.flavour_note'
+                'master_barang.nama_barang as product_name',
+                'level_roast.name',
+                'post_roast_blend.flavour_note'
             );
 
-        // if ($request->filled('level_roast')) {
-        //     $query->where('master_barang.level_roast', $request->level_roast);
-        // }
+        if ($request->filled('level_roast')) {
+            $query->where('master_barang.level_roast', $request->level_roast);
+        }
 
-        // if ($request->filled('flavour_note')) {
-        //     $query->where('master_barang.flavour_note', 'like', '%'.$request->flavour_note.'%');
-        // }
+        if ($request->filled('flavour_note')) {
+            $query->where('master_barang.flavour_note', 'like', '%'.$request->flavour_note.'%');
+        }
 
-        // if ($request->filled('expired_before')) {
-        //     $query->where('inventorifinishgood.expired_date', '<=', $request->expired_before);
-        // }
+        if ($request->filled('expired_before')) {
+            $query->where('inventorifinishgood.expired_date', '<=', $request->expired_before);
+        }
 
         $items = $query->orderBy('inventorifinishgood.expired_date')->paginate(15);
 
