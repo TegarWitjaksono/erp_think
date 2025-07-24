@@ -1,0 +1,183 @@
+Tabel mesin :
+Mesin id
+Merk
+Type
+Kapasitas
+PLC support no/yes
+
+
+Tabel Suplier
+Standard
+
+
+// Tabel2 untuk pulldown saat mengisi form penerimaan
+
+Tabel Jenis
+Id
+Deskripsi
+
+Tabel Varietas
+Id
+Deskripsi
+
+Tabel Grade
+Id
+Deskripsi
+
+Tabel Origin
+Id
+Deskripsi
+
+
+// ====
+
+Tabel Penerimaan (modul penerimaan)
+Id
+Timestamp
+Id supplier
+Catatan
+
+Tabel penerimaan sub Raw Material
+Id (batch/lot) 
+id penerimaan
+Id Jenis
+Id varietas
+Id grade
+Id origin
+Kadar air
+Bulk densities (kg/liter)
+Jenis kemasan
+Harga per Kg
+Berat per Kemasan
+Jumlah kemasan
+Jumlah total
+size
+Saat save penerimaan, langsung update Tabel inventory :
+
+Tabel Inventory
+Id
+Timestamp
+Id penerimaan
+Id karung (kalau Jumlah karung lbh dari 1, langsung generate semua)
+Id roasting batch / nomad batch
+catatan
+Kadar air
+Bulk Densitas (kadar air & bulk masuk auto dr penerimaan, keluar ikut perubahan di menu batch.
+Jml Mask (Debit) (jumlah per karung)
+Jml Keluar (Kredit)
+
+Setiap perubahan tabel Inventory, langsung update GL
+
+
+
+Tabel BatchProduction (modul batch)
+Id
+Timestamp
+Datetime : Estimate expire date
+Id mesin
+Id methode => tabel method (id, deskripsi (single/blend)
+Id roastprofile => tabel roast profile (id, deskripsi, charge temp, TP temp, TP Temp, DE temp, DE time,
+FCs temp, FcsTime, Drop Temp, Drop Time);
+Level Roasting => tabel Level (light, light to medium, medium, medium to dark, dark).
+Berat diroasting
+Status = (open, on process, closing, cancel)
+Attention = normal, priority
+Catatan
+user pickup inventory bah Baku yang akan diambil, masuk list dibawahny 
+(Relation tabel ke tabel inventory bahan baku)
+
+Yg ditampilkan di list
+Id batch (read only)
+Id penerimaan (read only)
+Id karung (read only)
+Kadar air (default sexual tabel inventory, edited sesuai kenyataan)
+Bulk densities idem
+Jumah keluar (qty out)(yg pertama di pickup as berat yg diroasting, begitu masukan lagi list di kosongkan)
+Catatan 
+
+Sebelum di save pastikan Total sum keluar = Berat diroasting => alert Jika salah
+Setelah di save langsung insert tabel inventory.
+Yg Sudah di save tdk bisa di edit, kecuali kadar air dan bulk densities.
+Bisa di cancel kalau status masih open, cancel insert tabel inventory Jumlah masuk lag. Catatan cancel.
+Penentuan closing bisa manual, bisa tomates dari mesin.
+Begitu closing, langsung pindah ke Tabel inventory finishgood
+
+
+Tabel BatchProductionResult
+Id
+Id bacthproduction
+Level Roasting => tabel Level (light, light to medium, medium, medium to dark, dark).
+Berat akhir
+Kadar air
+Agtron
+Cupping score
+Note Flavour
+
+==========
+
+FINISH GOOD
+Tabel InventoriFinishGood
+Id inventory
+Id product
+Timestamp
+Expired date
+Jenis (PreRoastBlend,PostRoast,Single) => otomatis
+Id batch production
+Id PostRoastblend 
+Id penjualan
+Jml Masuk
+Jml Keluar
+Catatan
+
+
+
+
+
+Tabel postRoastblend. (Modul post roast)
+Id
+Timestamp
+Est expired date
+Cupping score
+Note flavour
+Catatan
+Berat total
+Status (close, cancel)
+
+user pickup inventory finish good yang akan diambil, masuk list dibawahny 
+(Relation tabel ke tabel inventory finishgood) 
+
+Yg ditampilkan di list
+Id inventory (read only)
+Id reff (kosong)
+Deskripsi (lookup data bean, level roast, noteFlavor)
+Jumlah out
+
+Sebum save, pastikan  total Jumlah out = Berat total => alert 
+Setelah di save langsung insert tabel inventory finish good.
+Yg Sudah di save tdk bisa di edit, kecuali kadar air dan bulk densities.
+Bisa di cancel, langsung buat transaksi inventory seuai item dan jmlnya (dibalik out jd in).
+
+
+================
+TABEL LOGMESIN
+Id
+Timestamp
+Id mesin
+Id batch
+Datetime dari mesin
+Time roast (second)
+Phase
+InterestPoint (1 = charge, 2 = TP, 3 = DE, 4 = Fcs, 5= Scs, 6 = Drop)
+BT
+dBT
+ET
+dET
+BurnerPower
+Gas pressure
+Airflow Power
+AIr pressure
+Drum Power
+RPM
+Event
+EventValue
+Source
