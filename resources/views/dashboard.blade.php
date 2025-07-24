@@ -570,7 +570,7 @@
         </div>
 
 
-        Sidebar
+        
         <div class="sidebar">
             <!-- Menu area -->
             <div class="menu-area">
