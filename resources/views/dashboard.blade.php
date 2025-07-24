@@ -570,7 +570,7 @@
         </div>
 
 
-        <!-- Sidebar -->
+        Sidebar
         <div class="sidebar">
             <!-- Menu area -->
             <div class="menu-area">
@@ -599,7 +599,7 @@
                                     <a href="/master_suppliers"
                                         class="nav-link {{ request()->is('master_suppliers*') ? 'active' : '' }}">
                                         <i class="fas fa-box"></i>
-                                        <p>Master Suppliers</p>
+                                        <p> Suppliers</p>
                                     </a>
                                 </li>
 
@@ -621,28 +621,28 @@
                                     <a href="/master_jenis"
                                         class="nav-link {{ request()->is('master_jenis*') ? 'active' : '' }}">
                                         <i class="fas fa-tags"></i>
-                                        <p>Master Type/Jenis</p>
+                                        <p> Type/Jenis</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="/master_varietas"
                                         class="nav-link {{ request()->is('master_varietas*') ? 'active' : '' }}">
                                         <i class="fas fa-seedling"></i>
-                                        <p>Master Varietas</p>
+                                        <p> Varietas</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="/master_origin"
                                         class="nav-link {{ request()->is('master_origin*') ? 'active' : '' }}">
                                         <i class="fas fa-globe-americas"></i>
-                                        <p>Master Origin</p>
+                                        <p> Origin</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="/master_grade"
                                         class="nav-link {{ request()->is('master_grade*') ? 'active' : '' }}">
                                         <i class="fas fa-star"></i>
-                                        <p>Master Grade</p>
+                                        <p> Grade</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -675,14 +675,102 @@
                                 </li>
                                 
                                 <!-- Add Master Penerimaan Menu Item -->
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="/master_penerimaan"
                                         class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
                                         <i class="fas fa-truck-loading"></i>
                                         <p>Penerimaan</p>
                                     </a>
-                                </li>
+                                </li> -->
                             </ul>
+                            {{-- OPERASIONAL --}}
+                <li class="nav-header">Operasional</li>
+                <li class="nav-item">
+                    <a href="/master_penerimaan" class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
+                        <i class="fas fa-truck-loading"></i><p>Penerimaan Bahan Baku</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/inventory" class="nav-link {{ request()->is('inventory') ? 'active' : '' }}">
+                        <i class="fas fa-warehouse"></i><p>Inventory Bahan Baku</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/batch-productions" class="nav-link {{ request()->is('batch-productions*') ? 'active' : '' }}">
+                        <i class="fas fa-fire"></i><p>Batch Production (Roasting)</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/batch-results" class="nav-link {{ request()->is('batch-results*') ? 'active' : '' }}">
+                        <i class="fas fa-check-circle"></i><p>Batch Production Result</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/inventory_fg" class="nav-link {{ request()->is('inventory_fg*') ? 'active' : '' }}">
+                        <i class="fas fa-box-open"></i><p>Inventory Finish Good</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/post-roast-blends" class="nav-link {{ request()->is('post-roast-blends*') ? 'active' : '' }}">
+                        <i class="fas fa-mortar-pestle"></i><p>Post Roast Blend</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logs/mesin" class="nav-link {{ request()->is('logs/mesin*') ? 'active' : '' }}">
+                        <i class="fas fa-microchip"></i><p>Log Mesin (IoT/Import)</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/gl" class="nav-link {{ request()->is('gl*') ? 'active' : '' }}">
+                        <i class="fas fa-book"></i><p>General Ledger Integration</p>
+                    </a>
+                </li>
+
+                {{-- LAPORAN --}}
+                <li class="nav-header">Laporan & Dashboard</li>
+                <li class="nav-item">
+                    <a href="/dashboards" class="nav-link {{ request()->is('dashboards*') ? 'active' : '' }}">
+                        <i class="fas fa-tachometer-alt"></i><p>Dashboards</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports/inventory/raw" class="nav-link {{ request()->is('reports/inventory/raw*') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-list"></i><p>Report Inventory Bahan Baku</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports/inventory/fg" class="nav-link {{ request()->is('reports/inventory/fg*') ? 'active' : '' }}">
+                        <i class="fas fa-clipboard-check"></i><p>Report Inventory FG</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/reports/batch" class="nav-link {{ request()->is('reports/batch*') ? 'active' : '' }}">
+                        <i class="fas fa-fire-alt"></i><p>Report Batch Production</p>
+                    </a>
+                </li>
+
+                {{-- ADMIN --}}
+                <li class="nav-header">Administrasi & Security</li>
+                <li class="nav-item">
+                    <a href="/users" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i><p>Users</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/roles" class="nav-link {{ request()->is('roles*') ? 'active' : '' }}">
+                        <i class="fas fa-key"></i><p>Roles & Permissions</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/audit" class="nav-link {{ request()->is('audit*') ? 'active' : '' }}">
+                        <i class="fas fa-history"></i><p>Audit Trail</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/settings" class="nav-link {{ request()->is('settings*') ? 'active' : '' }}">
+                        <i class="fas fa-sliders-h"></i><p>Settings</p>
+                    </a>
+                </li>
                         </li>
                     </ul>
                 </nav>
