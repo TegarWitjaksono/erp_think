@@ -11,11 +11,11 @@
                                 <i class="fas fa-tags fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Tambah Batch Result</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Batch Result</h1>
                                 <div
                                     style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                                 </div>
-                                <p class="text-muted mt-2 mb-0">Add Batch Production Result</p>
+                                <p class="text-muted mt-2 mb-0">Update Batch Production Result</p>
                             </div>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                                     <li class="breadcrumb-item">
                                         <a href="{{ route('sku.index') }}" style="color: #79523B;">SKU</a>
                                     </li>
-                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Production Result</li>
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Edit Result</li>
                                 </ol>
                             </nav>
                         </div>
@@ -42,27 +42,27 @@
 
         <section class="content">
             @if ($errors->any())
-    <div class="alert alert-danger mx-3 mt-3">
-        <h5><i class="icon fas fa-exclamation-triangle"></i> Terjadi Kesalahan:</h5>
-        <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+                <div class="alert alert-danger mx-3 mt-3">
+                    <h5><i class="icon fas fa-exclamation-triangle"></i> Terjadi Kesalahan:</h5>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Add Batch Production Result</h3>
+                                <h3 class="card-title">Edit Batch Production Result</h3>
                             </div>
 
-                            <form action="{{route('batch-results.store')}}" method="POST">
+                            <form action="{{ route('batch-results.update', $result->id) }}" method="POST">
                                 @csrf
-                               
+                                @method('PUT')
 
                                 <div class="card-body">
                                     <div class="form-group">
@@ -89,61 +89,39 @@
 
                                     <div class="form-group">
                                         <label>Berat Akhir (kg)</label>
-                                        <input
-                                            type="number"
-                                            step="0.001"
-                                            name="berat_akhir"
-                                            class="form-control"
-                                            value="{{ old('berat_akhir', $result->berat_akhir ?? '') }}"
-                                        >
+                                        <input type="number" step="0.001" name="berat_akhir" class="form-control"
+                                               value="{{ old('berat_akhir', $result->berat_akhir ?? '') }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Kadar Air (%)</label>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            name="kadar_air"
-                                            class="form-control"
-                                            value="{{ old('kadar_air', $result->kadar_air ?? '') }}"
-                                        >
+                                        <input type="number" step="0.01" name="kadar_air" class="form-control"
+                                               value="{{ old('kadar_air', $result->kadar_air ?? '') }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Agtron</label>
-                                        <input
-                                            type="number"
-                                            name="agtron"
-                                            class="form-control"
-                                            value="{{ old('agtron', $result->agtron ?? '') }}"
-                                        >
+                                        <input type="number" name="agtron" class="form-control"
+                                               value="{{ old('agtron', $result->agtron ?? '') }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Cupping Score</label>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            name="cupping_score"
-                                            class="form-control"
-                                            value="{{ old('cupping_score', $result->cupping_score ?? '') }}"
-                                        >
+                                        <input type="number" step="0.01" name="cupping_score" class="form-control"
+                                               value="{{ old('cupping_score', $result->cupping_score ?? '') }}">
                                     </div>
 
                                     <div class="form-group">
                                         <label>Note Flavour</label>
-                                        <textarea
-                                            name="note_flavour"
-                                            class="form-control"
-                                        >{{ old('note_flavour', $result->note_flavour ?? '') }}</textarea>
+                                        <textarea name="note_flavour" class="form-control">{{ old('note_flavour', $result->note_flavour ?? '') }}</textarea>
                                     </div>
                                 </div>
 
                                 <div class="card-footer">
                                     <button type="button" class="btn btn-secondary" onclick="window.history.back();">
-                                        Cancel
+                                        Batal
                                     </button>
-                                    <button type="submit" class="btn btn-coffee">SIMPAN</button>
+                                    <button type="submit" class="btn btn-coffee">UPDATE</button>
                                 </div>
                             </form>
 

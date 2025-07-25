@@ -78,11 +78,11 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="typ">Type</label>
-                                        <input type="text" name="typ" id="typ"
-                                            class="form-control @error('typ') is-invalid @enderror" required
-                                            value="{{ old('typ', $machine->typ) }}">
-                                        @error('typ')
+                                        <label for="type">typee</label>
+                                        <input typee="text" name="type" id="type"
+                                            class="form-control @error('type') is-invalid @enderror" required
+                                            value="{{ old('type', $machine->type) }}">
+                                        @error('type')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -115,16 +115,16 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="plc">PLC</label>
-                                        <select name="plc" id="plc"
-                                            class="form-control @error('plc') is-invalid @enderror" required>
+                                        <label for="plc_support">PLC</label>
+                                        <select name="plc_support" id="plc_support"
+                                            class="form-control @error('plc_support') is-invalid @enderror" required>
                                             <option value=""></option>
-                                            <option value="1" {{ old('plc', $machine->plc) == 1 ? 'selected' : '' }}>
+                                            <option value="1" {{ old('plc_support', $machine->plc_support) == 1 ? 'selected' : '' }}>
                                                 Yes</option>
-                                            <option value="0" {{ old('plc', $machine->plc) == 0 ? 'selected' : '' }}>
+                                            <option value="0" {{ old('plc_support', $machine->plc_support) == 0 ? 'selected' : '' }}>
                                                 No</option>
                                         </select>
-                                        @error('plc')
+                                        @error('plc_support')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>

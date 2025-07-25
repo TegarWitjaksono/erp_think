@@ -60,7 +60,7 @@
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
-                    <div class="card-header bg-white">
+                    <div class="card-header text-white">
                         <i class="fas fa-table me-1"></i> Data Batch Production
                     </div>
                     <div class="card-body">
@@ -76,6 +76,75 @@
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @foreach ($items as $item)
+                                    <tr>
+                                        <td>
+                                            {{$item->id}}
+                                        </td>
+                                        <td>
+                                            {{$item->mesin_nama}}
+                                        </td>
+                                        <td>
+                                            {{$item->method_deskripsi}}
+                                        </td>
+                                        <td>
+                                            {{$item->keluar ?? 'Belum ada'}}
+                                        </td>
+                                        <td>
+                                            {{$item->status}}
+                                        </td>
+                                        <td>
+                                        <!-- Detail -->
+                                        <a href="{{ route('batch.list', $item->id) }}" class="btn btn-info btn-sm" title="Detail">
+                                            <i class="fas fa-list"></i>
+                                        </a>
+
+                                        <!-- Edit -->
+                                        <a href="{{ route('batch-productions.edit', base64_encode($item->id)) }}" class="btn btn-warning btn-sm" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        <!-- Status Actions -->
+                                        @if ($item->status === 'open')
+                                            <!-- Start Process -->
+                                            <form action="{{ route('batch-productions.start', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Mulai proses batch ini?')">
+                                                @csrf
+                                                <button class="btn btn-primary btn-sm" title="Start Batch">
+                                                    <i class="fas fa-play"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Cancel Batch -->
+                                            <form action="{{ route('batch-productions.cancel', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan batch ini?')">
+                                                @csrf
+                                                <button class="btn btn-danger btn-sm" title="Cancel Batch">
+                                                    <i class="fas fa-times-circle"></i>
+                                                </button>
+                                            </form>
+
+                                        @elseif ($item->status === 'on process')
+                                            <!-- Close Batch -->
+                                            <form action="{{ route('batch-productions.close', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Anda yakin ingin menutup batch ini?')">
+                                                @csrf
+                                                <button class="btn btn-success btn-sm" title="Close Batch">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        <!-- Delete -->
+                                        <button type="button" class="btn btn-secondary btn-sm delete-btn" data-id="{{ $item->id }}" data-toggle="modal" data-target="#deleteModal" title="Hapus Batch">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+
+
+                                    </tr>
+                                        
+                                    @endforeach
+                                    
+                                </tbody>
 
                             </table>
                         </div>
@@ -148,20 +217,19 @@
     </div>
 
     {{-- Script --}}
-    @push('scripts')
+    
         <script>
             $(document).ready(function () {
                 $('#inventory-table').DataTable({ responsive: true });
 
                 $('.delete-btn').click(function () {
                     const id = $(this).data('id');
-                    const url = "{{ route('inventory.destroy', ':id') }}".replace(':id', id);
+                    const url = "{{ route('batch-productions.destroy', ':id') }}".replace(':id', id);
                     $('#deleteForm').attr('action', url);
                 });
 
                 setTimeout(() => $('.alert').alert('close'), 5000);
             });
         </script>
-    @endpush
-
+   
 @endsection

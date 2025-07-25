@@ -62,7 +62,7 @@
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
-                    <div class="card-header bg-white">
+                    <div class="card-header text-white">
                         <i class="fas fa-table me-1"></i> Data Inventory
                     </div>
                     <div class="card-body">
@@ -106,7 +106,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        {{ $items->links() }}
+                       
                     </div>
                 </div>
 
@@ -174,8 +174,7 @@
         </div>
     </div>
 
-    {{-- Script --}}
-    @push('scripts')
+   
         <script>
             $(document).ready(function() {
                 $('#inventory-table').DataTable({ responsive: true });
@@ -189,6 +188,5 @@
                 setTimeout(() => $('.alert').alert('close'), 5000);
             });
         </script>
-    @endpush
-
+   
 @endsection

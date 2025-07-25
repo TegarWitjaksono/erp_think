@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Log;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -84,7 +86,6 @@ class DetailPenerimaanController extends Controller
     {
         $validated = $request->validate([
             'id_penerimaan' => 'required',
-            'id_batch' => 'required|string|max:100',
             'id_suplier' => 'required',
             'id_jenis' => 'required',
             'id_varietas' => 'required',
@@ -93,17 +94,23 @@ class DetailPenerimaanController extends Controller
             'kadar_air' => 'required|numeric',
             'bulk_value' => 'required|numeric',
             'bulk_unit' => 'required|in:kg,liter',
-            'id_kemasan' => 'required|integer', // Change validation to integer
+            'id_kemasan' => 'required|integer',
             'berat' => 'required|numeric',
             'jumlah' => 'required|integer',
-            'size' => 'required|string|max:50',
+            'harga_per_kg' => 'required|numeric',
+            'size' => 'nullable|string|max:50',
         ]);
 
-        // Combine bulk value and unit
-        $bulk = $request->bulk_value . ' ' . $request->bulk_unit;
+        DB::beginTransaction();
 
         try {
-            DB::table('detail_penerimaan')->insert([
+            // Hitung total berat
+            $totalBerat = $request->berat * $request->jumlah;
+            $bulk = $request->bulk_value . ' ' . $request->bulk_unit;
+
+           
+            // 1. Simpan Detail Penerimaan
+            $idDetail = DB::table('detail_penerimaan')->insertGetId([
                 'id_penerimaan' => $request->id_penerimaan,
                 'id_batch' => $request->id_batch,
                 'id_suplier' => $request->id_suplier,
@@ -113,17 +120,128 @@ class DetailPenerimaanController extends Controller
                 'id_origin' => $request->id_origin,
                 'kadar_air' => $request->kadar_air,
                 'bulk' => $bulk,
-                'id_kemasan' => (int)$request->id_kemasan, // Cast to integer
+                'id_kemasan' => $request->id_kemasan,
                 'berat' => $request->berat,
                 'jumlah' => $request->jumlah,
-                'jumlah_tot' => $request->berat * $request->jumlah,
+                'jumlah_tot' => $totalBerat,
                 'size' => $request->size,
+                'harga_per_kg' => $request->harga_per_kg
             ]);
 
-            return redirect()->back()->with('success', 'Detail penerimaan berhasil ditambahkan');
+            // 2. Loop buat karung + inventory
+            $karungIds = [];
+
+            for ($i = 1; $i <= $request->jumlah; $i++) {
+                // Buat kode karung unik
+                do {
+                    $kodeKarung = 'K-' . strtoupper(Str::random(6));
+                } while (DB::table('karung')->where('kode_karung', $kodeKarung)->exists());
+
+                // Simpan karung
+                $idKarung = DB::table('karung')->insertGetId([
+                    'penerimaan_id' => $request->id_penerimaan,
+                    'id_detail_penerimaan' => $idDetail,
+                    'kode_karung' => $kodeKarung,
+                    'berat_masuk' => $request->berat,
+                    'catatan' => 'auto generate'
+                ]);
+
+                $karungIds[] = $idKarung;
+
+                // Simpan inventory (1 baris per karung)
+                DB::table('inventory')->insert([
+                    'timestamp' => now(),
+                    'penerimaan_id' => $request->id_penerimaan,
+                    'karung_id' => $idKarung,
+                    'roast_batch_id' => null,
+                    'id_detail_penerimaan' => $idDetail,
+                    'catatan' => 'init stock',
+                    'kadar_air' => $request->kadar_air,
+                    'bulk_densitas' => $request->bulk_value,
+                    'debit_qty' => $request->berat,
+                    'credit_qty' => 0,
+                    'gl_trx_id' => null // update nanti setelah GL
+                ]);
+            }
+
+            // 3. Hitung total nilai transaksi
+            $totalDebit = $totalBerat * $request->harga_per_kg;
+
+            // 4. Simpan jurnal GL header
+            $glHeaderId = DB::table('gl_headers')->insertGetId([
+                'ref_module' => 'PENERIMAAN',
+                'ref_id' => $request->id_penerimaan,
+                'doc_no' => 'GR-' . now()->format('YmdHis'),
+                'doc_date' => now(),
+                'posting_date' => now(),
+                'currency' => 'IDR',
+                'total_debit' => $totalDebit,
+                'total_credit' => $totalDebit,
+                'status' => 'posted',
+                'notes' => 'Auto generate from Detail Raw Material',
+                'created_by' => auth()->user()->id ?? 1,
+            ]);
+
+            // 5. GL Lines
+            DB::table('gl_lines')->insert([
+                [
+                    'header_id' => $glHeaderId,
+                    'line_no' => 1,
+                    'account_id' => 8, // akun persediaan bahan baku
+                    'debit' => $totalDebit,
+                    'credit' => 0,
+                    'memo' => 'Persediaan bahan baku',
+                    'batch_id' => $request->id_batch
+                ],
+                [
+                    'header_id' => $glHeaderId,
+                    'line_no' => 2,
+                    'account_id' => 8, // akun hutang/grni
+                    'debit' => 0,
+                    'credit' => $totalDebit,
+                    'memo' => 'Hutang GRNI',
+                    'batch_id' => $request->id_batch
+                ]
+            ]);
+
+            // 6. Update inventory rows with GL ID
+            DB::table('inventory')
+                ->where('id_detail_penerimaan', $idDetail)
+                ->whereIn('karung_id', $karungIds)
+                ->update(['gl_trx_id' => $glHeaderId]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Detail penerimaan dan stok berhasil disimpan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Store Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
+    }
+
+
+
+
+    function generateKodeKarung(int $penerimaanId): string
+    {
+        // Hitung karung yang sudah ada untuk penerimaan ini
+        $countKarung = DB::table('karung')
+            ->where('penerimaan_id', $penerimaanId)
+            ->count();
+
+        $karungSequence = $countKarung + 1; // next
+
+        // Ambil nomor urut penerimaan untuk format (atau langsung pakai id)
+        // Kalau mau pakai langsung id_penerimaan:
+        $penerimaanSequence = $penerimaanId;
+
+        // Pad 3 digit
+        $penStr = str_pad($penerimaanSequence, 3, '0', STR_PAD_LEFT);
+        $karStr = str_pad($karungSequence, 3, '0', STR_PAD_LEFT);
+
+        return "KRG-BATCH-GB-{$penStr}-{$karStr}";
     }
 
     /**

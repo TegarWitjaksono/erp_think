@@ -29,7 +29,7 @@
                                         </a>
                                     </li>
                                     <li class="breadcrumb-item">
-                                        <a href="{{ route('sku.index') }}" style="color: #79523B;">Batch Production</a>
+                                        <a href="{{ route('batch-productions.index') }}" style="color: #79523B;">Batch Production</a>
                                     </li>
                                     <li class="breadcrumb-item active font-weight-bold" aria-current="page">Create</li>
                                 </ol>
@@ -48,15 +48,15 @@
                             <div class="card-header">
                                 <h3 class="card-title">Create Batch Production</h3>
                             </div>
-                            <form action="" method="POST">
+                            <form action="{{route('batch-productions.store')}}" method="POST">
                                 @csrf
-                                @method('PUT')
+                                
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label>Mesin</label>
-                                        <select name="mesin_id" class="form-control">
+                                        <select name="id_mesin" class="form-control">
                                             @foreach($machines as $k => $v)
-                                                <option value="{{ $k }}" {{ (old('mesin_id', $batch->mesin_id ?? '') == $k) ? 'selected' : '' }}>
+                                                <option value="{{ $k }}" {{ (old('id_mesin', $batch->mesin_id ?? '') == $k) ? 'selected' : '' }}>
                                                     {{ $v }}
                                                 </option>
                                             @endforeach

@@ -262,6 +262,14 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="harga_per_kg">Harga Per Kg</label>
+                                    <input type="text" id="harga_per_kg" class="form-control" name="harga_per_kg">
+                                    @error('harga_per_kg')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 {{-- Origin --}}

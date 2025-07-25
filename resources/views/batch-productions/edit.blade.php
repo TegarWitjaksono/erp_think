@@ -1,0 +1,142 @@
+@extends('dashboard')
+
+@section('konten')
+<div class="content-wrapper">
+    <div class="content-header bg-light border-bottom shadow-sm mb-3">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3 p-3 rounded-circle" style="background-color: rgba(121, 82, 59, 0.15);">
+                            <i class="fas fa-tags fa-2x" style="color: #79523B;"></i>
+                        </div>
+                        <div>
+                            <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Batch Production</h1>
+                            <div style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;"></div>
+                            <p class="text-muted mt-2 mb-0">Update your product Batch Production details</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-sm-right mt-3">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb bg-transparent p-0 mb-0">
+                                <li class="breadcrumb-item">
+                                    <a href="/home" style="color: #79523B;">
+                                        <i class="fas fa-home"></i> Home
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('batch-productions.index') }}" style="color: #79523B;">Batch Production</a>
+                                </li>
+                                <li class="breadcrumb-item active font-weight-bold" aria-current="page">Edit</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Edit Batch Production</h3>
+                        </div>
+
+                        <form action="{{ route('batch-productions.update', $batch->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Mesin</label>
+                                    <select name="id_mesin" class="form-control">
+                                        @foreach($machines as $k => $v)
+                                            <option value="{{ $k }}" {{ (old('id_mesin', $batch->id_mesin) == $k) ? 'selected' : '' }}>{{ $v }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Method</label>
+                                    <select name="method_id" class="form-control">
+                                        @foreach($methods as $k => $v)
+                                            <option value="{{ $k }}" {{ (old('method_id', $batch->id_method) == $k) ? 'selected' : '' }}>{{ $v }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Roast Profile</label>
+                                    <select name="roast_profile_id" class="form-control">
+                                        @foreach($profiles as $k => $v)
+                                            <option value="{{ $k }}" {{ (old('roast_profile_id', $batch->id_roastprofile) == $k) ? 'selected' : '' }}>{{ $v }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Level Roast</label>
+                                    <select name="level_roast_id" class="form-control">
+                                        @foreach($levels as $k => $v)
+                                            <option value="{{ $k }}" {{ (old('level_roast_id', $batch->id_level_rosting) == $k) ? 'selected' : '' }}>{{ $v }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Berat Diroasting (kg)</label>
+                                    <input type="number" step="0.001" name="berat_diroasting" class="form-control"
+                                        value="{{ old('berat_diroasting', $batch->berat_diroasting) }}">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select name="status" class="form-control">
+                                        @foreach($statuses as $k => $v)
+                                            <option value="{{ $k }}" {{ (old('status', $batch->status) == $k) ? 'selected' : '' }}>{{ $v }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Attention</label>
+                                    <select name="attention" class="form-control">
+                                        @foreach($attentions as $k => $v)
+                                            <option value="{{ $k }}" {{ (old('attention', $batch->attention) == $k) ? 'selected' : '' }}>{{ $v }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Estimate Expire Date</label>
+                                   <input type="date" name="estimate_expire_date" class="form-control"
+                                    value="{{ old('estimate_expire_date', \Carbon\Carbon::parse($batch->estimate_expire_date)->format('Y-m-d')) }}">
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Catatan</label>
+                                    <textarea name="catatan" class="form-control">{{ old('catatan', $batch->catatan) }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-secondary" onclick="window.history.back();">
+                                    Batal
+                                </button>
+                                <button type="submit" class="btn btn-coffee">Update</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@endsection

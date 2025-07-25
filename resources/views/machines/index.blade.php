@@ -85,11 +85,11 @@
                                             <td>{{ $machines->merk }}</td>
                                             <td>{{ $machines->location }}</td>
                                             <td>{{ $machines->serial_number }}</td>
-                                            <td>{{ $machines->typ }}</td>
+                                            <td>{{ $machines->type }}</td>
                                             <td>{{ $machines->kapasitas }}</td>
 
                                             <td>
-                                                @if ($machines->plc == '1')
+                                                @if ($machines->plc_support == '1')
                                                     <span class="badge badge-success">Yes</span>
                                                 @else
                                                     <span class="badge badge-danger">No</span>
@@ -190,13 +190,14 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        
 
                         <div class="form-group">
-                            <label for="typ">Type</label>
-                            <input type="text" name="typ" id="typ"
-                                class="form-control @error('typ') is-invalid @enderror" required
-                                value="{{ old('typ') }}">
-                            @error('typ')
+                            <label for="type">typee</label>
+                            <input typee="text" name="type" id="type"
+                                class="form-control @error('type') is-invalid @enderror" required
+                                value="{{ old('type') }}">
+                            @error('type')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -223,15 +224,15 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="plc">PLC</label>
-                            <select name="plc" id="plc" class="form-control @error('plc') is-invalid @enderror"
+                            <label for="plc_support">plc_support</label>
+                            <select name="plc_support" id="plc_support" class="form-control @error('plc_support') is-invalid @enderror"
                                 required>
                                 <option value="">Pilih PLC</option>
-                                <option value="1" {{ old('plc') == 'Yes' ? 'selected' : '' }}>Yes</option>
-                                <option value="0" {{ old('plc') == 'No' ? 'selected' : '' }}>No
+                                <option value="1" {{ old('plc_support') == 'Yes' ? 'selected' : '' }}>Yes</option>
+                                <option value="0" {{ old('plc_support') == 'No' ? 'selected' : '' }}>No
                                 </option>
                             </select>
-                            @error('plc')
+                            @error('plc_support')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
