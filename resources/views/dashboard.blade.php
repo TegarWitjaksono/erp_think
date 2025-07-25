@@ -673,15 +673,29 @@
                                         <p>SKU Management</p>
                                     </a>
                                 </li>
-                                
-                                <!-- Add Master Penerimaan Menu Item -->
-                                <!-- <li class="nav-item">
-                                    <a href="/master_penerimaan"
-                                        class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
-                                        <i class="fas fa-truck-loading"></i>
-                                        <p>Penerimaan</p>
+                                <li class="nav-item">
+                                    <a href="/methods"
+                                        class="nav-link {{ request()->is('methods*') ? 'active' : '' }}">
+                                        <i class="fas fa-cogs"></i> {{-- metode/teknik --}}
+                                        <p>Methods</p>
                                     </a>
-                                </li> -->
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/level-roast"
+                                        class="nav-link {{ request()->is('level-roast*') ? 'active' : '' }}">
+                                        <i class="fas fa-fire-alt"></i> {{-- tingkat kematangan roasting --}}
+                                        <p>Level Roast</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="/karung"
+                                        class="nav-link {{ request()->is('karung*') ? 'active' : '' }}">
+                                        <i class="fas fa-boxes"></i> {{-- karung/barang --}}
+                                        <p>Karung</p>
+                                    </a>
+                                </li>
+
+                               
                             </ul>
                             {{-- OPERASIONAL --}}
                 <li class="nav-header">Operasional</li>

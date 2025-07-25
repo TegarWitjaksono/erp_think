@@ -42,10 +42,8 @@ class BatchProductionController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validated();
-        $data['created_by'] = auth()->id();
-        DB::table('batchproduction')->insert($data);
-        // Validasi request
+        
+      
         $data = $request->validate([
             'id_mesin' => 'required',
             'method_id' => 'required',
@@ -87,24 +85,21 @@ class BatchProductionController extends Controller
         $batch = DB::table('batchproduction')->find($idBatch);
     
         $machines      = DB::table('machines')->pluck('merk','id');
-        $method       = DB::table('method')->pluck('deskripsi','id');
+        $methods       = DB::table('method')->pluck('deskripsi','id');
         $profiles      = DB::table('roast_profile')->pluck('deskripsi','id');
         $levels        = DB::table('level_roast')->pluck('name','id');
         $statuses   = ['open'=>'Open','on process'=>'On Process','closing'=>'Closing','cancel'=>'Cancel'];
         $attentions = ['normal'=>'Normal','priority'=>'Priority'];
 
         return view('batch-productions.edit', compact(
-            'batch','machines','method','profiles','levels','statuses','attentions'
+            'batch','machines','methods','profiles','levels','statuses','attentions'
         ));
     }
 
     public function update(Request $request, $id)
     {
-        $data = $request->validated();
-        $data['updated_by'] = auth()->id();
-        DB::table('batchproduction')->where('id',$id)->update($data);
-
-     
+       
+       
         // Validasi request
         $data = $request->validate([
             'id_mesin' => 'required',
@@ -328,110 +323,145 @@ class BatchProductionController extends Controller
     }
 
    public function close($id)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
-        $batch = DB::table('batchproduction')->where('id', $id)->first();
+        try {
+            $batch = DB::table('batchproduction')->where('id', $id)->first();
 
-        if (!$batch) {
-            throw new Exception('Batch tidak ditemukan.');
-        }
-
-        if ($batch->status !== 'on process') {
-            throw new Exception('Hanya batch ON PROCESS yang bisa diselesaikan.');
-        }
-
-        // Ambil hasil roasting dari tabel result
-        $results = DB::table('batchproduction_input')
-            ->where('batchproduction_id', $id)
-            ->get();
-
-        if ($results->isEmpty()) {
-            throw new Exception('Hasil roasting belum tersedia.');
-        }
-
-        $totalQtyHasil = 0;
-        $inventoryFinishId = null;
-
-        foreach ($results as $result) {
-            if (!$result->berat_akhir) {
-                throw new Exception('Data berat akhir belum lengkap.');
+            if (!$batch) {
+                throw new Exception('Batch tidak ditemukan.');
             }
 
-            $totalQtyHasil += $result->berat_akhir;
-
-            // Ambil salah satu inventory_id sebagai acuan (misalnya dari karung pertama)
-            if (!$inventoryFinishId && $result->inventory_id) {
-                $inventoryFinishId = $result->inventory_id;
+            if ($batch->status !== 'on process') {
+                throw new Exception('Hanya batch ON PROCESS yang bisa diselesaikan.');
             }
+
+            // Ambil semua hasil roasting
+            $results = DB::table('batchproductionresult')
+                ->where('id_bacthproduction', $id)
+                ->get();
+
+            if ($results->isEmpty()) {
+                throw new Exception('Hasil roasting belum tersedia.');
+            }
+
+            // Ambil input batch (berat bahan baku yang digunakan)
+            $inputs = DB::table('batchproduction_input')
+                ->where('batchproduction_id', $id)
+                ->get();
+
+            if ($inputs->isEmpty()) {
+                throw new Exception('Input bahan baku belum tersedia.');
+            }
+
+            $totalQtyHasil = 0;
+            $totalQtyBahanBaku = 0;
+            $inventoryFinishId = null;
+
+            foreach ($results as $result) {
+                if (!$result->berat_akhir) {
+                    throw new Exception('Berat akhir pada hasil belum lengkap.');
+                }
+
+                $totalQtyHasil += $result->berat_akhir;
+
+                if (!$inventoryFinishId && isset($result->inventory_id)) {
+                    $inventoryFinishId = $result->inventory_id;
+                }
+            }
+
+            foreach ($inputs as $input) {
+                if (!$input->qty_out) {
+                    throw new Exception('Berat masuk pada input belum lengkap.');
+                }
+
+                $totalQtyBahanBaku += $input->qty_out;
+            }
+
+            if (!$inventoryFinishId) {
+                $inventoryFinishId = 999; // fallback
+            }
+
+            // Update status batch
+            DB::table('batchproduction')->where('id', $id)->update([
+                'status' => 'closing',
+            ]);
+
+            // Buat jurnal GL
+            $glHeaderId = DB::table('gl_headers')->insertGetId([
+                'ref_module'   => 'batch_close',
+                'ref_id'       => $id,
+                'doc_no'       => 'GL-CLOSE-' . str_pad($id, 4, '0', STR_PAD_LEFT),
+                'doc_date'     => now(),
+                'posting_date' => now(),
+                'currency'     => 'IDR',
+                'total_debit'  => $totalQtyHasil,
+                'total_credit' => $totalQtyBahanBaku,
+                'status'       => 'posted',
+                'notes'        => 'Penyelesaian batch #' . $id,
+                'created_by'   => auth()->id(),
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ]);
+
+            $lineNo = 1;
+
+            // Debit: Inventory FG
+            DB::table('gl_lines')->insert([
+                'header_id'    => $glHeaderId,
+                'line_no'      => $lineNo++,
+                'account_id'   => 9,
+                'debit'        => $totalQtyHasil,
+                'credit'       => 0,
+                'memo'         => 'Masuk hasil roasting - Batch #' . $id,
+                'inventory_id' => $inventoryFinishId,
+                'batch_id'     => $id,
+            ]);
+
+            // Credit: WIP
+            DB::table('gl_lines')->insert([
+                'header_id'    => $glHeaderId,
+                'line_no'      => $lineNo++,
+                'account_id'   => 10,
+                'debit'        => 0,
+                'credit'       => $totalQtyBahanBaku,
+                'memo'         => 'Keluar bahan dalam proses - Batch #' . $id,
+                'inventory_id' => $inventoryFinishId,
+                'batch_id'     => $id,
+            ]);
+
+            // Update inventory stok masuk
+            DB::table('inventory')
+                ->where('id', $inventoryFinishId)
+                ->increment('debit_qty', $totalQtyHasil);
+
+            // Simpan ke inventori finish good
+            DB::table('inventorifinishgood')->insert([
+                'id_inventory'         => $inventoryFinishId,
+                'id_product'           => null,
+                'timestamp'            => now(),
+                'expired_date'         => null,
+                'jenis'                => 'Single',
+                'Id_batch_production'  => $id,
+                'Id_postRoastblend'    => null,
+                'Id_penjualan'         => null,
+                'jml_masuk'            => $totalQtyHasil,
+                'jml_keluar'           => 0,
+                'Catatan'              => 'Hasil produksi batch #' . $id,
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Batch berhasil diselesaikan.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal menyelesaikan batch: ' . $e->getMessage());
         }
-
-        if (!$inventoryFinishId) {
-            $inventoryFinishId = 999; // fallback jika tidak ada
-        }
-
-        // Update status batch ke 'closed'
-        DB::table('batchproduction')->where('id', $id)->update([
-            'status' => 'closed',
-            'updated_at' => now(),
-        ]);
-
-        // Buat jurnal hasil produksi
-        $glHeaderId = DB::table('gl_headers')->insertGetId([
-            'ref_module' => 'batch_close',
-            'ref_id' => $id,
-            'doc_no' => 'GL-CLOSE-' . str_pad($id, 4, '0', STR_PAD_LEFT),
-            'doc_date' => now(),
-            'posting_date' => now(),
-            'currency' => 'IDR',
-            'total_debit' => $totalQtyHasil,
-            'total_credit' => $totalQtyHasil,
-            'status' => 'posted',
-            'notes' => 'Penyelesaian batch #' . $id,
-            'created_by' => auth()->id(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $lineNo = 1;
-
-        // Debit - Inventory Finish Goods
-        DB::table('gl_lines')->insert([
-            'header_id' => $glHeaderId,
-            'line_no' => $lineNo++,
-            'account_id' => 9, // Inventory Finish Goods
-            'debit' => $totalQtyHasil,
-            'credit' => 0,
-            'memo' => 'Masuk hasil roasting - Batch #' . $id,
-            'inventory_id' => $inventoryFinishId,
-            'batch_id' => $id,
-        ]);
-
-        // Credit - WIP (Work in Process)
-        DB::table('gl_lines')->insert([
-            'header_id' => $glHeaderId,
-            'line_no' => $lineNo++,
-            'account_id' => 10, // HPP atau akun WIP
-            'debit' => 0,
-            'credit' => $totalQtyHasil,
-            'memo' => 'Keluar bahan dalam proses - Batch #' . $id,
-            'inventory_id' => $inventoryFinishId,
-            'batch_id' => $id,
-        ]);
-
-        // Tambahkan ke inventory hasil jadi
-        DB::table('inventory')
-            ->where('id', $inventoryFinishId)
-            ->increment('debit_qty', $totalQtyHasil);
-
-        DB::commit();
-        return redirect()->back()->with('success', 'Batch berhasil diselesaikan.');
-    } catch (Exception $e) {
-        DB::rollBack();
-        return redirect()->back()->with('error', 'Gagal menyelesaikan batch: ' . $e->getMessage());
     }
-}
+
+
+
+
 
 
 

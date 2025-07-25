@@ -31,8 +31,11 @@ use App\Http\Controllers\FinishedProductsController;
 use App\Http\Controllers\InventoryBahanBakuController;
 use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\BatchProductionResultController;
-
-
+use App\Http\Controllers\GlController;
+use App\Http\Controllers\JournalController;
+use App\Http\Controllers\KarungController;
+use App\Http\Controllers\LevelRoastController;
+use App\Http\Controllers\MethodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +78,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('list_batch_production/update/{id}',[BatchProductionController::class,'updateBatchInput'])->name('batch.update');
     Route::delete('list_batch_production/delete/{id}',[BatchProductionController::class,'deleteBatchInput'])->name('batch.delete');
 
+    Route::resource('methods',MethodController::class);
+    Route::resource('level-roast',LevelRoastController::class);
+    Route::resource('karung',KarungController::class);
+
+    Route::get('gl',[JournalController::class,'index']);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });
 

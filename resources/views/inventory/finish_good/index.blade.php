@@ -102,7 +102,7 @@
                                     @foreach ($items as $item )
                                         <tr>
                                             <td>{{$item->id}}</td>
-                                            <td>{{$item->product_name}}</td>
+                                            <td>{{$item->product_name ?? 'Belum ada product'}}</td>
                                             <td>{{$item->jenis}}</td>
                                             <td>{{$item->jml_masuk}}</td>
                                             <td>{{$item->jml_keluar}}</td>

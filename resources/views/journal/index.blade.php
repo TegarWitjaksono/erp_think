@@ -32,7 +32,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="card shadow-sm">
-                <div class="card-header bg-white">
+                <div class="card-header text-white">
                     <i class="fas fa-table"></i> Data General Ledger
                 </div>
                 <div class="card-body p-0">

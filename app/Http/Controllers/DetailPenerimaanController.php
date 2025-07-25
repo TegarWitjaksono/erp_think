@@ -140,7 +140,7 @@ class DetailPenerimaanController extends Controller
                 // Simpan karung
                 $idKarung = DB::table('karung')->insertGetId([
                     'penerimaan_id' => $request->id_penerimaan,
-                    'id_detail_penerimaan' => $idDetail,
+                    // 'id_detail_penerimaan' => $idDetail,
                     'kode_karung' => $kodeKarung,
                     'berat_masuk' => $request->berat,
                     'catatan' => 'auto generate'
@@ -217,7 +217,7 @@ class DetailPenerimaanController extends Controller
             DB::rollBack();
             Log::error('Store Error: ' . $e->getMessage());
 
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data.' . $e->getMessage());
         }
     }
 
