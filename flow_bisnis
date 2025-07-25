@@ -1,0 +1,133 @@
+.⁠ ⁠Modul Penerimaan Bahan Baku
+Kapan dipakai? Saat truk supplier membawa biji kopi (green bean) ke gudang.
+Di lapangan terjadi:
+
+Cek dokumen & fisik barang
+
+Petugas penerimaan memeriksa surat jalan, memotret sample.
+
+Catat siapa supplier, tanggal kedatangan, nomor PO.
+
+Sampling & QC awal
+
+Ambil sampel untuk uji kadar air & bulk density.
+
+Timbang jumlah karung, jenis kemasan.
+
+Input ke sistem
+
+Di form “Penerimaan”: pilih supplier, isi catatan kondisi barang.
+
+Di sub-form “Detail Raw Material”: pilih jenis/varietas/grade/origin, masukkan kadar air, bulk density, berat per kemasan, jumlah karung.
+
+Sistem otomatis menghitung total berat dan generate ID batch/lot untuk tiap karung.
+
+Hook ke Inventory
+
+Begitu disave, sistem membuat entri stok (“Debit”) per karung di modul Inventory Bahan Baku.
+
+Jurnal GL otomatis: Debit akun Raw Material, Kredit GRNI/AP.
+
+2.⁠ ⁠Modul Inventory Bahan Baku
+Kapan dipakai? Setelah penerimaan dan setiap kali ada bahan keluar masuk.
+Di lapangan terjadi:
+
+Monitoring stok
+
+Warehouse team lihat list karung tersedia, kadar air, bulk density, sisa qty.
+
+Transaksi keluar
+
+Saat bahan dipindah ke roasting, operator klik “Issue” di inventory; sistem mencatat kredit stok.
+
+Penyesuaian manual
+
+Kalau ada loss (tumpah, rusak), supervisor bisa buat adjustment dengan alasan dan catatan.
+
+Reverse stok
+
+Jika batch roasting batal, stok kembali (“Debit”) otomatis.
+
+3.⁠ ⁠Modul Batch Production (Roasting)
+Kapan dipakai? Saat jadwal roasting dimulai.
+Di lapangan terjadi:
+
+Persiapan batch
+
+Operator memilih mesin roasting, method (single/blend), roast profile, dan level roasting.
+
+Ambil karung-karung dari inventory: sistem menampilkan list karung dengan kadar air & bulk density (bisa disesuaikan).
+
+Validasi qty
+
+Pastikan total berat bahan keluar = target berat diroasting.
+
+Proses roasting
+
+Operator start mesin, sistem status berubah jadi “On Process”.
+
+Jika terintegrasi IoT, data temperatur & power live-feed ke modul Log Mesin.
+
+Cancel / Close
+
+Jika batal sebelum start, sistem reverse stok.
+
+Jika selesai, klik “Close”: stok roasting berkurang, langsung generate stok Finish Good.
+
+4.⁠ ⁠Modul Batch Production Result
+Kapan dipakai? Setelah batch roasting selesai untuk QC lab.
+Di lapangan terjadi:
+
+Pengisian hasil QC
+
+Lab QA/QC timbang berat akhir, ukur kadar air, ambil Agtron reading, lakukan cupping test dan beri skor/note flavor.
+
+Record ke sistem
+
+Operator/lab input data hasil ke form BatchProductionResult.
+
+Hook ke Inventory FG
+
+Sistem mendebit (“Masuk”) stok Finish Good sesuai yield berat akhir.
+
+Update jurnal GL otomatis: Debit WIP/FG, Kredit WIP/Raw Material sesuai cost mapping.
+
+5.⁠ ⁠Modul Inventory Finish Good
+Kapan dipakai? Untuk melihat stok produk jadi dan handling keluar masuk ke penjualan atau blending.
+Di lapangan terjadi:
+
+Monitoring stok FG
+
+Warehouse lihat stok per level roast, note flavor, tanggal expire.
+
+Pick untuk penjualan
+
+Sales/warehouse buat transaksi keluar; sistem catat kredit stok, generate DO/invoice.
+
+Pick untuk Post Roast Blend
+
+Jika mau blend lanjutan, ambil dari stok FG melalui modul Post Roast Blend (lihat di bawah).
+
+Adjustment
+
+Jika ada kerusakan/return, bisa adjustment dengan alasan dan audit trail.
+
+6.⁠ ⁠Modul Post Roast Blend
+Kapan dipakai? Jika mau bikin blend pasca-roast (misal Pre-Blend vs Single Origin).
+Di lapangan terjadi:
+
+Form blend baru
+
+Input total berat blend, cupping note, tanggal expired estimate.
+
+Pick stok FG
+
+Pilih beberapa item FG, masukkan qty out sesuai komposisi blend.
+
+Validasi: Σ qty out = total blend.
+
+Save & update stok
+
+Sistem kredit stok FG lama, debit stok FG blend baru.
+
+Posting GL sesuai mapping akun.

@@ -24,14 +24,14 @@ class BatchProductionController extends Controller
     public function create()
     {
         $machines      = DB::table('machines')->pluck('merk','id');
-         $method       = DB::table('method')->pluck('deskripsi','id');
+         $methods       = DB::table('method')->pluck('deskripsi','id');
         $profiles      = DB::table('roast_profile')->pluck('deskripsi','id');
         $levels        = DB::table('level_roast')->pluck('name','id');
         $statuses      = ['open'=>'Open','on process'=>'On Process','closing'=>'Closing','cancel'=>'Cancel'];
         $attentions    = ['normal'=>'Normal','priority'=>'Priority'];
 
         return view('batch-productions.create', compact(
-            'machines','method','profiles','levels','statuses','attentions'
+            'machines','methods','profiles','levels','statuses','attentions'
         ));
     }
 
