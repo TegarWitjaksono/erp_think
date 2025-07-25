@@ -20,46 +20,65 @@ class InventoryBahanBakuController extends Controller
 
     public function create()
     {
-        $penerimaanList = DB::table('penerimaan')->pluck('nama', 'id');
-        return view('inventory.raw.create', compact('penerimaanList'));
+        $penerimaanList = DB::table('master_penerimaan')->get();
+        $details = DB::table('detail_penerimaan')->get();
+        $karung = DB::table('karung')->get();
+       
+        return view('inventory.raw.create', compact('penerimaanList','karung','details'));
     }
     public function store(Request $request)
     {
-        $data = $request->validated();
-        $data['qty_keluar'] = 0;
-        $data['is_active'] = true;
-        $data['created_by'] = auth()->id();
-        DB::table('inventory')->insert($data);
+       $data = $request->validate([
+        'penerimaan_id' => 'required',
+        'karung_id' => 'required',
+        'catatan' => 'required',
+        'id_detail_penerimaan' => 'required',
+        'kadar_air' => 'required',
+        'bulk_densitas' => 'required',
+        'debit_qty' => 'required',
+        'credit_qty' => 'required'
+       ]);
+       $data['timestamp'] = now();
+       $data['roast_batch_id'] = null;
+       $data['gl_trx_id'] = null;
+         DB::table('inventory')->insert($data);
 
-        return redirect()->route('inventory.raw.index')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('inventory.index')->with('success', 'Data berhasil disimpan');
     }
 
     public function edit($id)
     {
-        $inventory = DB::table('inventory')->find($id);
-        $penerimaanList = DB::table('penerimaan')->pluck('nama', 'id');
-
-        return view('inventory.raw.edit', [
-            'inventoryBahanBaku' => $inventory,
-            'penerimaanList' => $penerimaanList
-        ]);
+          $penerimaanList = DB::table('master_penerimaan')->get();
+        $details = DB::table('detail_penerimaan')->get();
+        $karung = DB::table('karung')->get();
+        $data = DB::table('inventory')->find($id);
+       
+        return view('inventory.raw.edit', compact('penerimaanList','karung','details','data'));
     }
 
     public function update(Request $request, $id)
     {
-        $data = $request->validated();
-        $data['updated_by'] = auth()->id();
-        DB::table('inventory')->where('id', $id)->update($data);
+        $data = $request->validate([
+        'penerimaan_id' => 'required',
+        'karung_id' => 'required',
+        'catatan' => 'required',
+        'id_detail_penerimaan' => 'required',
+        'kadar_air' => 'required',
+        'bulk_densitas' => 'required',
+        'debit_qty' => 'required',
+        'credit_qty' => 'required'
+       ]);
+       $data['timestamp'] = now();
+       $data['roast_batch_id'] = null;
+       $data['gl_trx_id'] = null;
+         DB::table('inventory')->where('id',$id)->update($data);
 
-        return redirect()->route('inventory.raw.index')->with('success', 'Data berhasil diperbarui');
+        return redirect()->route('inventory.index')->with('success', 'Data berhasil diubah');
     }
 
     public function destroy($id)
     {
-        DB::table('inventory')->where('id', $id)->update([
-            'is_active' => false,
-            'updated_by' => auth()->id()
-        ]);
+        DB::table('inventory')->where('id',$id)->delete();
 
         return redirect()->route('inventory.raw.index')->with('success', 'Data dinonaktifkan');
     }

@@ -50,7 +50,7 @@
             <a href="{{ route('post-roast-blends.create') }}" class="btn btn-primary mb-3">Tambah Blend</a>
 
             <div class="card shadow-sm">
-                <div class="card-header bg-white">
+                <div class="card-header text-white">
                     <i class="fas fa-table me-1"></i> Data Post Roast Blends
                 </div>
                 <div class="card-body p-0">
@@ -73,8 +73,8 @@
                                 @foreach($blends as $blend)
                                 <tr>
                                     <td>{{ $blend->id }}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{$blend->timestamp}}</td>
+                                    <td>{{$blend->est_expired_date}}</td>
                                     <td>{{ $blend->cupping_score }}</td>
                                     <td>{{ $blend->note_flavour }}</td>
                                     <td>{{ $blend->catatan }}</td>

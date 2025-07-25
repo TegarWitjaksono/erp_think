@@ -56,9 +56,9 @@
             <div class="container-fluid">
 
                 {{-- Button Tambah --}}
-                <!-- <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">
+               <a href="{{route('inventory.create')}}"  class="btn btn-primary mb-3" >
                     <i class="fas fa-plus-circle mr-2"></i> Tambah Data
-                </button> -->
+                </a>
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
@@ -89,17 +89,18 @@
                                             <td>{{ $item->bulk_densitas }}</td>
                                             <td>{{ $item->debit_qty }}</td>
                                             <td>{{ $item->credit_qty }}</td>
-                                            <td></td>
+                                            <td>{{ $item->debit_qty =- $item->credit_qty }}</td>
+                                            
                                             <td>
                                                 <a href="{{ route('inventory.edit', $item->id) }}"
                                                     class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <!-- <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                <button type="button" class="btn btn-danger btn-sm delete-btn"
                                                     data-id="{{ $item->id }}" data-toggle="modal"
                                                     data-target="#deleteModal" title="Hapus">
                                                     <i class="fas fa-trash-alt"></i>
-                                                </button> -->
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
