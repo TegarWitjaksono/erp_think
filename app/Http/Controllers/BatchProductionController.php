@@ -14,26 +14,17 @@ class BatchProductionController extends Controller
         $items = DB::table('batchproduction')
             ->join('machines', 'batchproduction.id_mesin', '=', 'machines.id')
             ->join('method', 'batchproduction.id_method', '=', 'method.id')
-<<<<<<< HEAD
-            ->selectRaw('batchproduction.*, machines.nama as mesin_nama, method.deskripsi as method_deskripsi')
-            ->paginate(15);
-=======
-            ->leftJoin('batchproduction_input','batchproduction.id','=','batchproduction_input.batchproduction_id')
-            ->selectRaw('batchproduction.*, machines.merk as mesin_nama, method.deskripsi as method_deskripsi, batchproduction_input.qty_out as keluar')
+            ->selectRaw('batchproduction.*, machines.merk as mesin_nama, method.deskripsi as method_deskripsi')
+            ->selectRaw('batchproduction.*, machines.merk as mesin_nama, method.deskripsi as method_deskripsi')
             ->get();
             
->>>>>>> main
+
 
         return view('batch-productions.index', compact('items'));
 
-<<<<<<< HEAD
-        //return view('batch-productions.index');  
-      }
-=======
        
 
         return view('batch-productions.index',compact('items'));    }
->>>>>>> main
 
     public function create()
     {
@@ -51,11 +42,9 @@ class BatchProductionController extends Controller
 
     public function store(Request $request)
     {
-<<<<<<< HEAD
         $data = $request->validated();
         $data['created_by'] = auth()->id();
         DB::table('batchproduction')->insert($data);
-=======
         // Validasi request
         $data = $request->validate([
             'id_mesin' => 'required',
@@ -68,7 +57,6 @@ class BatchProductionController extends Controller
             'estimate_expire_date' => 'required',
             'catatan' => 'nullable|string|max:255',
         ]);
->>>>>>> main
 
         // Siapkan data insert ke tabel batch_production
         $insertData = [
@@ -94,13 +82,10 @@ class BatchProductionController extends Controller
 
     public function edit($id)
     {
-<<<<<<< HEAD
         $batch = DB::table('batchproduction')->find($id);
-=======
         $idBatch = base64_decode($id);
         $batch = DB::table('batchproduction')->find($idBatch);
-        
->>>>>>> main
+    
         $machines      = DB::table('machines')->pluck('merk','id');
         $method       = DB::table('method')->pluck('deskripsi','id');
         $profiles      = DB::table('roast_profile')->pluck('deskripsi','id');
@@ -114,13 +99,12 @@ class BatchProductionController extends Controller
     }
 
     public function update(Request $request, $id)
-<<<<<<< HEAD
     {
         $data = $request->validated();
         $data['updated_by'] = auth()->id();
         DB::table('batchproduction')->where('id',$id)->update($data);
-=======
-     {
+
+     
         // Validasi request
         $data = $request->validate([
             'id_mesin' => 'required',
@@ -133,7 +117,7 @@ class BatchProductionController extends Controller
             'estimate_expire_date' => 'required',
             'catatan' => 'nullable|string|max:255',
         ]);
->>>>>>> main
+
 
         // Siapkan data insert ke tabel batch_production
         $updateData = [
@@ -158,11 +142,9 @@ class BatchProductionController extends Controller
 
     public function destroy($id)
     {
-<<<<<<< HEAD
+
         DB::table('batchproduction')->where('id',$id)->update(['is_active'=>false,'updated_by'=>auth()->id()]);
-=======
         DB::table('batchproduction')->where('id',$id)->delete();
->>>>>>> main
         return redirect()->route('batch-productions.index')->with('success','Batch dinonaktifkan');
     }
 
