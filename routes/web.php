@@ -2,34 +2,35 @@
 
 
 use App\Exports\JurusanExport;
-use App\Exports\TemplateJurusanExport;
-use App\Http\Controllers\BarangController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\OriginController;
 use App\Imports\JurusanImport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
+use App\Exports\TemplateJurusanExport;
 use App\Http\Controllers\FdController;
-use App\Http\Controllers\FinishedProductsController;
-use App\Http\Controllers\HomeController;
-
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\MasterJenisController;
-use App\Http\Controllers\MasterSuppliersController;
-use App\Http\Controllers\MasterVarietasController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\SalesController;
-use App\Http\Controllers\GradeController;
-use App\Http\Controllers\MasterMachinesController;
-use App\Http\Controllers\MasterSkuController;
 use App\Http\Controllers\SkuController;
-use App\Http\Controllers\DetailPenerimaanController;
-use App\Http\Controllers\InventoryBahanBakuController;
-use App\Http\Controllers\BatchProductionController;
-use App\Http\Controllers\BatchProductionResultController;
-use App\Http\Controllers\InventoryFinishGoodController;
-use App\Http\Controllers\PostRoastBlendController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\LoginController;
+
+use App\Http\Controllers\SalesController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\OriginController;
 use App\Http\Controllers\LogMesinController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MasterSkuController;
+use App\Http\Controllers\MasterJenisController;
+use App\Http\Controllers\MasterMachinesController;
+use App\Http\Controllers\MasterVarietasController;
+use App\Http\Controllers\PostRoastBlendController;
+use App\Http\Controllers\BatchProductionController;
+use App\Http\Controllers\MasterSuppliersController;
+use App\Http\Controllers\DetailPenerimaanController;
+use App\Http\Controllers\FinishedProductsController;
+use App\Http\Controllers\InventoryBahanBakuController;
+use App\Http\Controllers\InventoryFinishGoodController;
+use App\Http\Controllers\BatchProductionResultController;
 
 
 
@@ -60,6 +61,20 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('machines', MasterMachinesController::class);
     Route::resource('master_sku', MasterSkuController::class);
     Route::resource('sku', SkuController::class);
+
+    Route::resource('batch-productions',BatchProductionController::class);
+    Route::post('batch-productions/start/{id}',[BatchProductionController::class,'start'])->name('batch-productions.start');
+    Route::post('batch-productions/cancel/{id}',[BatchProductionController::class,'cancel'])->name('batch-productions.cancel');
+    Route::post('batch-productions/close{id}',[BatchProductionController::class,'close'])->name('batch-productions.close');
+    
+    
+
+    Route::get('list_batch_production/{id}',[BatchProductionController::class,'list'])->name('batch.list');
+    Route::post('list_batch_production/{id}',[BatchProductionController::class,'storeBatchInput'])->name('batch.input');
+    Route::get('list_batch_production/edit/{id}',[BatchProductionController::class,'editList'])->name('batch.edit');
+    Route::put('list_batch_production/update/{id}',[BatchProductionController::class,'updateBatchInput'])->name('batch.update');
+    Route::delete('list_batch_production/delete/{id}',[BatchProductionController::class,'deleteBatchInput'])->name('batch.delete');
+
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });
 
@@ -116,7 +131,7 @@ Route::get('get-master-penerimaan/{id}', function($id) {
 
 
 Route::resource('inventory',InventoryBahanBakuController::class);
-Route::resource('batch-productions',BatchProductionController::class);
+
 Route::resource('batch-results', BatchProductionResultController::class);
 Route::resource('inventory_fg', InventoryFinishGoodController::class);
 

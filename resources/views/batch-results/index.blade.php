@@ -60,17 +60,71 @@
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <i class="fas fa-table me-1"></i> Data Batch Production Result
+                    <div class="card-header text-white">
+                        <i class="fas fa-table me-1"></i><span> Data Batch Production Result</span>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="inventory-table" class="table datatable table-hover text-nowrap table-striped">
+                             <table id="inventory-table" class="table datatable table-hover text-nowrap table-striped">
                                 <thead>
                                     <tr>
-                                    <tr><th>ID</th><th>Batch</th><th>Level Roast</th><th>Berat Akhir</th><th>Aksi</th></tr>
+                                        <th>ID</th>
+                                        <th>ID Batch Production</th>
+                                        <th>Level Roasting</th>
+                                        <th>Berat Akhir</th>
+                                        <th>Kadar Air</th>
+                                        <th>Agrton</th>
+                                        <th>Cupping Store</th>
+                                        <th>Note Flower</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @foreach ($items as $item)
+                                    <tr>
+                                        <td>
+                                            {{$item->id}}
+                                        </td>
+                                        <td>
+                                            {{$item->id_bacthproduction}}
+                                        </td>
+                                        <td>
+                                            {{$item->level_name}}
+                                        </td>
+                                        <td>
+                                            {{$item->berat_akhir}}
+                                        </td>
+                                        <td>
+                                            {{$item->kadar_air}}
+                                        </td>
+                                        <td>
+                                            {{$item->agtron}}
+                                        </td>
+                                        <td>
+                                            {{$item->cupping_score}}
+                                        </td>
+                                        <td>
+                                            {{$item->note_flavour}}
+                                        </td>
+                                        <td>
+                                       
+
+                                        <!-- Edit -->
+                                        <a href="{{ route('batch-results.edit', base64_encode($item->id)) }}" class="btn btn-warning btn-sm" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <!-- Delete -->
+                                        <button type="button" class="btn btn-secondary btn-sm delete-btn" data-id="{{ $item->id }}" data-toggle="modal" data-target="#deleteModal" title="Hapus Batch">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+
+
+                                    </tr>
+                                        
+                                    @endforeach
+                                    
+                                </tbody>
 
                             </table>
                         </div>
@@ -143,20 +197,20 @@
     </div>
 
     {{-- Script --}}
-    @push('scripts')
+   
         <script>
             $(document).ready(function () {
                 $('#inventory-table').DataTable({ responsive: true });
 
                 $('.delete-btn').click(function () {
                     const id = $(this).data('id');
-                    const url = "{{ route('inventory.destroy', ':id') }}".replace(':id', id);
+                    const url = "{{ route('batch-results.destroy', ':id') }}".replace(':id', id);
                     $('#deleteForm').attr('action', url);
                 });
 
                 setTimeout(() => $('.alert').alert('close'), 5000);
             });
         </script>
-    @endpush
+    
 
 @endsection

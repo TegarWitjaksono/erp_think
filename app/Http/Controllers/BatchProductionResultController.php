@@ -12,13 +12,14 @@ class BatchProductionResultController extends Controller
     {
         $items = DB::table('batchproductionresult')
             ->join('batchproduction', 'batchproductionresult.id_bacthproduction', '=', 'batchproduction.id')
-            ->join('level_roast', 'batchproductionresult.level_roast_id', '=', 'level_roast.id')
+            ->join('level_roast', 'batchproductionresult.level_roasting', '=', 'level_roast.id')
             ->select(
                 'batchproductionresult.*',
                 'batchproduction.estimate_expire_date as batch_date',
-                'level_roast.nama as level_nama'
+                'level_roast.name as level_name'
             )
-            ->paginate(15);
+            ->get();
+        
 
         return view('batch-results.index', compact('items'));
     }
@@ -33,8 +34,16 @@ class BatchProductionResultController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validated();
-        $data['created_by'] = auth()->id();
+       $data = $request->validate([
+            'id_bacthproduction' => 'required',
+            'level_roasting' => 'required',
+            'berat_akhir' => 'required',
+            'kadar_air' => 'required',
+            'agtron' => 'required',
+            'cupping_score' => 'required',
+            'note_flavour' => 'required|string'
+        ]);
+
         DB::table('batchproductionresult')->insert($data);
 
         return redirect()->route('batch-results.index')->with('success','Hasil batch berhasil disimpan');
@@ -51,8 +60,16 @@ class BatchProductionResultController extends Controller
 
     public function update(Request $request, $id)
     {
-        $data = $request->validated();
-        $data['updated_by'] = auth()->id();
+         $data = $request->validate([
+            'id_bacthproduction' => 'required',
+            'level_roasting' => 'required',
+            'berat_akhir' => 'required',
+            'kadar_air' => 'required',
+            'agtron' => 'required',
+            'cupping_score' => 'required',
+            'note_flavour' => 'required|string'
+        ]);
+
         DB::table('batchproductionresult')->where('id',$id)->update($data);
 
         return redirect()->route('batch-results.index')->with('success','Hasil batch diperbarui');
@@ -60,10 +77,9 @@ class BatchProductionResultController extends Controller
 
     public function destroy($id)
     {
-        DB::table('batchproductionresult')->where('id',$id)->update([
-            'is_active'=>false,'updated_by'=>auth()->id()
-        ]);
+        DB::table('batchproductionresult')->where('id',$id)->delete();
 
         return redirect()->route('batch-results.index')->with('success','Hasil batch dinonaktifkan');
     }
+
 }

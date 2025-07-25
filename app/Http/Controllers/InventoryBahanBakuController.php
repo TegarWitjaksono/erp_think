@@ -13,7 +13,7 @@ class InventoryBahanBakuController extends Controller
         $items = DB::table('inventory')
             ->join('master_penerimaan', 'inventory.penerimaan_id', '=', 'master_penerimaan.id_penerimaan')
             ->select('inventory.*', 'master_penerimaan.*')
-            ->paginate(15);
+            ->get();
 
         return view('inventory.raw.index', compact('items'));
     }

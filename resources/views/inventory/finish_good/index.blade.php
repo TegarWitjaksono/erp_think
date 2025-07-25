@@ -51,27 +51,27 @@
             @endif
         </div>
 
-        {{-- Main Content --}}
-        <section class="content">
-            <div class="container-fluid">
+            {{-- Main Content --}}
+            <section class="content">
+                <div class="container-fluid">
 
-            <form method="GET" class="mb-3">
-        <div class="row">
-            <div class="col-md-3">
-                <input type="text" name="level_roast" value="{{ request('level_roast') }}" placeholder="Level Roast" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="flavour_note" value="{{ request('flavour_note') }}" placeholder="Flavour Note" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <input type="date" name="expired_before" value="{{ request('expired_before') }}" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="" class="btn btn-secondary">Reset</a>
-            </div>
-        </div>
-    </form>
+                <form method="GET" class="mb-3">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="text" name="level_roast" value="{{ request('level_roast') }}" placeholder="Level Roast" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="flavour_note" value="{{ request('flavour_note') }}" placeholder="Flavour Note" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="expired_before" value="{{ request('expired_before') }}" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="" class="btn btn-secondary">Reset</a>
+                        </div>
+                    </div>
+                </form>
 
                 {{-- Button Tambah --}}
                 <!-- <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">
@@ -80,8 +80,8 @@
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <i class="fas fa-table me-1"></i> Data Inventory
+                    <div class="card-header text-white">
+                        <i class="fas fa-table me-1"></i> Data Inventory FinishGood
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -99,11 +99,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+                                    @foreach ($items as $item )
+                                        <tr>
+                                            <td>{{$item->id}}</td>
+                                            <td>{{$item->product_name}}</td>
+                                            <td>{{$item->jenis}}</td>
+                                            <td>{{$item->jml_masuk}}</td>
+                                            <td>{{$item->jml_keluar}}</td>
+                                            <td>{{$item->expired_date}}</td>
+                                            <td>{{$item->Catatan}}</td>
+                                           <td>
+                                                <a href="{{ route('inventory_fg.edit', $item->id) }}"
+                                                    class="btn btn-warning btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <!-- <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                    data-id="{{ $item->id }}" data-toggle="modal"
+                                                    data-target="#deleteModal" title="Hapus">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button> -->
+                                            </td>
+                                        </tr>
+                                        
+                                        
+                                    @endforeach
+                                    
                                 </tbody>
                             </table>
                         </div>
-                        {{ $items->links() }}
+                       
                     </div>
                 </div>
 
@@ -171,8 +195,7 @@
         </div>
     </div>
 
-    {{-- Script --}}
-    @push('scripts')
+    
         <script>
             $(document).ready(function () {
                 $('#inventory-table').DataTable({ responsive: true });
@@ -186,6 +209,6 @@
                 setTimeout(() => $('.alert').alert('close'), 5000);
             });
         </script>
-    @endpush
+    
 
 @endsection
