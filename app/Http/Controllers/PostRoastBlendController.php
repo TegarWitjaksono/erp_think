@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Exception;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class PostRoastBlendController extends Controller
 {
@@ -20,57 +22,222 @@ class PostRoastBlendController extends Controller
         return view('post_roast_blend.create', compact('inventory'));
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
-        $data = $request->validate([
-            'expired_date' => 'required|date',
-            'cupping_score' => 'nullable|numeric',
-            'note_flavour' => 'nullable|string',
-            'catatan' => 'nullable|string',
-            'total_weight' => 'required|numeric',
-            'status' => 'required|in:close,cancel',
-            'details' => 'required|array|min:1',
-            'details.*.inventorifinishgood_id' => 'required|integer|exists:inventorifinishgood,id',
-            'details.*.reference_id' => 'nullable|string',
-            'details.*.quantity_out' => 'required|numeric',
-        ]);
-
-        DB::beginTransaction();
+        // Debug: Log semua data yang masuk
+        Log::info('PostRoastBlend Store Request:', $request->all());
+        
         try {
-            $blendId = DB::table('post_roast_blend')->insertGetId([
-                'expired_date'  => $data['expired_date'],
-                'cupping_score' => $data['cupping_score'],
-                'note_flavour'  => $data['note_flavour'],
-                'catatan'       => $data['catatan'],
-                'total_weight'  => $data['total_weight'],
-                'status'        => $data['status'],
-                'created_at'    => now(),
-                'updated_at'    => now(),
+            // Validasi dasar
+            $validator = Validator::make($request->all(), [
+                'expired_date' => 'required|date',
+                'cupping_score' => 'nullable|numeric|min:0|max:100',
+                'note_flavour' => 'nullable|string',
+                'catatan' => 'nullable|string',
+                'total_weight' => 'required|numeric|min:0.001',
+                'status' => 'required|in:close,cancel',
+                'details' => 'required|array|min:1',
+                'details.*.inventorifinishgood_id' => 'required|exists:inventorifinishgood,id',
+                'details.*.reference_id' => 'nullable|string',
+                'details.*.description' => 'nullable|string',
+                'details.*.quantity_out' => 'required|numeric|min:0.01',
+            ], [
+                'details.required' => 'Minimal harus ada 1 detail blend',
+                'details.*.inventorifinishgood_id.required' => 'Inventory harus dipilih',
+                'details.*.inventorifinishgood_id.exists' => 'Inventory tidak valid',
+                'details.*.quantity_out.required' => 'Jumlah out harus diisi',
+                'details.*.quantity_out.min' => 'Jumlah out minimal 0.01',
+                'total_weight.required' => 'Berat total harus diisi',
             ]);
 
-            $sumOut = 0;
-            foreach ($data['details'] as $item) {
-                $sumOut += $item['quantity_out'];
-                DB::table('post_roast_blend_details')->insert([
-                    'post_roast_blend_id'      => $blendId,
-                    'inventorifinishgood_id' => $item['inventorifinishgood_id'],
-                    'reference_id'             => $item['reference_id'],
-                    'description'              => DB::table('inventorifinishgood')->where('id', $item['inventorifinishgood_id'])->value(DB::raw("CONCAT(bean,' / ', level_roast,' / ', note_flavour)")),
-                    'quantity_out'             => $item['quantity_out'],
-                    'created_at'               => now(),
-                    'updated_at'               => now(),
-                ]);
+            if ($validator->fails()) {
+                Log::error('Validation failed:', $validator->errors()->toArray());
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput()
+                    ->with('error', 'Validasi gagal: ' . $validator->errors()->first());
+            }
 
-                DB::table('inventorifinishgood')->where('id', $item['inventorifinishgood_id'])->increment('jml_keluar', $item['quantity_out']);
+            // Validasi total weight sama dengan sum quantity_out
+            $totalQuantityOut = 0;
+            foreach ($request->details as $detail) {
+                $totalQuantityOut += floatval($detail['quantity_out']);
             }
-            if (abs($sumOut - $data['total_weight']) > 0.001) {
-                throw new Exception('Total Jumlah out harus sama dengan Berat total');
+            
+            Log::info("Total Quantity Out: $totalQuantityOut, Total Weight: {$request->total_weight}");
+            
+            if (abs($totalQuantityOut - floatval($request->total_weight)) > 0.01) {
+                return redirect()->back()
+                    ->withErrors(['total_weight' => "Total weight ({$request->total_weight}) harus sama dengan jumlah quantity out ({$totalQuantityOut})"])
+                    ->withInput()
+                    ->with('error', 'Total weight tidak sesuai dengan quantity out');
             }
-            DB::commit();
-            return redirect()->route('post-roast-blends.index')->with('success', 'Blend berhasil disimpan');
+
+            // Validasi stok tersedia
+            foreach ($request->details as $detail) {
+                $inventory = DB::table('inventorifinishgood')
+                    ->where('id', $detail['inventorifinishgood_id'])
+                    ->first();
+                
+                if (!$inventory) {
+                    return redirect()->back()
+                        ->withErrors(['details' => 'Inventory tidak ditemukan'])
+                        ->withInput()
+                        ->with('error', 'Inventory ID ' . $detail['inventorifinishgood_id'] . ' tidak ditemukan');
+                }
+
+                $availableStock = $inventory->jml_masuk - $inventory->jml_keluar;
+                Log::info("Inventory ID {$inventory->id}: Available Stock = $availableStock, Requested = {$detail['quantity_out']}");
+                
+                if (floatval($detail['quantity_out']) > $availableStock) {
+                    return redirect()->back()
+                        ->withErrors(['details' => "Stok inventory ID {$inventory->id} tidak mencukupi. Tersedia: {$availableStock}, Diminta: {$detail['quantity_out']}"])
+                        ->withInput()
+                        ->with('error', "Stok tidak mencukupi untuk inventory ID {$inventory->id}");
+                }
+            }
+
+            DB::beginTransaction();
+            
+            try {
+                // Cek apakah tabel ada
+                if (!DB::getSchemaBuilder()->hasTable('post_roast_blend')) {
+                    throw new Exception('Tabel post_roast_blend tidak ditemukan');
+                }
+
+                // Generate ID untuk post roast blend
+                $todayCount = DB::table('post_roast_blend')
+                    ->count();
+                
+                $blendId = 'PRB-' . date('Ymd') . '-' . str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
+                
+                Log::info("Generated Blend ID: $blendId");
+
+                // Data untuk insert
+                $blendData = [
+                   'timestamp' => now(),
+                    'est_expired_date' => $request->expired_date,
+                    'cupping_score' => $request->cupping_score ? floatval($request->cupping_score) : null,
+                    'note_flavour' => $request->note_flavour,
+                    'catatan' => $request->catatan,
+                    'berat_total' => floatval($request->total_weight),
+                    'status' => $request->status
+                ];
+
+                Log::info('Inserting blend data:', $blendData);
+
+                // Insert ke post_roast_blends
+                $postRoastBlendId = DB::table('post_roast_blend')->insertGetId($blendData);
+                
+                if (!$postRoastBlendId) {
+                    throw new Exception('Gagal insert ke tabel post_roast_blends');
+                }
+
+                Log::info("Inserted Post Roast Blend ID: $postRoastBlendId");
+
+                // Insert detail dan update inventory
+                foreach ($request->details as $index => $detail) {
+                    // Cek apakah tabel detail ada
+                    if (!DB::getSchemaBuilder()->hasTable('post_roast_blend_details')) {
+                        throw new Exception('Tabel post_roast_blend_details tidak ditemukan');
+                    }
+
+                    $detailData = [
+                        'post_roast_blend_id' => $postRoastBlendId,
+                        'inventorifinishgood_id' => $detail['inventorifinishgood_id'],
+                        'reference_id' => $detail['reference_id'],
+                        'description' => $detail['description'],
+                        'quantity_out' => floatval($detail['quantity_out']),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+
+                    Log::info("Inserting detail $index:", $detailData);
+
+                    // Insert detail blend
+                    $detailId = DB::table('post_roast_blend_details')->insertGetId($detailData);
+                    
+                    if (!$detailId) {
+                        throw new Exception("Gagal insert detail ke-$index");
+                    }
+
+                    // Update jml_keluar di inventorifinishgood
+                    $updated = DB::table('inventorifinishgood')
+                        ->where('id', $detail['inventorifinishgood_id'])
+                        ->increment('jml_keluar', floatval($detail['quantity_out']));
+
+                    if (!$updated) {
+                        throw new Exception("Gagal update inventory ID {$detail['inventorifinishgood_id']}");
+                    }
+
+                    Log::info("Updated inventory ID {$detail['inventorifinishgood_id']}, added {$detail['quantity_out']} to jml_keluar");
+                }
+
+                // Jika status close, buat entry baru di inventorifinishgood untuk hasil blend
+                
+
+                DB::commit();
+                Log::info('Transaction committed successfully');
+
+                return redirect()->route('post-roast-blends.index')
+                    ->with('success', "Post Roast Blend {$blendId} berhasil disimpan");
+
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::error('Database transaction failed:', [
+                    'error' => $e->getMessage(),
+                    'line' => $e->getLine(),
+                    'file' => $e->getFile()
+                ]);
+                
+                return redirect()->back()
+                    ->withErrors(['database' => 'Database error: ' . $e->getMessage()])
+                    ->withInput()
+                    ->with('error', 'Terjadi kesalahan database: ' . $e->getMessage());
+            }
+
         } catch (Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error'=>$e->getMessage()])->withInput();
+            Log::error('General error in store method:', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    // Method untuk debugging - bisa dihapus setelah selesai
+    public function debugTables()
+    {
+        try {
+            // Cek tabel yang ada
+            $tables = DB::select('SHOW TABLES');
+            Log::info('Available tables:', $tables);
+
+            // Cek struktur tabel inventorifinishgood
+            if (DB::getSchemaBuilder()->hasTable('inventorifinishgood')) {
+                $columns = DB::select('DESCRIBE inventorifinishgood');
+                Log::info('inventorifinishgood structure:', $columns);
+            }
+
+            // Cek data sample
+            $sampleInventory = DB::table('inventorifinishgood')
+                ->where('id', 1)
+                ->first();
+            Log::info('Sample inventory data:', (array)$sampleInventory);
+
+            return response()->json([
+                'tables' => $tables,
+                'sample_inventory' => $sampleInventory
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Debug tables error:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 

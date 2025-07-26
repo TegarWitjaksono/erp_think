@@ -11,11 +11,11 @@
                                 <i class="fas fa-tags fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Add Inventory Bahan Baku</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Edit Inventory Bahan Baku</h1>
                                 <div
                                     style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                                 </div>
-                                <p class="text-muted mt-2 mb-0">Add Inventory Bahan Baku</p>
+                                <p class="text-muted mt-2 mb-0">Edit Inventory Bahan Baku</p>
                             </div>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                                     <li class="breadcrumb-item">
                                         <a href="{{ route('sku.index') }}" style="color: #79523B;">SKU</a>
                                     </li>
-                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Inventory GoodFinished</li>
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Inventory Bahan Baku</li>
                                 </ol>
                             </nav>
                         </div>
@@ -57,19 +57,19 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Add Inventory Bahan Baku</h3>
+                                <h3 class="card-title">Edit Inventory Bahan Baku</h3>
                             </div>
 
-                            <form action="{{route('inventory.store')}}" method="POST">
+                            <form action="{{ route('inventory.update', $data->id) }}" method="POST">
                                 @csrf
-                               
+                                @method('PUT')
 
                                 <div class="card-body">
-                                  <div class="form-group">
+                                    <div class="form-group">
                                         <label>Penerima</label>
                                         <select name="penerimaan_id" class="form-control">
                                             @foreach($penerimaanList as $k)
-                                                <option value="{{ $k->id_penerimaan }}" {{ (old('penerimaan_id', $result->penerimaan_id ?? '') == $k->id_penerimaan) ? 'selected' : '' }}>
+                                                <option value="{{ $k->id_penerimaan }}" {{ (old('penerimaan_id', $data->penerimaan_id) == $k->id_penerimaan) ? 'selected' : '' }}>
                                                     {{ $k->keterangan }}
                                                 </option>
                                             @endforeach
@@ -80,87 +80,76 @@
                                         <label>Detail Penerima</label>
                                         <select name="id_detail_penerimaan" class="form-control">
                                             @foreach($details as $k)
-                                                <option value="{{ $k->id_detail_penerimaan }}" {{ (old('id_detail_penerimaan', $result->id_detail_penerimaan ?? '') == $k->id_detail_penerimaan) ? 'selected' : '' }}>
+                                                <option value="{{ $k->id_detail_penerimaan }}" {{ (old('id_detail_penerimaan', $data->id_detail_penerimaan) == $k->id_detail_penerimaan) ? 'selected' : '' }}>
                                                     {{ $k->harga_per_kg }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
 
-
                                     <div class="form-group">
                                         <label>Pilih Karung</label>
                                         <select name="karung_id" class="form-control">
                                             @foreach($karung as $k)
-                                                <option value="{{ $k->id }}" {{ (old('karung_id', $result->karung_id ?? '') == $k) ? 'selected' : '' }}>
+                                                <option value="{{ $k->id }}" {{ (old('karung_id', $data->karung_id) == $k->id) ? 'selected' : '' }}>
                                                     {{ $k->kode_karung }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
 
-                                  
                                     <div class="form-group">
                                         <label>Catatan</label>
-                                        <textarea
-                                            name="catatan"
-                                            class="form-control"
-                                        >{{ old('catatan', $result->catatan ?? '') }}</textarea>
+                                        <textarea name="catatan" class="form-control">{{ old('catatan', $data->catatan) }}</textarea>
                                     </div>
-                                  <div class="form-group">
-                                    <label for="kadar_air">Kadar Air (%)</label>
-                                    <input type="number" step="0.01" name="kadar_air" id="kadar_air"
-                                        class="form-control @error('kadar_air') is-invalid @enderror"
-                                        value="{{ old('kadar_air') }}" required>
-                                    @error('kadar_air')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                  {{-- Bulk --}}
-                                  <div class="form-group">
-                                      <label for="bulk">Bulk densitas</label>
-                                      <div class="input-group">
-                                          <input type="number" step="0.01" name="bulk_densitas" id="bulk_densitas"
-                                              class="form-control @error('bulk_densitas') is-invalid @enderror"
-                                              value="{{ old('bulk_densitas') }}" required placeholder="Value">
-                                          
-                                      </div>
-                                      @error('bulk_densitas')
-                                          <span class="text-danger">{{ $message }}</span>
-                                      @enderror
-                                     
-                                  </div>
 
-                                  <div class="form-group">
-                                    <label for="debit_qty">Debit Qty</label>
-                                    <input type="number" step="0.01" name="debit_qty" id="debit_qty"
-                                        class="form-control @error('debit_qty') is-invalid @enderror"
-                                        value="{{ old('debit_qty') }}" required>
-                                    @error('debit_qty')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                    <div class="form-group">
+                                        <label for="kadar_air">Kadar Air (%)</label>
+                                        <input type="number" step="0.01" name="kadar_air" id="kadar_air"
+                                            class="form-control @error('kadar_air') is-invalid @enderror"
+                                            value="{{ old('kadar_air', $data->kadar_air) }}" required>
+                                        @error('kadar_air')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="credit_qty">Credit Qty</label>
-                                    <input type="number" step="0.01" name="credit_qty" id="credit_qty"
-                                        class="form-control @error('credit_qty') is-invalid @enderror"
-                                        value="{{ old('credit_qty') }}" required>
-                                    @error('credit_qty')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                </div>
+                                    <div class="form-group">
+                                        <label for="bulk_densitas">Bulk Densitas</label>
+                                        <input type="number" step="0.01" name="bulk_densitas" id="bulk_densitas"
+                                            class="form-control @error('bulk_densitas') is-invalid @enderror"
+                                            value="{{ old('bulk_densitas', $data->bulk_densitas) }}" required>
+                                        @error('bulk_densitas')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
-                               
+                                    <div class="form-group">
+                                        <label for="debit_qty">Debit Qty</label>
+                                        <input type="number" step="0.01" name="debit_qty" id="debit_qty"
+                                            class="form-control @error('debit_qty') is-invalid @enderror"
+                                            value="{{ old('debit_qty', $data->debit_qty) }}" required>
+                                        @error('debit_qty')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="credit_qty">Credit Qty</label>
+                                        <input type="number" step="0.01" name="credit_qty" id="credit_qty"
+                                            class="form-control @error('credit_qty') is-invalid @enderror"
+                                            value="{{ old('credit_qty', $data->credit_qty) }}" required>
+                                        @error('credit_qty')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
 
                                 <div class="card-footer">
-                                    <button type="button" class="btn btn-secondary" onclick="window.history.back();">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" class="btn btn-coffee">SIMPAN</button>
+                                    <button type="button" class="btn btn-secondary" onclick="window.history.back();">Cancel</button>
+                                    <button type="submit" class="btn btn-coffee">UPDATE</button>
                                 </div>
                             </form>
+
 
                         </div>
                     </div>

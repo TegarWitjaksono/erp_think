@@ -1,15 +1,11 @@
 <?php
 
 
-use App\Exports\JurusanExport;
-use App\Imports\JurusanImport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
-use App\Exports\TemplateJurusanExport;
-use App\Http\Controllers\FdController;
 use App\Http\Controllers\SkuController;
-use App\Http\Controllers\HomeController;
+
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\LoginController;
 
@@ -33,6 +29,11 @@ use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\BatchProductionResultController;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\GlController;
+use App\Http\Controllers\JournalController;
+use App\Http\Controllers\KarungController;
+use App\Http\Controllers\LevelRoastController;
+use App\Http\Controllers\MethodController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('list_batch_production/update/{id}',[BatchProductionController::class,'updateBatchInput'])->name('batch.update');
     Route::delete('list_batch_production/delete/{id}',[BatchProductionController::class,'deleteBatchInput'])->name('batch.delete');
 
+    Route::resource('methods',MethodController::class);
+    Route::resource('level-roast',LevelRoastController::class);
+    Route::resource('karung',KarungController::class);
+
+    Route::get('gl',[JournalController::class,'index']);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });
 

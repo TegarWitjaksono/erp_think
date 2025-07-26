@@ -68,9 +68,9 @@
                                     <div class="form-group">
                                         <label>Batch Production</label>
                                         <select name="id_bacthproduction" class="form-control">
-                                            @foreach($batches as $k => $v)
-                                                <option value="{{ $k }}" {{ (old('id_bacthproduction', $result->batch_production_id ?? '') == $k) ? 'selected' : '' }}>
-                                                    {{ $v }}
+                                            @foreach($batches as $k)
+                                                <option value="{{ $k->id }}" {{ (old('id_bacthproduction', $result->batch_production_id ?? '') == $k) ? 'selected' : '' }}>
+                                                    {{ $k->id }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -79,9 +79,9 @@
                                     <div class="form-group">
                                         <label>Level Roast</label>
                                         <select name="level_roasting" class="form-control">
-                                            @foreach($levels as $k => $v)
-                                                <option value="{{ $k }}" {{ (old('level_roasting', $result->level_roast_id ?? '') == $k) ? 'selected' : '' }}>
-                                                    {{ $v }}
+                                            @foreach($levels as $k )
+                                                <option value="{{ $k->id }}" {{ (old('level_roasting', $result->level_roast_id ?? '') == $k) ? 'selected' : '' }}>
+                                                    {{ $k->name }}
                                                 </option>
                                             @endforeach
                                         </select>

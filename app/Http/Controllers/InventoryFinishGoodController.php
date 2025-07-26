@@ -11,7 +11,7 @@ class InventoryFinishGoodController extends Controller
     public function index(Request $request)
 {
     $query = DB::table('inventorifinishgood')
-        ->join('master_barang', 'inventorifinishgood.id_product', '=', 'master_barang.id_barang')
+        ->leftJoin('master_barang', 'inventorifinishgood.id_product', '=', 'master_barang.id_barang')
         ->select(
             'inventorifinishgood.*',
             'master_barang.nama_barang as product_name',

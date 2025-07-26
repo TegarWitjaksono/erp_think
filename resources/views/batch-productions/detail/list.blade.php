@@ -45,9 +45,11 @@
                     </div>
                 @endif
                 @if (session('error'))
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                        <strong class="font-bold">Gagal!</strong>
-                        <span class="block sm:inline">{{ session('error') }}</span>
+                   <div class="alert alert-danger alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Gagal!</strong> {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                 @endif
 

@@ -9,18 +9,32 @@
 
         <section class="content">
             <div class="container-fluid">
+                 @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Error!</strong> {{ session('error') }}
+                    </div>
+                @endif
+                @if($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Validation Error!</strong>
+                        <ul class="mb-0 mt-2">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
                 <div class="card shadow-sm">
-                    <div class="card-header bg-white">
+                    <div class="card-header text-white">
                         <i class="fas fa-table me-1"></i>
                         {{ isset($blend) ? 'Edit' : 'Tambah' }} Post Roast Blend
                     </div>
                     <div class="card-body">
                         <form method="POST"
-                              action="{{ isset($blend)
-                                        ? route('post-roast-blends.update', $blend->id)
-                                        : route('post-roast-blends.store') }}">
+                              action="{{route('post-roast-blends.store')}}">
                             @csrf
-                            @isset($blend) @method('PUT') @endisset
+                          
 
                             {{-- Field-field utama --}}
                             <div class="mb-3">
@@ -69,46 +83,76 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach(old('details', $details ?? []) as $i => $d)
+                                    @forelse(old('details', $details ?? []) as $i => $d)
                                         <tr>
                                             <td>
                                                 <select name="details[{{ $i }}][inventorifinishgood_id]" class="form-control inventory-select">
                                                     <option value="">-- Pilih Inventory --</option>
                                                     @foreach($inventory as $item)
                                                         <option value="{{ $item->id }}"
-                                                            data-description="{{ $item->bean }} / {{ $item->level_roast }} / {{ $item->note_flavour }}"
-                                                            {{ ($d->inventorifinishgood_id??'') == $item->id ? 'selected':'' }}>
-                                                            {{ $item->id }} – {{ $item->bean }} / {{ $item->level_roast }}
+                                                            data-description="{{ $item->jenis }} / {{ $item->Id_batch_production }} / {{ $item->expired_date }}"
+                                                            {{ (is_array($d) ? ($d['inventorifinishgood_id'] ?? '') : ($d->inventorifinishgood_id ?? '')) == $item->id ? 'selected' : '' }}>
+                                                            {{ $item->id }} – {{ $item->jenis }} {{ $item->Id_batch_production ? '/ ' . $item->Id_batch_production : '' }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </td>
                                             <td>
                                                 <input type="text"
-                                                       name="details[{{ $i }}][reference_id]"
-                                                       class="form-control"
-                                                       value="{{ $d->reference_id }}">
+                                                    name="details[{{ $i }}][reference_id]"
+                                                    class="form-control"
+                                                    value="{{ is_array($d) ? ($d['reference_id'] ?? '') : ($d->reference_id ?? '') }}">
                                             </td>
                                             <td>
                                                 <input type="text"
-                                                       name="details[{{ $i }}][description]"
-                                                       class="form-control description-field"
-                                                       readonly
-                                                       value="{{ $d->description }}">
+                                                    name="details[{{ $i }}][description]"
+                                                    class="form-control description-field"
+                                                    readonly
+                                                    value="{{ is_array($d) ? ($d['description'] ?? '') : ($d->description ?? '') }}">
                                             </td>
                                             <td>
-                                                <input type="number" step="0.001"
-                                                       name="details[{{ $i }}][quantity_out]"
-                                                       class="form-control qty-out"
-                                                       value="{{ $d->quantity_out }}">
+                                                <input type="number" step="0.01"
+                                                    name="details[{{ $i }}][quantity_out]"
+                                                    class="form-control qty-out"
+                                                    value="{{ is_array($d) ? ($d['quantity_out'] ?? 0) : ($d->quantity_out ?? 0) }}">
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-danger remove-detail">-</button>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        {{-- Baris kosong jika tidak ada data --}}
+                                        <tr>
+                                            <td>
+                                                <select name="details[0][inventorifinishgood_id]" class="form-control inventory-select">
+                                                    <option value="">-- Pilih Inventory --</option>
+                                                    @foreach($inventory as $item)
+                                                        <option value="{{ $item->id }}"
+                                                            data-description="{{ $item->jenis }} / {{ $item->Id_batch_production }} / {{ $item->expired_date }}">
+                                                            {{ $item->id }} – {{ $item->jenis }} {{ $item->Id_batch_production ? '/ ' . $item->Id_batch_production : '' }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="details[0][reference_id]" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input type="text" name="details[0][description]" class="form-control description-field" readonly>
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.01" name="details[0][quantity_out]" class="form-control qty-out" value="0">
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-danger remove-detail">-</button>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
+
+
+
 
                             <button type="submit" class="btn btn-primary" id="save-btn">Simpan</button>
                         </form>
@@ -117,71 +161,132 @@
             </div>
         </section>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const firstSelect = document.querySelector('.inventory-select');
+        if (!firstSelect) return;
+        const optionsHTML = firstSelect.innerHTML;
 
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                // Ambil opsi dari select pertama sebagai template
-                const firstSelect = document.querySelector('.inventory-select');
-                if (!firstSelect) return;
-                const optionsHTML = firstSelect.innerHTML;
+        function onInventoryChange(e) {
+            const sel = e.target;
+            const desc = sel.selectedOptions[0]?.dataset.description || '';
+            sel.closest('tr').querySelector('.description-field').value = desc;
+        }
 
-                // Handler change untuk mengisi description
-                function onInventoryChange(e) {
-                    const sel = e.target;
-                    const desc = sel.selectedOptions[0]?.dataset.description || '';
-                    sel.closest('tr').querySelector('.description-field').value = desc;
+        // Pasang listener pada baris existing
+        document.querySelectorAll('.inventory-select').forEach(el => {
+            el.addEventListener('change', onInventoryChange);
+            // Trigger change event untuk existing selected values
+            if (el.value) {
+                onInventoryChange({ target: el });
+            }
+        });
+
+        // Event listener untuk tombol remove existing
+        document.querySelectorAll('.remove-detail').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tbody = document.querySelector('#details-table tbody');
+                const rows = tbody.querySelectorAll('tr');
+                
+                // Jangan hapus jika hanya ada 1 baris
+                if (rows.length > 1) {
+                    e.target.closest('tr').remove();
+                    // Update index setelah remove
+                    updateRowIndexes();
+                } else {
+                    // Reset baris terakhir jika hanya ada 1
+                    const row = e.target.closest('tr');
+                    row.querySelector('.inventory-select').value = '';
+                    row.querySelector('input[name*="reference_id"]').value = '';
+                    row.querySelector('.description-field').value = '';
+                    row.querySelector('.qty-out').value = '0';
+                }
+            });
+        });
+
+        // Event listener untuk tombol add
+        document.getElementById('add-detail').addEventListener('click', () => {
+            const tbody = document.querySelector('#details-table tbody');
+            const idx = tbody.querySelectorAll('tr').length;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <select name="details[${idx}][inventorifinishgood_id]" class="form-control inventory-select">
+                        ${optionsHTML}
+                    </select>
+                </td>
+                <td><input type="text" name="details[${idx}][reference_id]" class="form-control"></td>
+                <td><input type="text" name="details[${idx}][description]" class="form-control description-field" readonly></td>
+                <td><input type="number" step="0.01" name="details[${idx}][quantity_out]" class="form-control qty-out" value="0"></td>
+                <td><button type="button" class="btn btn-sm btn-danger remove-detail">-</button></td>
+            `;
+            tbody.appendChild(row);
+
+            // Attach event listeners untuk baris baru
+            row.querySelector('.inventory-select').addEventListener('change', onInventoryChange);
+            row.querySelector('.remove-detail').addEventListener('click', (e) => {
+                const tbody = document.querySelector('#details-table tbody');
+                const rows = tbody.querySelectorAll('tr');
+                
+                if (rows.length > 1) {
+                    row.remove();
+                    updateRowIndexes();
+                }
+            });
+        });
+
+        // Function untuk update index setelah remove
+        function updateRowIndexes() {
+            const tbody = document.querySelector('#details-table tbody');
+            const rows = tbody.querySelectorAll('tr');
+            
+            rows.forEach((row, index) => {
+                // Update name attributes
+                row.querySelector('.inventory-select').name = `details[${index}][inventorifinishgood_id]`;
+                row.querySelector('input[name*="reference_id"]').name = `details[${index}][reference_id]`;
+                row.querySelector('.description-field').name = `details[${index}][description]`;
+                row.querySelector('.qty-out').name = `details[${index}][quantity_out]`;
+            });
+        }
+
+        // Validation sebelum submit
+        const saveBtn = document.getElementById('save-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', (e) => {
+                const total = parseFloat(document.getElementById('total-weight')?.value || 0);
+                const sum = Array.from(document.querySelectorAll('.qty-out'))
+                    .reduce((a, inp) => a + parseFloat(inp.value || 0), 0);
+                
+                if (Math.abs(sum - total) > 0.001) {
+                    e.preventDefault();
+                    alert(`Jumlah total out (${sum.toFixed(2)}) tidak sama dengan berat total (${total.toFixed(2)}).`);
+                    return false;
                 }
 
-                // Pasang listener pada baris existing
-                document.querySelectorAll('.inventory-select').forEach(el => {
-                    el.addEventListener('change', onInventoryChange);
-                    if (el.value) {
-                        // trigger sekali untuk mengisi field jika sudah ada value
-                        onInventoryChange({ target: el });
-                    }
-                });
+                // Validasi minimal ada 1 inventory dipilih
+                const selectedInventories = Array.from(document.querySelectorAll('.inventory-select'))
+                    .filter(sel => sel.value !== '');
+                
+                if (selectedInventories.length === 0) {
+                    e.preventDefault();
+                    alert('Minimal pilih 1 inventory!');
+                    return false;
+                }
 
-                // Tambah baris baru
-                document.getElementById('add-detail').addEventListener('click', () => {
-                    const tbody = document.querySelector('#details-table tbody');
-                    const idx = tbody.children.length;
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>
-                            <select name="details[${idx}][inventorifinishgood_id]" class="form-control inventory-select">
-                                ${optionsHTML}
-                            </select>
-                        </td>
-                        <td><input type="text" name="details[${idx}][reference_id]" class="form-control"></td>
-                        <td><input type="text" name="details[${idx}][description]" class="form-control description-field" readonly></td>
-                        <td><input type="number" step="0.001" name="details[${idx}][quantity_out]" class="form-control qty-out"></td>
-                        <td><button type="button" class="btn btn-sm btn-danger remove-detail">-</button></td>
-                    `;
-                    tbody.append(row);
-                    // pasang listener
-                    row.querySelector('.remove-detail').addEventListener('click', () => row.remove());
-                    row.querySelector('.inventory-select').addEventListener('change', onInventoryChange);
-                });
-
-                // Hapus baris (backup handler)
-                document.addEventListener('click', e => {
-                    if (e.target.matches('.remove-detail')) {
-                        e.target.closest('tr').remove();
-                    }
-                });
-
-                // Validasi total berat vs jumlah out
-                document.getElementById('save-btn').addEventListener('click', e => {
-                    const total = parseFloat(document.getElementById('total-weight').value) || 0;
-                    const sum = Array.from(document.querySelectorAll('.qty-out'))
-                        .reduce((a, inp) => a + parseFloat(inp.value || 0), 0);
-                    if (Math.abs(sum - total) > 0.001) {
-                        e.preventDefault();
-                        alert('Total Jumlah out harus sama dengan Berat total');
-                    }
-                });
+                // Validasi quantity tidak boleh 0 atau kosong
+                const invalidQuantities = Array.from(document.querySelectorAll('.qty-out'))
+                    .filter(inp => parseFloat(inp.value || 0) <= 0);
+                
+                if (invalidQuantities.length > 0) {
+                    e.preventDefault();
+                    alert('Jumlah quantity out harus lebih dari 0!');
+                    return false;
+                }
             });
-        </script>
-    @endpush
+        }
+    });
+</script>
+
+   
 @endsection

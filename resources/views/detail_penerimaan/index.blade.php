@@ -44,6 +44,14 @@
                         </button>
                     </div>
                 @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Error!</strong> {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
 
                 <a href="{{ route('master_penerimaan.index') }}" class="btn btn-light mb-3" style="color: #79523B; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
                     <i class="fas fa-arrow-left mr-2"></i> Back

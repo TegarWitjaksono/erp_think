@@ -26,8 +26,8 @@ class BatchProductionResultController extends Controller
 
     public function create()
     {
-        $batches = DB::table('batchproduction')->pluck('id', 'id');
-        $levels  = DB::table('level_roast')->pluck('name', 'id');
+        $batches = DB::table('batchproduction')->get();
+        $levels  = DB::table('level_roast')->get();
 
         return view('batch-results.create', compact('batches','levels'));
     }
