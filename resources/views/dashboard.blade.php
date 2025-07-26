@@ -727,24 +727,20 @@
                 </li>
 
                 {{-- LAPORAN --}}
-                <li class="nav-header">Laporan & Dashboard</li>
+                <li class="nav-header">Laporan</li>
+                
                 <li class="nav-item">
-                    <a href="/dashboards" class="nav-link {{ request()->is('dashboards*') ? 'active' : '' }}">
-                        <i class="fas fa-tachometer-alt"></i><p>Dashboards</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/reports/inventory/raw" class="nav-link {{ request()->is('reports/inventory/raw*') ? 'active' : '' }}">
+                    <a href="/inventory/current-stock" class="nav-link {{ request()->is('reports/inventory/raw*') ? 'active' : '' }}">
                         <i class="fas fa-clipboard-list"></i><p>Report Inventory Bahan Baku</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/reports/inventory/fg" class="nav-link {{ request()->is('reports/inventory/fg*') ? 'active' : '' }}">
+                    <a href="/inventory_fg/report" class="nav-link {{ request()->is('inventory_fg/report*') ? 'active' : '' }}">
                         <i class="fas fa-clipboard-check"></i><p>Report Inventory FG</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/reports/batch" class="nav-link {{ request()->is('reports/batch*') ? 'active' : '' }}">
+                    <a href="batch-production/report" class="nav-link {{ request()->is('batch-production/report*') ? 'active' : '' }}">
                         <i class="fas fa-fire-alt"></i><p>Report Batch Production</p>
                     </a>
                 </li>

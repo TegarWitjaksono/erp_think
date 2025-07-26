@@ -6,6 +6,7 @@ use App\Models\InventoryBahanBaku;
 use App\Http\Requests\InventoryBahanBakuRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class InventoryBahanBakuController extends Controller
 {
     public function index()
@@ -33,7 +34,15 @@ class InventoryBahanBakuController extends Controller
 
         return redirect()->route('inventory.raw.index')->with('success', 'Data berhasil disimpan');
     }
+    public function show()
+    {
+        $items = DB::table('inventory')
+            ->join('master_penerimaan', 'inventory.penerimaan_id', '=', 'master_penerimaan.id_penerimaan')
+            ->select('inventory.*', 'master_penerimaan.*')
+            ->get();
 
+        return view('inventory.raw.index', compact('items'));
+    }
     public function edit($id)
     {
         $inventory = DB::table('inventory')->find($id);
@@ -63,4 +72,194 @@ class InventoryBahanBakuController extends Controller
 
         return redirect()->route('inventory.raw.index')->with('success', 'Data dinonaktifkan');
     }
+
+    
+
+    /**
+     * Menampilkan laporan inventory
+     */
+    public function report(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
+        
+        // Data untuk tabel laporan
+        $reportData = $this->getInventoryReportData($startDate, $endDate);
+        
+        // Data untuk grafik
+        $chartData = $this->getInventoryChartData($startDate, $endDate);
+        
+        // Summary data
+        $summary = $this->getInventorySummary($startDate, $endDate);
+        
+        return view('inventory.raw.report', compact('reportData', 'chartData', 'summary', 'startDate', 'endDate'));
+    }
+
+    /**
+     * Mendapatkan data laporan inventory
+     */
+    private function getInventoryReportData($startDate, $endDate)
+    {
+        return DB::table('inventory as i')
+            ->join('master_penerimaan as mp', 'i.penerimaan_id', '=', 'mp.id_penerimaan')
+            ->leftJoin('detail_penerimaan as dp', 'i.id_detail_penerimaan', '=', 'dp.id_detail_penerimaan')
+            ->select([
+                'i.id',
+                'i.timestamp',
+                'mp.keterangan as penerimaan_keterangan',
+                'mp.id_batch_mp',
+                'dp.id_batch',
+                'i.kadar_air',
+                'i.bulk_densitas',
+                'i.debit_qty',
+                'i.credit_qty',
+                DB::raw('(i.credit_qty - i.debit_qty) as saldo_qty'),
+                'i.catatan'
+            ])
+            ->whereBetween('i.timestamp', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->orderBy('i.timestamp', 'desc')
+            ->get();
+    }
+
+    /**
+     * Mendapatkan data untuk grafik
+     */
+    private function getInventoryChartData($startDate, $endDate)
+    {
+        // Data stok per hari
+        $dailyStock = DB::table('inventory as i')
+            ->select([
+                DB::raw('DATE(i.timestamp) as tanggal'),
+                DB::raw('SUM(i.credit_qty - i.debit_qty) as total_stock')
+            ])
+            ->whereBetween('i.timestamp', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->groupBy(DB::raw('DATE(i.timestamp)'))
+            ->orderBy('tanggal')
+            ->get();
+
+        // Data transaksi per hari (masuk vs keluar)
+        $dailyTransactions = DB::table('inventory as i')
+            ->select([
+                DB::raw('DATE(i.timestamp) as tanggal'),
+                DB::raw('SUM(i.credit_qty) as total_masuk'),
+                DB::raw('SUM(i.debit_qty) as total_keluar')
+            ])
+            ->whereBetween('i.timestamp', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->groupBy(DB::raw('DATE(i.timestamp)'))
+            ->orderBy('tanggal')
+            ->get();
+
+        // Data kadar air rata-rata per hari
+        $dailyMoisture = DB::table('inventory as i')
+            ->select([
+                DB::raw('DATE(i.timestamp) as tanggal'),
+                DB::raw('AVG(i.kadar_air) as avg_kadar_air')
+            ])
+            ->whereBetween('i.timestamp', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->groupBy(DB::raw('DATE(i.timestamp)'))
+            ->orderBy('tanggal')
+            ->get();
+
+        // Data bulk density rata-rata per hari
+        $dailyBulkDensity = DB::table('inventory as i')
+            ->select([
+                DB::raw('DATE(i.timestamp) as tanggal'),
+                DB::raw('AVG(i.bulk_densitas) as avg_bulk_density')
+            ])
+            ->whereBetween('i.timestamp', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->groupBy(DB::raw('DATE(i.timestamp)'))
+            ->orderBy('tanggal')
+            ->get();
+
+        return [
+            'dailyStock' => $dailyStock,
+            'dailyTransactions' => $dailyTransactions,
+            'dailyMoisture' => $dailyMoisture,
+            'dailyBulkDensity' => $dailyBulkDensity
+        ];
+    }
+
+    /**
+     * Mendapatkan summary data
+     */
+    private function getInventorySummary($startDate, $endDate)
+    {
+        $summary = DB::table('inventory as i')
+            ->select([
+                DB::raw('COUNT(*) as total_transaksi'),
+                DB::raw('SUM(i.credit_qty) as total_masuk'),
+                DB::raw('SUM(i.debit_qty) as total_keluar'),
+                DB::raw('SUM(i.credit_qty - i.debit_qty) as saldo_akhir'),
+                DB::raw('AVG(i.kadar_air) as avg_kadar_air'),
+                DB::raw('AVG(i.bulk_densitas) as avg_bulk_density'),
+                DB::raw('MIN(i.kadar_air) as min_kadar_air'),
+                DB::raw('MAX(i.kadar_air) as max_kadar_air'),
+                DB::raw('MIN(i.bulk_densitas) as min_bulk_density'),
+                DB::raw('MAX(i.bulk_densitas) as max_bulk_density')
+            ])
+            ->whereBetween('i.timestamp', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->first();
+
+        return $summary;
+    }
+
+    /**
+     * Export laporan ke Excel
+     */
+    public function exportReport(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
+        
+        $reportData = $this->getInventoryReportData($startDate, $endDate);
+        $summary = $this->getInventorySummary($startDate, $endDate);
+        
+        // Generate Excel using Laravel Excel or similar package
+        // This is a placeholder - you'll need to implement the actual Excel export
+        return response()->json([
+            'message' => 'Export functionality needs to be implemented with Laravel Excel package',
+            'data' => $reportData,
+            'summary' => $summary
+        ]);
+    }
+
+    /**
+     * API endpoint untuk data grafik (untuk AJAX calls)
+     */
+    public function getChartData(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
+        
+        $chartData = $this->getInventoryChartData($startDate, $endDate);
+        
+        return response()->json($chartData);
+    }
+
+    /**
+     * Laporan stok real-time
+     */
+    public function currentStock()
+    {
+        $currentStock = DB::table('inventory as i')
+            ->join('master_penerimaan as mp', 'i.penerimaan_id', '=', 'mp.id_penerimaan')
+            ->leftJoin('detail_penerimaan as dp', 'i.id_detail_penerimaan', '=', 'dp.id_detail_penerimaan')
+            ->select([
+                'mp.id_batch_mp',
+                'dp.id_batch',
+                'mp.keterangan',
+                DB::raw('SUM(i.credit_qty - i.debit_qty) as current_stock'),
+                DB::raw('AVG(i.kadar_air) as avg_kadar_air'),
+                DB::raw('AVG(i.bulk_densitas) as avg_bulk_density'),
+                DB::raw('MAX(i.timestamp) as last_update')
+            ])
+            ->groupBy('mp.id_batch_mp', 'dp.id_batch', 'mp.keterangan')
+            ->having('current_stock', '>', 0)
+            ->orderBy('last_update', 'desc')
+            ->get();
+        
+        return view('inventory.raw.current-stock', compact('currentStock'));
+    }
+
+    
 }

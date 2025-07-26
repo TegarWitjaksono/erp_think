@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\BatchProductionRequest;
-
+use Carbon\Carbon;
 class BatchProductionController extends Controller
 {
     public function index()
@@ -584,5 +584,84 @@ class BatchProductionController extends Controller
 
         return redirect()->route('batch.list',$idBatch)->with('success', 'Data berhasil dihapus.');
 
+    }
+
+
+    public function report(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
+
+        $reportData = $this->getBatchProductionData($startDate, $endDate);
+        $summary = $this->getBatchProductionSummary($startDate, $endDate);
+
+        return view('batch-productions.report', compact('reportData', 'summary', 'startDate', 'endDate'));
+    }
+
+    private function getBatchProductionData($startDate, $endDate)
+    {
+        return DB::table('batchproduction as bp')
+            ->leftJoin('batchproduction_input as bpi', 'bp.id', '=', 'bpi.batchproduction_id')
+            ->leftJoin('batchproductionresult as bpr', 'bp.id', '=', DB::raw('bpr.id_bacthproduction'))
+            ->leftJoin('level_roast as lr', 'bp.level_roasting_id', '=', 'lr.id')
+            ->leftJoin('machines as m', 'bp.id_mesin', '=', 'm.id')
+            ->select(
+                'bp.id',
+                'bp.datetime',
+                'bp.status',
+                'bp.attention',
+                'bp.estimate_expire_date',
+                'bp.berat_diroasting_kg',
+                'bp.catatan',
+                'lr.name as level_roast',
+                'm.merk as mesin',
+                'm.location',
+                DB::raw('SUM(bpi.qty_out) as total_input'),
+                DB::raw('AVG(bpi.kadar_air) as avg_kadar_air_input'),
+                DB::raw('AVG(bpi.bulk_densitas) as avg_bulk_densitas'),
+                DB::raw('SUM(bpr.berat_akhir) as total_output'),
+                DB::raw('AVG(bpr.kadar_air) as avg_kadar_air_output'),
+                DB::raw('AVG(bpr.agtron) as avg_agtron'),
+                DB::raw('AVG(bpr.cupping_score) as avg_cupping_score')
+            )
+            ->whereBetween('bp.datetime', [$startDate . ' 00:00:00', $endDate . ' 23:59:59'])
+            ->groupBy(
+                'bp.id', 'bp.datetime', 'bp.status', 'bp.attention', 'bp.estimate_expire_date',
+                'bp.berat_diroasting_kg', 'bp.catatan', 'lr.name', 'm.merk', 'm.location'
+            )
+            ->orderBy('bp.datetime', 'desc')
+            ->get();
+    }
+
+    private function getBatchProductionSummary($startDate, $endDate)
+    {
+        $base = DB::table('batchproduction as bp')
+            ->leftJoin('batchproduction_input as bpi', 'bp.id', '=', 'bpi.batchproduction_id')
+            ->leftJoin('batchproductionresult as bpr', 'bp.id', '=', DB::raw('bpr.id_bacthproduction'))
+            ->whereBetween('bp.datetime', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+
+        $summary = $base->select([
+            DB::raw('COUNT(DISTINCT bp.id) as total_batch'),
+            DB::raw('SUM(bpi.qty_out) as total_input'),
+            DB::raw('SUM(bpr.berat_akhir) as total_output'),
+            DB::raw('AVG(bpr.cupping_score) as avg_cupping_score'),
+            DB::raw('AVG(bpr.kadar_air) as avg_kadar_air_output')
+        ])->first();
+
+        // Breakdown status
+        $statusBreakdown = clone $base;
+        $summary->status_breakdown = $statusBreakdown->select(
+            'bp.status',
+            DB::raw('COUNT(bp.id) as total')
+        )->groupBy('bp.status')->get();
+
+        // Breakdown attention
+        $attentionBreakdown = clone $base;
+        $summary->attention_breakdown = $attentionBreakdown->select(
+            'bp.attention',
+            DB::raw('COUNT(bp.id) as total')
+        )->groupBy('bp.attention')->get();
+
+        return $summary;
     }
 }

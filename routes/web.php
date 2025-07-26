@@ -31,7 +31,7 @@ use App\Http\Controllers\FinishedProductsController;
 use App\Http\Controllers\InventoryBahanBakuController;
 use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\BatchProductionResultController;
-
+use Illuminate\Http\Request;
 
 
 /*
@@ -62,12 +62,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('master_sku', MasterSkuController::class);
     Route::resource('sku', SkuController::class);
 
-    Route::resource('batch-productions',BatchProductionController::class);
+    Route::resource('batch-productions',BatchProductionController::class)->except(['show']);
     Route::post('batch-productions/start/{id}',[BatchProductionController::class,'start'])->name('batch-productions.start');
     Route::post('batch-productions/cancel/{id}',[BatchProductionController::class,'cancel'])->name('batch-productions.cancel');
     Route::post('batch-productions/close{id}',[BatchProductionController::class,'close'])->name('batch-productions.close');
     
     
+    Route::get('/batch-production/report', [BatchProductionController::class, 'report'])->name('batch-production.report');
+
+
+
 
     Route::get('list_batch_production/{id}',[BatchProductionController::class,'list'])->name('batch.list');
     Route::post('list_batch_production/{id}',[BatchProductionController::class,'storeBatchInput'])->name('batch.input');
@@ -130,10 +134,40 @@ Route::get('get-master-penerimaan/{id}', function($id) {
 
 
 
-Route::resource('inventory',InventoryBahanBakuController::class);
+Route::resource('inventory', InventoryBahanBakuController::class)->except(['show']);
+
+
+Route::prefix('inventory')->name('inventory.')->group(function () {
+   
+
+    // Report & Data routes
+    Route::get('/report', [InventoryBahanBakuController::class, 'report'])->name('report');
+    Route::get('/current-stock', [InventoryBahanBakuController::class, 'currentStock'])->name('current-stock');
+    Route::get('/export-report', [InventoryBahanBakuController::class, 'exportReport'])->name('export');
+    Route::get('/chart-data', [InventoryBahanBakuController::class, 'getChartData'])->name('chart-data');
+});
+
+// Routes untuk inventory (umum)
+Route::resource('inventory', InventoryBahanBakuController::class);
+
+// Optional: API routes for AJAX
+Route::prefix('api/inventory')->name('api.inventory.')->group(function () {
+    Route::get('/chart-data', [InventoryBahanBakuController::class, 'getChartData'])->name('chart-data');
+
+    Route::get('/current-stock-data', function(Request $request) {
+        $controller = new InventoryBahanBakuController();
+        return response()->json($controller->getCurrentStockData());
+    })->name('current-stock-data');
+});
+
+
+Route::get('/inventory/currentStock', [App\Http\Controllers\InventoryBahanBakuController::class, 'currentStock'])->name('inventory.currentStock');
 
 Route::resource('batch-results', BatchProductionResultController::class);
-Route::resource('inventory_fg', InventoryFinishGoodController::class);
+Route::resource('inventory_fg', InventoryFinishGoodController::class)->except(['show']);
+Route::get('/inventory_fg/report', [InventoryFinishGoodController::class, 'report'])->name('inventory-finish-goods.report');
+Route::get('/inventory_fg/export', [InventoryFinishGoodController::class, 'exportReport'])->name('inventory-finish-goods.export');
+Route::get('/inventory_fg/chart-data', [InventoryFinishGoodController::class, 'getChartData'])->name('inventory-finish-goods.chart-data');
 
 Route::resource('/post-roast-blends', PostRoastBlendController::class);
 
