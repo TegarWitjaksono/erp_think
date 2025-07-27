@@ -17,8 +17,7 @@ class BatchProductionController extends Controller
             ->selectRaw('batchproduction.*, machines.merk as mesin_nama, method.deskripsi as method_deskripsi')
             ->selectRaw('batchproduction.*, machines.merk as mesin_nama, method.deskripsi as method_deskripsi')
             ->get();
-            
-
+        
 
         return view('batch-productions.index', compact('items'));
 
@@ -34,11 +33,34 @@ class BatchProductionController extends Controller
         $levels        = DB::table('level_roast')->pluck('name','id');
         $statuses      = ['open'=>'Open','on process'=>'On Process','closing'=>'Closing','cancel'=>'Cancel'];
         $attentions    = ['normal'=>'Normal','priority'=>'Priority'];
-
+         $nextBatchId = $this->generateBatchId();
         return view('batch-productions.create', compact(
-            'machines','methods','profiles','levels','statuses','attentions'
+            'machines','methods','profiles','levels','statuses','attentions','nextBatchId'
         ));
     }
+
+   private function generateBatchId()
+    {
+        $today = now(); // pakai Carbon juga bisa: Carbon::now()
+        $prefix = 'BA' . $today->format('y') . $today->format('m') . $today->format('d'); // BA + tanggal + tahun, contoh: BA2525
+
+        // Ambil data terakhir hari ini yang punya prefix yang sama
+        $last = DB::table('batchproduction')
+            ->where('no_batch', 'like', $prefix . '%')
+            ->orderBy('no_batch', 'desc')
+            ->first();
+
+        if (!$last) {
+            return $prefix . '0001';
+        }
+
+        // Ambil 4 digit terakhir dan increment
+        $lastNumber = (int) substr($last->no_batch, -4);
+        $nextNumber = $lastNumber + 1;
+
+        return $prefix . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+    }
+
 
     public function store(Request $request)
     {
@@ -69,6 +91,7 @@ class BatchProductionController extends Controller
             'status' => $data['status'],
             'attention' => $data['attention'],
             'catatan' => $data['catatan'] ?? null,
+            'no_batch' => $request->no_batch
         ];
 
         // Simpan ke database
@@ -90,9 +113,9 @@ class BatchProductionController extends Controller
         $levels        = DB::table('level_roast')->pluck('name','id');
         $statuses   = ['open'=>'Open','on process'=>'On Process','closing'=>'Closing','cancel'=>'Cancel'];
         $attentions = ['normal'=>'Normal','priority'=>'Priority'];
-
+          $nextBatchId = $this->generateBatchId();
         return view('batch-productions.edit', compact(
-            'batch','machines','methods','profiles','levels','statuses','attentions'
+            'batch','machines','methods','profiles','levels','statuses','attentions','nextBatchId'
         ));
     }
 
@@ -570,10 +593,10 @@ class BatchProductionController extends Controller
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil disimpan.');
         } catch (\Throwable $e) {
-    DB::rollBack();
-    dd($e); // Debug langsung errornya
-    return redirect()->back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
-}
+            DB::rollBack();
+            dd($e); // Debug langsung errornya
+            return redirect()->back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
+        }
     }
 
 
@@ -594,17 +617,108 @@ class BatchProductionController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        DB::table('batchproduction_input')->where('id',$id)->update([
-            'inventory_id' => $validated['id_origin'],
-            'kadar_air' => $validated['kadar_air'],
-            'bulk_densitas' => $validated['bulk_densitas'],
-            'qty_out' => $validated['qty_out'],
-            'catatan' => $validated['catatan'],
-        ]);
+        DB::beginTransaction();
+        
+        try {
+            // Ambil data batch input yang akan diupdate
+            $batchInput = DB::table('batchproduction_input')->where('id', $id)->first();
+            
+            if (!$batchInput) {
+                throw new \Exception('Batch input tidak ditemukan');
+            }
 
-        $idBatch = DB::table('batchproduction_input')->where('id',$id)->value('batchproduction_id');
+            $batchProductionId = $batchInput->batchproduction_id;
+            
+            // Ambil data batch production untuk validasi
+            $batchProduction = DB::table('batchproduction')->find($batchProductionId);
+            
+            if (!$batchProduction) {
+                throw new \Exception('Batch production tidak ditemukan');
+            }
 
-        return redirect()->route('batch.list',$idBatch)->with('success', 'Data berhasil diubah.');
+            // Validasi total qty_out (exclude current record)
+            $totalQtyOut = DB::table('batchproduction_input')
+                ->where('batchproduction_id', $batchProductionId)
+                ->where('id', '!=', $id) // Exclude current record
+                ->sum('qty_out');
+
+            if ($totalQtyOut + $validated['qty_out'] > $batchProduction->berat_diroasting) {
+                return back()->with('error', 'Total qty_out melebihi target berat roasting!');
+            }
+
+            // 1. Hapus GL records yang terkait dengan batch input ini
+            $existingGlHeaders = DB::table('gl_headers')
+                ->where('ref_module', 'batch_pic_raw')
+                ->where('ref_id', $id)
+                ->pluck('id')
+                ->toArray();
+
+            if (!empty($existingGlHeaders)) {
+                DB::table('gl_lines')->whereIn('header_id', $existingGlHeaders)->delete();
+                DB::table('gl_headers')->whereIn('id', $existingGlHeaders)->delete();
+            }
+
+            // 2. Update batchproduction_input
+            DB::table('batchproduction_input')->where('id', $id)->update([
+                'inventory_id' => $validated['id_origin'],
+                'kadar_air' => $validated['kadar_air'],
+                'bulk_densitas' => $validated['bulk_densitas'],
+                'qty_out' => $validated['qty_out'],
+                'catatan' => $validated['catatan'],
+              
+            ]);
+
+            // 3. Buat GL header baru
+            $glHeaderId = DB::table('gl_headers')->insertGetId([
+                'ref_module' => 'batch_pic_raw',
+                'ref_id' => $id,
+                'doc_no' => 'GL-PICK-UPD-' . $id . '-' . now()->format('His'),
+                'doc_date' => now(),
+                'posting_date' => now(),
+                'currency' => 'IDR',
+                'total_debit' => $validated['qty_out'],
+                'total_credit' => $validated['qty_out'],
+                'status' => 'posted',
+                'notes' => 'Updated - Ambil bahan baku batch untuk #' . $batchProductionId,
+                'created_by' => auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            // 4. Buat GL lines baru
+            DB::table('gl_lines')->insert([
+                [
+                    'header_id' => $glHeaderId,
+                    'line_no' => 1,
+                    'account_id' => 8,
+                    'debit' => 0,
+                    'credit' => $validated['qty_out'],
+                    'memo' => 'Persediaan keluar (Updated) - Batch #' . $batchProductionId,
+                    'inventory_id' => $validated['id_origin'],
+                    'batch_id' => $batchProductionId,
+                   
+                ],
+                [
+                    'header_id' => $glHeaderId,
+                    'line_no' => 2,
+                    'account_id' => 8,
+                    'debit' => $validated['qty_out'],
+                    'credit' => 0,
+                    'memo' => 'COGS (Updated) - Batch #' . $batchProductionId,
+                    'inventory_id' => $validated['id_origin'],
+                    'batch_id' => $batchProductionId,
+                   
+                ],
+            ]);
+
+            DB::commit();
+            
+            return redirect()->route('batch.list', $batchProductionId)->with('success', 'Data berhasil diubah.');
+            
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal mengupdate: ' . $e->getMessage());
+        }
     }
 
     public function deleteBatchInput($id){

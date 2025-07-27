@@ -4,7 +4,7 @@
     <div class="content-wrapper">
 
         {{-- Header --}}
-        <div class="content-header bg-light border-bottom shadow-sm mb-3">
+        <div class="content-header border-bottom shadow-sm mb-3">
             <div class="container-fluid">
                 <div class="row mb-2 align-items-center">
                     <div class="col-sm-6 d-flex">
@@ -38,7 +38,7 @@
         {{-- Filter Card --}}
         <div class="container-fluid">
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light text-dark">
+                <div class="card-header text-white">
                     <h5 class="mb-0">Filter Laporan</h5>
                 </div>
                 <div class="card-body">
@@ -102,7 +102,7 @@
             <div class="row mb-4">
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header bg-light text-dark">Grafik Stok Harian</div>
+                        <div class="card-header text-white">Grafik Stok Harian</div>
                         <div class="card-body">
                             <canvas id="stockChart" height="300"></canvas>
                         </div>
@@ -110,7 +110,7 @@
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header bg-light text-dark">Grafik Transaksi Masuk vs Keluar</div>
+                        <div class="card-header text-white">Grafik Transaksi Masuk vs Keluar</div>
                         <div class="card-body">
                             <canvas id="transactionChart" height="300"></canvas>
                         </div>
@@ -118,7 +118,7 @@
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header bg-light text-dark">Grafik Kadar Air Rata-rata</div>
+                        <div class="card-header text-white">Grafik Kadar Air Rata-rata</div>
                         <div class="card-body">
                             <canvas id="moistureChart" height="300"></canvas>
                         </div>
@@ -126,7 +126,7 @@
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <div class="card-header bg-light text-dark">Grafik Bulk Density Rata-rata</div>
+                        <div class="card-header text-white">Grafik Bulk Density Rata-rata</div>
                         <div class="card-body">
                             <canvas id="bulkDensityChart" height="300"></canvas>
                         </div>
@@ -136,7 +136,7 @@
 
             {{-- Statistik Ringkasan --}}
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light text-dark">Ringkasan Statistik</div>
+                <div class="card-header text-white">Ringkasan Statistik</div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -159,7 +159,7 @@
 
             {{-- Table Data --}}
             <div class="card shadow-sm">
-                <div class="card-header bg-light text-dark">Detail Transaksi Inventory</div>
+                <div class="card-header text-white">Detail Transaksi Inventory</div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-sm" id="inventoryTable">
@@ -200,10 +200,10 @@
 
         </div>
     </div>
-@endsection
 
 
-@section('scripts')
+
+
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- DataTables -->
@@ -328,9 +328,6 @@ $(document).ready(function() {
     });
 });
 </script>
-@endsection
-
-@section('styles')
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
 <style>

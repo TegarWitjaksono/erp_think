@@ -137,7 +137,7 @@
 </div>
 
 {{-- Script --}}
-@section('scripts')
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     $(document).ready(function () {
@@ -196,5 +196,4 @@
 
     setInterval(() => refreshData(), 300000); // auto-refresh tiap 5 menit
 </script>
-@endsection
 @endsection

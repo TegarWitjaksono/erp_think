@@ -69,6 +69,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>No Batch</th>
                                         <th>Mesin</th>
                                         <th>Method</th>
                                         <th>Berat</th>
@@ -81,6 +82,9 @@
                                     <tr>
                                         <td>
                                             {{$item->id}}
+                                        </td>
+                                        <td>
+                                            {{$item->no_batch ?? 'Belum ada no batch !'}}
                                         </td>
                                         <td>
                                             {{$item->mesin_nama}}

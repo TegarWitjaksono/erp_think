@@ -89,7 +89,8 @@
                                             <td>{{ $item->bulk_densitas }}</td>
                                             <td>{{ $item->debit_qty }}</td>
                                             <td>{{ $item->credit_qty }}</td>
-                                            <td>{{ $item->debit_qty =- $item->credit_qty }}</td>
+                                          <td>{{ number_format($item->debit_qty - $item->credit_qty, 2, ',', '.') }}</td>
+
                                             
                                             <td>
                                                 <a href="{{ route('inventory.edit', $item->id) }}"

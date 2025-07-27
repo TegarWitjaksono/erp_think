@@ -261,7 +261,7 @@ class InventoryBahanBakuController extends Controller
     public function currentStock()
     {
         $currentStock = DB::table('inventory as i')
-            ->join('master_penerimaan as mp', 'i.penerimaan_id', '=', 'mp.id_penerimaan')
+            ->leftJoin('master_penerimaan as mp', 'i.penerimaan_id', '=', 'mp.id_penerimaan')
             ->leftJoin('detail_penerimaan as dp', 'i.id_detail_penerimaan', '=', 'dp.id_detail_penerimaan')
             ->select([
                 'mp.id_batch_mp',
@@ -273,10 +273,11 @@ class InventoryBahanBakuController extends Controller
                 DB::raw('MAX(i.timestamp) as last_update')
             ])
             ->groupBy('mp.id_batch_mp', 'dp.id_batch', 'mp.keterangan')
-            ->having('current_stock', '>', 0)
+           
             ->orderBy('last_update', 'desc')
             ->get();
-        
+
+           
         return view('inventory.raw.current-stock', compact('currentStock'));
     }
 

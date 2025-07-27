@@ -69,6 +69,7 @@
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary">Filter</button>
                             <a href="" class="btn btn-secondary">Reset</a>
+                            <a href="{{route('inventory_fg.create')}}" class="btn btn-primary">Tambah Data</a>
                         </div>
                     </div>
                 </form>

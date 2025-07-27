@@ -4,6 +4,22 @@
     <div class="content-wrapper">
         <div class="content-header bg-light border-bottom shadow-sm mb-3">
             <div class="container-fluid">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Success!</strong> {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Error!</strong> {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <div class="d-flex align-items-center">
@@ -36,6 +52,8 @@
         </div>
 
         <div class="d-flex justify-content-center">
+             
+
             <div class="col-12">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-header">
@@ -235,6 +253,16 @@
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                        {{-- Harga Per KG --}}
+                                            <div class="form-group">
+                                                <label for="harga_per_kg">Harga Per KG</label>
+                                                <input type="number" step="0.01" name="harga_per_kg" id="harga_per_kg"
+                                                    class="form-control @error('harga_per_kg') is-invalid @enderror"
+                                                    value="{{ $data->harga_per_kg ?? 0 }}" required>
+                                                @error('harga_per_kg')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
                                     </div>
                                 </div>
                             </div>

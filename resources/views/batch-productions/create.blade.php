@@ -50,8 +50,22 @@
                             </div>
                             <form action="{{route('batch-productions.store')}}" method="POST">
                                 @csrf
+                                 <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> ID Batch akan dibuat otomatis dengan format P0001, P0002, dst.
+                                </div>
+                                 
                                 
                                 <div class="card-body">
+                                    <div class="form-group">
+                                            <label for="no_batch">NO Batch</label>
+                                            <input type="text" name="no_batch" id="no_batch"
+                                                class="form-control @error('no_batch') is-invalid @enderror"
+                                                value="{{ old('no_batch', $nextBatchId ?? '') }}" readonly required>
+                                            @error('no_batch')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                               
                                     <div class="form-group">
                                         <label>Mesin</label>
                                         <select name="id_mesin" class="form-control">

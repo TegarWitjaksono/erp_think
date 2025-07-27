@@ -754,7 +754,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="batch-production/report" class="nav-link {{ request()->is('batch-production/report*') ? 'active' : '' }}">
+                    <a href="{{route('batch-production.report')}}" class="nav-link {{ request()->is('batch-production/report*') ? 'active' : '' }}">
                         <i class="fas fa-fire-alt"></i><p>Report Batch Production</p>
                     </a>
                 </li>

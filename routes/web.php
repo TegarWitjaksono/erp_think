@@ -33,7 +33,9 @@ use App\Http\Controllers\GlController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\KarungController;
 use App\Http\Controllers\LevelRoastController;
+use App\Http\Controllers\MasterUserController;
 use App\Http\Controllers\MethodController;
+use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +86,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('level-roast',LevelRoastController::class);
     Route::resource('karung',KarungController::class);
 
+    Route::resource('roles',RoleController::class);
+    Route::resource('users',MasterUserController::class);
     Route::get('gl',[JournalController::class,'index']);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });

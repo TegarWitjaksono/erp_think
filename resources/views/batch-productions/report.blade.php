@@ -102,7 +102,7 @@
 
     {{-- Data Table --}}
     <div class="card shadow-sm">
-        <div class="card-header bg-white font-weight-bold">
+        <div class="card-header text-white font-weight-bold">
             <i class="fas fa-table mr-2"></i> Detail Batch Production
         </div>
         <div class="card-body table-responsive">
@@ -150,9 +150,7 @@
     </div>
 
 </div>
-@endsection
 
-@section('scripts')
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function () {

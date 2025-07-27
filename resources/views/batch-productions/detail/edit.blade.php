@@ -4,6 +4,22 @@
     <div class="content-wrapper">
         <div class="content-header bg-light border-bottom shadow-sm mb-3">
             <div class="container-fluid">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Success!</strong> {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show floating-alert" role="alert">
+                        <strong>Error!</strong> {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
                 <div class="row mb-2">
                     <div class="col-sm-6">
                         <div class="d-flex align-items-center">
