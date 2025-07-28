@@ -11,7 +11,7 @@
                                 <i class="fas fa-truck-loading fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Master Penerimaan</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Penerimaan Bahan Baku</h1>
                                 <div
                                     style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;">
                                 </div>
@@ -25,7 +25,7 @@
                                 <ol class="breadcrumb bg-transparent p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="/home" style="color: #79523B;"><i
                                                 class="fas fa-home"></i> Home</a></li>
-                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Master Penerimaan
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Penerimaan Bahan Baku
                                     </li>
                                 </ol>
                             </nav>
@@ -50,9 +50,9 @@
 
         <section class="content">
             <div class="container-fluid">
-                <button type="button" class="btn btn-coffee mb-3" data-toggle="modal" data-target="#addModalPenerimaan">
+                <a href="{{route('master_penerimaan.create')}}" class="btn btn-coffee mb-3">
                     <i class="fas fa-plus-circle mr-2"></i> Add Penerimaan
-                </button>
+                </a>
 
                 <div class="card mb-4">
                     <div class="card-header">
@@ -65,8 +65,8 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>ID Penerimaan</th>
-                                        <th>ID Batch</th> <!-- Tambahkan ini -->
+                                       
+                                        <th>No Penerimaan</th> <!-- Tambahkan ini -->
                                         <th>Keterangan</th>
                                         <th>Tanggal</th>
                                         <th>Actions</th>
@@ -77,7 +77,7 @@
                                     @foreach ($data as $item)
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                            <td>{{ $item->id_penerimaan }}</td>
+                                          
                                             <td>{{ $item->id_batch_mp ?? '-' }}</td> <!-- Tampilkan batch -->
                                             <td>{{ $item->keterangan }}</td>
                                             <td>{{ date('Y-m-d', $item->cdate) }}</td>

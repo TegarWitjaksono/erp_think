@@ -33,6 +33,7 @@ use App\Http\Controllers\GlController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\KarungController;
 use App\Http\Controllers\LevelRoastController;
+use App\Http\Controllers\MasterPenerimaanController;
 use App\Http\Controllers\MasterUserController;
 use App\Http\Controllers\MethodController;
 use App\Http\Controllers\RoleController;
@@ -133,7 +134,7 @@ Route::post('/master_penerimaan', [App\Http\Controllers\MasterPenerimaanControll
 Route::get('/master_penerimaan/{id}/edit', [App\Http\Controllers\MasterPenerimaanController::class, 'edit'])->name('master_penerimaan.edit');
 Route::put('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'update'])->name('master_penerimaan.update');
 Route::delete('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'destroy'])->name('master_penerimaan.destroy');
-
+Route::get('/master_penerimaan/create',[MasterPenerimaanController::class,'create'])->name('master_penerimaan.create');
 
 // Detail Penerimaan Routes
 Route::resource('detail_penerimaan', DetailPenerimaanController::class);
