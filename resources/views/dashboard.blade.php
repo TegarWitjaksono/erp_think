@@ -603,13 +603,13 @@
                                     </a>
                                 </li>
 
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a href="/finished_products"
                                         class="nav-link {{ request()->is('finished_products*') ? 'active' : '' }}">
                                         <i class="fas fa-coffee"></i>
                                         <p>Finished Products</p>
                                     </a>
-                                </li>
+                                </li> --}}
 
                                 <li class="nav-item">
                                     <a href="/sales" class="nav-link {{ request()->is('sales*') ? 'active' : '' }}">
@@ -649,7 +649,7 @@
                                     <a href="/master_barang"
                                         class="nav-link {{ request()->is('master_barang*') ? 'active' : '' }}">
                                         <i class="fas fa-boxes"></i>
-                                        <p>Master Barang</p>
+                                        <p>Master Product</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -692,6 +692,14 @@
                                         class="nav-link {{ request()->is('karung*') ? 'active' : '' }}">
                                         <i class="fas fa-boxes"></i> {{-- karung/barang --}}
                                         <p>Karung</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="/roast_profile"
+                                        class="nav-link {{ request()->is('roast_profile*') ? 'active' : '' }}">
+                                        <i class="fas fa-fire-alt"></i> {{-- tingkat kematangan roasting --}}
+                                        <p>Roast Profile</p>
                                     </a>
                                 </li>
 

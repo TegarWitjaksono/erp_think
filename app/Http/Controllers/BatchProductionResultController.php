@@ -16,6 +16,7 @@ class BatchProductionResultController extends Controller
             ->select(
                 'batchproductionresult.*',
                 'batchproduction.estimate_expire_date as batch_date',
+                'batchproduction.no_batch',
                 'level_roast.name as level_name'
             )
             ->get();

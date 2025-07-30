@@ -78,11 +78,11 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="type">typee</label>
-                                        <input typee="text" name="type" id="type"
-                                            class="form-control @error('type') is-invalid @enderror" required
-                                            value="{{ old('type', $machine->type) }}">
-                                        @error('type')
+                                        <label for="type">type</label>
+                                        <input typee="text" name="typ" id="typ"
+                                            class="form-control @error('typ') is-invalid @enderror" required
+                                            value="{{ old('typ', $machine->typ) }}">
+                                        @error('typ')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>

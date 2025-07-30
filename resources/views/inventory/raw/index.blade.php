@@ -72,6 +72,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Penerimaan</th>
+                                        <th>Kode Karung</th>
                                         <th>Kadar Air</th>
                                         <th>Bulk Density</th>
                                         <th>Masuk</th>
@@ -85,6 +86,7 @@
                                         <tr>
                                             <td>{{ $item->id }}</td>
                                             <td>{{ $item->id_batch_mp }}</td>
+                                            <th>{{$item->kode_karung}}</th>
                                             <td>{{ $item->kadar_air }}</td>
                                             <td>{{ $item->bulk_densitas }}</td>
                                             <td>{{ $item->debit_qty }}</td>

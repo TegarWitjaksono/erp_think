@@ -96,7 +96,14 @@
                                             {{$item->keluar ?? 'Belum ada'}}
                                         </td>
                                         <td>
-                                            {{$item->status}}
+                                            @if ($item->status === 'open')
+                                                        <span class="badge bg-success">Open</span>
+                                                    @elseif ($item->status === 'on process')
+                                                        <span class="badge bg-warning text-dark">On Process</span>
+                                                    @else
+                                                        <span class="badge bg-secondary">{{ ucfirst($item->status) }}</span>
+                                                    @endif
+
                                         </td>
                                         <td>
                                         <!-- Detail -->

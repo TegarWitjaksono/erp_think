@@ -85,7 +85,7 @@
                                             <td>{{ $machines->merk }}</td>
                                             <td>{{ $machines->location }}</td>
                                             <td>{{ $machines->serial_number }}</td>
-                                            <td>{{ $machines->type }}</td>
+                                            <td>{{ $machines->typ }}</td>
                                             <td>{{ $machines->kapasitas }}</td>
 
                                             <td>
@@ -193,11 +193,11 @@
                         
 
                         <div class="form-group">
-                            <label for="type">typee</label>
-                            <input typee="text" name="type" id="type"
-                                class="form-control @error('type') is-invalid @enderror" required
-                                value="{{ old('type') }}">
-                            @error('type')
+                            <label for="type">type</label>
+                            <input typee="text" name="typ" id="typ"
+                                class="form-control @error('typ') is-invalid @enderror" required
+                                value="{{ old('typ') }}">
+                            @error('typ')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -224,7 +224,7 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="plc_support">plc_support</label>
+                            <label for="plc_support">PLC</label>
                             <select name="plc_support" id="plc_support" class="form-control @error('plc_support') is-invalid @enderror"
                                 required>
                                 <option value="">Pilih PLC</option>

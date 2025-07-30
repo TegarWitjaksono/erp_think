@@ -41,7 +41,7 @@ class MasterMachinesController extends Controller
             'location' => 'required',
             'serial_number' => 'required',
             'status' => 'required|in:active,inactive',
-            'type' => 'required',
+            'typ' => 'required',
             'kapasitas' => 'required',
             'plc_support' => 'required|in:1,0'
         ]);
@@ -92,7 +92,7 @@ class MasterMachinesController extends Controller
             'location' => 'required',
             'serial_number' => 'required',
             'status' => 'required|in:active,inactive',
-            'type' => 'required',
+            'typ' => 'required',
             'kapasitas' => 'required',
             'plc_support' => 'required|in:1,0'
         ]);

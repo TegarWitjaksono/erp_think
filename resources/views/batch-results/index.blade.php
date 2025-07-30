@@ -69,7 +69,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>ID Batch Production</th>
+                                        <th>No Batch</th>
                                         <th>Level Roasting</th>
                                         <th>Berat Akhir</th>
                                         <th>Kadar Air</th>
@@ -86,7 +86,7 @@
                                             {{$item->id}}
                                         </td>
                                         <td>
-                                            {{$item->id_bacthproduction}}
+                                            {{$item->no_batch}}
                                         </td>
                                         <td>
                                             {{$item->level_name}}

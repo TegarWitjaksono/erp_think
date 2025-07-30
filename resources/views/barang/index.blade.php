@@ -11,7 +11,7 @@
                                 <i class="fas fa-boxes fa-2x" style="color: #79523B;"></i>
                             </div>
                             <div>
-                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Master Barang</h1>
+                                <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Master Product</h1>
                                 <div style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); margin-top: 5px; border-radius: 3px;"></div>
                                 <p class="text-muted mt-2 mb-0">Manage inventory items and products</p>
                             </div>
@@ -44,13 +44,13 @@
         <section class="content">
             <div class="container-fluid">
                 <button type="button" class="btn btn-coffee mb-3" data-toggle="modal" data-target="#tambahBarang">
-                    <i class="fas fa-plus-circle mr-2"></i> Add Barang
+                    <i class="fas fa-plus-circle mr-2"></i> Add Product
                 </button>
 
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
-                        Data Barang
+                        Data Product
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -58,7 +58,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Barang</th>
+                                        <th>Nama Product</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -96,7 +96,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Add New Barang</h5>
+                    <h5 class="modal-title" id="modalLabel">Add New Product</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -105,7 +105,7 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="nama_barang">Nama Barang</label>
+                            <label for="nama_barang">Nama Product</label>
                             <input type="text" name="nama_barang" id="nama_barang" class="form-control @error('nama_barang') is-invalid @enderror" value="{{ old('nama_barang') }}">
                             @error('nama_barang')
                                 <span class="text-danger">{{ $message }}</span>

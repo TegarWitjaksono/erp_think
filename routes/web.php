@@ -36,6 +36,7 @@ use App\Http\Controllers\LevelRoastController;
 use App\Http\Controllers\MasterPenerimaanController;
 use App\Http\Controllers\MasterUserController;
 use App\Http\Controllers\MethodController;
+use App\Http\Controllers\RoastProfileController;
 use App\Http\Controllers\RoleController;
 
 /*
@@ -74,7 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('/batch-production/report', [BatchProductionController::class, 'report'])->name('batch-production.report');
 
-
+    Route::resource('roast_profile',RoastProfileController::class);
 
 
     Route::get('list_batch_production/{id}',[BatchProductionController::class,'list'])->name('batch.list');

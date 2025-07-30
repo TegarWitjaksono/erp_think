@@ -11,7 +11,7 @@
                         <i class="fas fa-boxes fa-2x" style="color: #79523B;"></i>
                     </div>
                     <div>
-                        <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Post Roast Blends</h1>
+                        <h1 class="m-0 font-weight-bold" style="color: #4A2C1A;">Post Roast Blends Detail</h1>
                         <div class="mt-1 mb-2" style="height: 3px; width: 60px; background: linear-gradient(to right, #79523B, #D2B48C); border-radius: 3px;"></div>
                         <p class="text-muted mb-0">Kelola stok bahan baku dengan mudah</p>
                     </div>
@@ -22,7 +22,7 @@
                             <li class="breadcrumb-item">
                                 <a href="/home" class="text-decoration-none" style="color: #79523B;"><i class="fas fa-home"></i> Home</a>
                             </li>
-                            <li class="breadcrumb-item active font-weight-bold" aria-current="page">Post Roast Blends</li>
+                            <li class="breadcrumb-item active font-weight-bold" aria-current="page">Post Roast Blends Detail</li>
                         </ol>
                     </nav>
                 </div>
@@ -47,11 +47,11 @@
     {{-- Main Content --}}
     <section class="content">
         <div class="container-fluid">
-            <a href="{{ route('post-roast-blends.create') }}" class="btn btn-primary mb-3">Tambah Blend</a>
+            {{-- <a href="{{ route('post-roast-blends.create') }}" class="btn btn-primary mb-3">Tambah Blend</a> --}}
 
             <div class="card shadow-sm">
                 <div class="card-header text-white">
-                    <i class="fas fa-table me-1"></i> Data Post Roast Blends
+                    <i class="fas fa-table me-1"></i> Data Post Roast Blends Detail
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -59,36 +59,28 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>ID</th>
-                                    <th>Timestamp</th>
-                                    <th>Est Expired Date</th>
-                                    <th>Cupping Score</th>
-                                    <th>Note Flavour</th>
-                                    <th>Catatan</th>
-                                    <th>Berat Total</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
+                                    <th>Catatan Post Blend</th>
+                                    <th>Deskripsi</th>
+                                    <th>Pengeluaran Stok</th>
+                                    <th>Tanggal</th>
+                                   
+                                   
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($blends as $blend)
+                                @php
+                                    $no = 1;
+                                @endphp
+                                @foreach($details as $item)
+                                
                                 <tr>
-                                    <td>{{ $blend->id }}</td>
-                                    <td>{{$blend->timestamp}}</td>
-                                    <td>{{$blend->est_expired_date}}</td>
-                                    <td>{{ $blend->cupping_score }}</td>
-                                    <td>{{ $blend->note_flavour }}</td>
-                                    <td>{{ $blend->catatan }}</td>
-                                    <td>{{ $blend->berat_total }} kg</td>
-                                    <td>
-                                        <span class="badge badge-{{ $blend->status == 'active' ? 'success' : 'secondary' }}">
-                                            {{ ucfirst($blend->status) }}
-                                        </span>
-                                    </td>
-                                        <td>
-                                            <a href="{{route('post-roast-blends.show',$blend->id)}}" class="btn btn-sm btn-secondary"> <i class="fas fa-list"></i></a>
-                                            <a href="{{ route('post-roast-blends.edit', $blend->id) }}" class="btn btn-sm btn-warning"> <i class="fas fa-edit"></i></a>
-                                            <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $blend->id }}" data-toggle="modal" data-target="#deleteModal"> <i class="fas fa-trash-alt"></i></button>
-                                        </td>
+                                    <td>{{ $no++ }}</td>
+                                    <td>{{$item->catatan_blend}}</td>
+                                    <td>{{$item->description}}</td>
+                                    <td>{{ $item->quantity_out }}</td>
+                                    <td>{{ $item->created_at }}</td>
+                                  
+                                   
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -173,6 +165,7 @@
     </div>
 </div>
 
+@push('scripts')
 <script>
     $(document).ready(function() {
         $('#roastBlendsTable').DataTable({ responsive: true });
@@ -186,4 +179,5 @@
         setTimeout(() => $('.alert').alert('close'), 5000);
     });
 </script>
+@endpush
 @endsection

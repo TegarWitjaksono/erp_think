@@ -334,8 +334,13 @@ class PostRoastBlendController extends Controller
     public function show($id)
     {
         $blend = DB::table('post_roast_blend')->where('id',$id)->first();
-        $details = DB::table('post_roast_blend_details')->where('post_roast_blend_id',$id)->get();
-        return view('post_roast_blend.show', compact('blend','details'));
+        $details = DB::table('post_roast_blend_details')
+        ->join('post_roast_blend','post_roast_blend.id','=','post_roast_blend_details.post_roast_blend_id')
+        ->where('post_roast_blend_id',$id)
+        ->select('post_roast_blend_details.*','post_roast_blend.catatan as catatan_blend')
+        ->get();
+      
+        return view('post_roast_blend.detail', compact('blend','details'));
     }
 
    public function edit($id)

@@ -549,9 +549,10 @@ class BatchProductionController extends Controller
     public function destroy($id)
     {
 
-        DB::table('batchproduction')->where('id',$id)->update(['is_active'=>false,'updated_by'=>auth()->id()]);
+       
+        DB::table('batchproduction_input')->where('batchproduction_id',$id)->delete();
         DB::table('batchproduction')->where('id',$id)->delete();
-        return redirect()->route('batch-productions.index')->with('success','Batch dinonaktifkan');
+        return redirect()->route('batch-productions.index')->with('success','Batch berhasil di hapus');
     }
 
     public function start($id)

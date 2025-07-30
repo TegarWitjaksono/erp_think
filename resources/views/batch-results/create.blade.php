@@ -68,9 +68,10 @@
                                     <div class="form-group">
                                         <label>Batch Production</label>
                                         <select name="id_bacthproduction" class="form-control">
+                                            <option value="">Pilih</option>
                                             @foreach($batches as $k)
                                                 <option value="{{ $k->id }}" {{ (old('id_bacthproduction', $result->batch_production_id ?? '') == $k) ? 'selected' : '' }}>
-                                                    {{ $k->id }}
+                                                    {{ $k->no_batch }}
                                                 </option>
                                             @endforeach
                                         </select>
