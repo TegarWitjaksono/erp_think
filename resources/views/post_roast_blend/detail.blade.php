@@ -165,7 +165,6 @@
     </div>
 </div>
 
-@push('scripts')
 <script>
     $(document).ready(function() {
         $('#roastBlendsTable').DataTable({ responsive: true });
@@ -179,5 +178,5 @@
         setTimeout(() => $('.alert').alert('close'), 5000);
     });
 </script>
-@endpush
+
 @endsection
