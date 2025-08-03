@@ -56,7 +56,7 @@
             <div class="container-fluid">
 
                 {{-- Button Tambah --}}
-                <a href="{{ route('batch-results.create') }}" class="btn btn-primary mb-3">Tambah Result</a>
+                <a href="{{ route('batch-results.create') }}" class="btn btn-coffee mb-3"><i class="fas fa-plus-circle mr-2"></i> Tambah Result</a>
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">

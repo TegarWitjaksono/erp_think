@@ -47,7 +47,7 @@
     {{-- Main Content --}}
     <section class="content">
         <div class="container-fluid">
-            <a href="{{ route('post-roast-blends.create') }}" class="btn btn-primary mb-3">Tambah Blend</a>
+            <a href="{{ route('post-roast-blends.create') }}" class="btn btn-coffee mb-3"><i class="fas fa-plus-circle mr-2"></i>Tambah Blend</a>
 
             <div class="card shadow-sm">
                 <div class="card-header text-white">

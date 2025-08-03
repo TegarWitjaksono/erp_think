@@ -56,6 +56,10 @@
                 <div class="container-fluid">
 
                 <form method="GET" class="mb-3">
+                    <a href="{{route('inventory_fg.create')}}" class="btn btn-coffee mb-3">
+                        <i class="fas fa-plus-circle mr-2"></i>Tambah Data
+                    </a>
+
                     <div class="row">
                         <div class="col-md-3">
                             <input type="text" name="level_roast" value="{{ request('level_roast') }}" placeholder="Level Roast" class="form-control">
@@ -64,12 +68,11 @@
                             <input type="text" name="flavour_note" value="{{ request('flavour_note') }}" placeholder="Flavour Note" class="form-control">
                         </div>
                         <div class="col-md-3">
-                            <input type="date" name="expired_before" value="{{ request('expired_before') }}" class="form-control">
+                            <input type="date" name="expired_before" value="{{ request('expired_before') }}" class="form-control" placeholder="Expired Before">
                         </div>
                         <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <button type="submit" class="btn btn-coffee"><i class="fas fa-filter"></i> Filter</button>
                             <a href="" class="btn btn-secondary">Reset</a>
-                            <a href="{{route('inventory_fg.create')}}" class="btn btn-primary">Tambah Data</a>
                         </div>
                     </div>
                 </form>

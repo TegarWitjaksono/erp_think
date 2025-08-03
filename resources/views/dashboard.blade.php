@@ -587,7 +587,7 @@
                         <li class="nav-header">Master</li>
                         <li class="nav-item">
                             <a href="#"
-                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') || request()->is('master_barang*') || request()->is('machines*') || request()->is('master_sku*') || request()->is('sku*') || request()->is('master_penerimaan*') ? 'active' : '' }}"
+                                class="nav-link {{ request()->is('master_suppliers*') || request()->is('finished_products*') || request()->is('sales*') || request()->is('master_jenis*') || request()->is('master_varietas*') || request()->is('master_origin*') || request()->is('master_grade*') || request()->is('master_barang*') || request()->is('machines*') || request()->is('master_sku*') || request()->is('sku*') || request()->is('methods*') || request()->is('level-roast*') || request()->is('karung*') || request()->is('roast*')  ? 'active' : '' }}"
                                 data-toggle="collapse" data-target="#masterMenu">
                                 <i class="fas fa-cogs"></i>
                                 <p>Data Master <i class="fas fa-chevron-down float-right"></i></p>
@@ -738,7 +738,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/log-mesin" class="nav-link {{ request()->is('logs/mesin*') ? 'active' : '' }}">
+                    <a href="/log-mesin" class="nav-link {{ request()->is('log-mesin*') ? 'active' : '' }}">
                         <i class="fas fa-microchip"></i><p>Log Mesin (IoT/Import)</p>
                     </a>
                 </li>

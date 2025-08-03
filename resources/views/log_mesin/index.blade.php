@@ -71,11 +71,11 @@
             <div class="container-fluid">
 
                 {{-- Button Tambah --}}
-                <a href="{{ route('log-mesins.import') }}" class="btn btn-primary mb-3">Import Log</a>
+                <a href="{{ route('log-mesins.import') }}" class="btn btn-coffee mb-3"><i class="fas fa-file-import mr-2"></i>Import Log</a>
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
-                    <div class="card-header bg-white">
+                    <div class="card-header bg-white ">
                         <i class="fas fa-table me-1"></i> Data Batch Production
                     </div>
                     <div class="card-body">
@@ -83,15 +83,15 @@
                             <table id="inventory-table" class="table datatable table-hover text-nowrap table-striped">
                                 <thead>
                                     <tr>
-                                    <th>ID</th>
-                <th>Mesin</th>
-                <th>Batch</th>
-                <th>Waktu Mesin</th>
-                <th>Time Roast</th>
-                <th>BT</th>
-                <th>ET</th>
-                <th>Event</th>
-                <th>Aksi</th>
+                                        <th>ID</th>
+                                        <th>Mesin</th>
+                                        <th>Batch</th>
+                                        <th>Waktu Mesin</th>
+                                        <th>Time Roast</th>
+                                        <th>BT</th>
+                                        <th>ET</th>
+                                        <th>Event</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
 
