@@ -79,87 +79,100 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($items as $item)
-                                    <tr>
-                                        <td>
-                                            {{$item->id}}
-                                        </td>
-                                        <td>
-                                            {{$item->no_batch ?? 'Belum ada no batch !'}}
-                                        </td>
-                                        <td>
-                                            {{$item->mesin_nama}}
-                                        </td>
-                                        <td>
-                                            {{$item->method_deskripsi}}
-                                        </td>
-                                        <td>
-                                            {{$item->keluar ?? 'Belum ada'}}
-                                        </td>
-                                        <td>
-                                            @if ($item->status === 'open')
-                                                        <span class="badge bg-success">Open</span>
-                                                    @elseif ($item->status === 'on process')
-                                                        <span class="badge bg-warning text-dark">On Process</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">{{ ucfirst($item->status) }}</span>
-                                                    @endif
+                                        <tr>
+                                            <td>
+                                                {{ $item->id }}
+                                            </td>
+                                            <td>
+                                                {{ $item->no_batch ?? 'Belum ada no batch !' }}
+                                            </td>
+                                            <td>
+                                                {{ $item->mesin_nama }}
+                                            </td>
+                                            <td>
+                                                {{ $item->method_deskripsi }}
+                                            </td>
+                                            <td>
+                                                {{ $item->keluar ?? 'Belum ada' }}
+                                            </td>
+                                            <td>
+                                                @if ($item->status === 'open')
+                                                    <span class="badge bg-success">Open</span>
+                                                @elseif ($item->status === 'on process')
+                                                    <span class="badge bg-warning text-dark">On Process</span>
+                                                @else
+                                                    <span class="badge bg-secondary">{{ ucfirst($item->status) }}</span>
+                                                @endif
 
-                                        </td>
-                                        <td>
-                                        <!-- Detail -->
-                                        <a href="{{ route('batch.list', $item->id) }}" class="btn btn-info btn-sm" title="Detail">
-                                            <i class="fas fa-list"></i>
-                                        </a>
+                                            </td>
+                                            <td>
+                                                <!-- Detail -->
+                                                <a href="{{ route('batch.list', $item->id) }}" class="btn btn-info btn-sm"
+                                                    title="Detail">
+                                                    <i class="fas fa-list"></i>
+                                                </a>
 
-                                        <!-- Edit -->
-                                        <a href="{{ route('batch-productions.edit', base64_encode($item->id)) }}" class="btn btn-warning btn-sm" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                                <a href="{{ route('batch-production.menu', $item->id) }}"
+                                                    class="btn btn-info btn-sm" title="Menu Action">
+                                                    <i class="fas fa-list"></i>
+                                                </a>
 
-                                        <!-- Status Actions -->
-                                        @if ($item->status === 'open')
-                                            <!-- Start Process -->
-                                            <form action="{{ route('batch-productions.start', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Mulai proses batch ini?')">
-                                                @csrf
-                                                <button class="btn btn-primary btn-sm" title="Start Batch">
-                                                    <i class="fas fa-play"></i>
+                                                <!-- Edit -->
+                                                <a href="{{ route('batch-productions.edit', base64_encode($item->id)) }}"
+                                                    class="btn btn-warning btn-sm" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+
+                                                <!-- Status Actions -->
+                                                @if ($item->status === 'open')
+                                                    <!-- Start Process -->
+                                                    <form action="{{ route('batch-productions.start', $item->id) }}"
+                                                        method="POST" class="d-inline"
+                                                        onsubmit="return confirm('Mulai proses batch ini?')">
+                                                        @csrf
+                                                        <button class="btn btn-primary btn-sm" title="Start Batch">
+                                                            <i class="fas fa-play"></i>
+                                                        </button>
+                                                    </form>
+
+                                                    <!-- Cancel Batch -->
+                                                    <form action="{{ route('batch-productions.cancel', $item->id) }}"
+                                                        method="POST" class="d-inline"
+                                                        onsubmit="return confirm('Batalkan batch ini?')">
+                                                        @csrf
+                                                        <button class="btn btn-danger btn-sm" title="Cancel Batch">
+                                                            <i class="fas fa-times-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                @elseif ($item->status === 'on process')
+                                                    <!-- Close Batch -->
+                                                    <form action="{{ route('batch-productions.close', $item->id) }}"
+                                                        method="POST" class="d-inline"
+                                                        onsubmit="return confirm('Anda yakin ingin menutup batch ini?')">
+                                                        @csrf
+                                                        <button class="btn btn-success btn-sm" title="Close Batch">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
+                                                <!-- Delete -->
+                                                <button type="button" class="btn btn-secondary btn-sm delete-btn"
+                                                    data-id="{{ $item->id }}" data-toggle="modal"
+                                                    data-target="#deleteModal" title="Hapus Batch">
+                                                    <i class="fas fa-trash-alt"></i>
                                                 </button>
-                                            </form>
-
-                                            <!-- Cancel Batch -->
-                                            <form action="{{ route('batch-productions.cancel', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan batch ini?')">
-                                                @csrf
-                                                <button class="btn btn-danger btn-sm" title="Cancel Batch">
-                                                    <i class="fas fa-times-circle"></i>
-                                                </button>
-                                            </form>
-
-                                        @elseif ($item->status === 'on process')
-                                            <!-- Close Batch -->
-                                            <form action="{{ route('batch-productions.close', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Anda yakin ingin menutup batch ini?')">
-                                                @csrf
-                                                <button class="btn btn-success btn-sm" title="Close Batch">
-                                                    <i class="fas fa-check-circle"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-
-                                        <!-- Delete -->
-                                        <button type="button" class="btn btn-secondary btn-sm delete-btn" data-id="{{ $item->id }}" data-toggle="modal" data-target="#deleteModal" title="Hapus Batch">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </td>
+                                            </td>
 
 
-                                    </tr>
-                                        
+                                        </tr>
                                     @endforeach
-                                    
+
                                 </tbody>
 
                             </table>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -194,7 +207,8 @@
     </div>
 
     {{-- Add Data Modal --}}
-    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -228,19 +242,20 @@
     </div>
 
     {{-- Script --}}
-    
-        <script>
-            $(document).ready(function () {
-                $('#inventory-table').DataTable({ responsive: true });
 
-                $('.delete-btn').click(function () {
-                    const id = $(this).data('id');
-                    const url = "{{ route('batch-productions.destroy', ':id') }}".replace(':id', id);
-                    $('#deleteForm').attr('action', url);
-                });
-
-                setTimeout(() => $('.alert').alert('close'), 5000);
+    <script>
+        $(document).ready(function() {
+            $('#inventory-table').DataTable({
+                responsive: true
             });
-        </script>
-   
+
+            $('.delete-btn').click(function() {
+                const id = $(this).data('id');
+                const url = "{{ route('batch-productions.destroy', ':id') }}".replace(':id', id);
+                $('#deleteForm').attr('action', url);
+            });
+
+            setTimeout(() => $('.alert').alert('close'), 5000);
+        });
+    </script>
 @endsection

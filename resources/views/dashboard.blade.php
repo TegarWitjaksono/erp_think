@@ -667,8 +667,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="/sku"
-                                        class="nav-link {{ request()->is('sku*') ? 'active' : '' }}">
+                                    <a href="/sku" class="nav-link {{ request()->is('sku*') ? 'active' : '' }}">
                                         <i class="fas fa-tags"></i>
                                         <p>SKU Management</p>
                                     </a>
@@ -703,7 +702,7 @@
                                     </a>
                                 </li>
 
-                               
+
                             </ul>
                             {{-- OPERASIONAL --}}
                 <li class="nav-header">Operasional</li>
@@ -748,47 +747,113 @@
                     </a>
                 </li>
 
-                {{-- LAPORAN --}}
-                <li class="nav-header">Laporan</li>
-                
-                <li class="nav-item">
-                    <a href="/inventory/current-stock" class="nav-link {{ request()->is('reports/inventory/raw*') ? 'active' : '' }}">
-                        <i class="fas fa-clipboard-list"></i><p>Report Inventory Bahan Baku</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/inventory_fg/report" class="nav-link {{ request()->is('inventory_fg/report*') ? 'active' : '' }}">
-                        <i class="fas fa-clipboard-check"></i><p>Report Inventory FG</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('batch-production.report')}}" class="nav-link {{ request()->is('batch-production/report*') ? 'active' : '' }}">
-                        <i class="fas fa-fire-alt"></i><p>Report Batch Production</p>
-                    </a>
-                </li>
+                        <li class="nav-header">Operasional</li>
+                        <li class="nav-item">
+                            <a href="/master_penerimaan"
+                                class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
+                                <i class="fas fa-truck-loading"></i>
+                                <p>Penerimaan Bahan Baku</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/inventory" class="nav-link {{ request()->is('inventory') ? 'active' : '' }}">
+                                <i class="fas fa-warehouse"></i>
+                                <p>Inventory Bahan Baku</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/batch-productions"
+                                class="nav-link {{ request()->is('batch-productions*') ? 'active' : '' }}">
+                                <i class="fas fa-fire"></i>
+                                <p>Batch Production (Roasting)</p>
+                            </a>
+                        </li>
+                        {{-- <li class="nav-item">
+                            <a href="/batch-results"
+                                class="nav-link {{ request()->is('batch-results*') ? 'active' : '' }}">
+                                <i class="fas fa-check-circle"></i>
+                                <p>Batch Production Result</p>
+                            </a>
+                        </li> --}}
+                        <li class="nav-item">
+                            <a href="/inventory_fg"
+                                class="nav-link {{ request()->is('inventory_fg*') ? 'active' : '' }}">
+                                <i class="fas fa-box-open"></i>
+                                <p>Inventory Finish Good</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/post-roast-blends"
+                                class="nav-link {{ request()->is('post-roast-blends*') ? 'active' : '' }}">
+                                <i class="fas fa-mortar-pestle"></i>
+                                <p>Post Roast Blend</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/log-mesin" class="nav-link {{ request()->is('logs/mesin*') ? 'active' : '' }}">
+                                <i class="fas fa-microchip"></i>
+                                <p>Log Mesin (IoT/Import)</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/gl" class="nav-link {{ request()->is('gl*') ? 'active' : '' }}">
+                                <i class="fas fa-book"></i>
+                                <p>General Ledger Integration</p>
+                            </a>
+                        </li>
+>>>>>>> 6e419daa0d7d4fca964dd8461415345bfc460dd9
 
-                {{-- ADMIN --}}
-                <li class="nav-header">Administrasi & Security</li>
-                <li class="nav-item">
-                    <a href="/users" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
-                        <i class="fas fa-users"></i><p>Users</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/roles" class="nav-link {{ request()->is('roles*') ? 'active' : '' }}">
-                        <i class="fas fa-key"></i><p>Roles & Permissions</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/audit" class="nav-link {{ request()->is('audit*') ? 'active' : '' }}">
-                        <i class="fas fa-history"></i><p>Audit Trail</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/settings" class="nav-link {{ request()->is('settings*') ? 'active' : '' }}">
-                        <i class="fas fa-sliders-h"></i><p>Settings</p>
-                    </a>
-                </li>
+                        {{-- LAPORAN --}}
+                        <li class="nav-header">Laporan</li>
+
+                        <li class="nav-item">
+                            <a href="/inventory/current-stock"
+                                class="nav-link {{ request()->is('reports/inventory/raw*') ? 'active' : '' }}">
+                                <i class="fas fa-clipboard-list"></i>
+                                <p>Report Inventory Bahan Baku</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/inventory_fg/report"
+                                class="nav-link {{ request()->is('inventory_fg/report*') ? 'active' : '' }}">
+                                <i class="fas fa-clipboard-check"></i>
+                                <p>Report Inventory FG</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('batch-production.report') }}"
+                                class="nav-link {{ request()->is('batch-production/report*') ? 'active' : '' }}">
+                                <i class="fas fa-fire-alt"></i>
+                                <p>Report Batch Production</p>
+                            </a>
+                        </li>
+
+                        {{-- ADMIN --}}
+                        <li class="nav-header">Administrasi & Security</li>
+                        <li class="nav-item">
+                            <a href="/users" class="nav-link {{ request()->is('users*') ? 'active' : '' }}">
+                                <i class="fas fa-users"></i>
+                                <p>Users</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/roles" class="nav-link {{ request()->is('roles*') ? 'active' : '' }}">
+                                <i class="fas fa-key"></i>
+                                <p>Roles & Permissions</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/audit" class="nav-link {{ request()->is('audit*') ? 'active' : '' }}">
+                                <i class="fas fa-history"></i>
+                                <p>Audit Trail</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/settings" class="nav-link {{ request()->is('settings*') ? 'active' : '' }}">
+                                <i class="fas fa-sliders-h"></i>
+                                <p>Settings</p>
+                            </a>
+                        </li>
                         </li>
                     </ul>
                 </nav>
@@ -892,33 +957,32 @@
             })();
         });
 
-        
-// Toggle sidebar and fullscreen layout
-    document.getElementById('sidebarToggle').addEventListener('click', function(e) {
-        e.preventDefault();
-        const body = document.body;
-        
-        if (body.classList.contains('sidebar-collapse') || body.classList.contains('layout-top-nav')) {
-            // Restore normal layout
-            body.classList.remove('layout-top-nav');
-            body.classList.remove('sidebar-collapse');
-            body.classList.add('sidebar-mini', 'layout-fixed');
-            localStorage.setItem('layoutState', 'normal');
-        } else {
-            // Minimize sidebar and enable fullscreen content
-            body.classList.remove('sidebar-mini', 'layout-fixed');
-            body.classList.add('layout-top-nav', 'sidebar-collapse');
-            localStorage.setItem('layoutState', 'minimized');
+
+        // Toggle sidebar and fullscreen layout
+        document.getElementById('sidebarToggle').addEventListener('click', function(e) {
+            e.preventDefault();
+            const body = document.body;
+
+            if (body.classList.contains('sidebar-collapse') || body.classList.contains('layout-top-nav')) {
+                // Restore normal layout
+                body.classList.remove('layout-top-nav');
+                body.classList.remove('sidebar-collapse');
+                body.classList.add('sidebar-mini', 'layout-fixed');
+                localStorage.setItem('layoutState', 'normal');
+            } else {
+                // Minimize sidebar and enable fullscreen content
+                body.classList.remove('sidebar-mini', 'layout-fixed');
+                body.classList.add('layout-top-nav', 'sidebar-collapse');
+                localStorage.setItem('layoutState', 'minimized');
+            }
+        });
+
+        // Check saved layout state
+        const savedState = localStorage.getItem('layoutState');
+        if (savedState === 'minimized') {
+            document.body.classList.add('layout-top-nav', 'sidebar-collapse');
+            document.body.classList.remove('sidebar-mini', 'layout-fixed');
         }
-    });
-
-    // Check saved layout state
-    const savedState = localStorage.getItem('layoutState');
-    if (savedState === 'minimized') {
-        document.body.classList.add('layout-top-nav', 'sidebar-collapse');
-        document.body.classList.remove('sidebar-mini', 'layout-fixed');
-    }
-
     </script>
 
     @yield('script')

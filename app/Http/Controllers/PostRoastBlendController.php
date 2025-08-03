@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -26,7 +26,7 @@ class PostRoastBlendController extends Controller
 {
     // Debug: Log semua data yang masuk
     Log::info('PostRoastBlend Store Request:', $request->all());
-    
+
     try {
         // Validasi dasar
         $validator = Validator::make($request->all(), [
@@ -63,9 +63,9 @@ class PostRoastBlendController extends Controller
         foreach ($request->details as $detail) {
             $totalQuantityOut += floatval($detail['quantity_out']);
         }
-        
+
         Log::info("Total Quantity Out: $totalQuantityOut, Total Weight: {$request->total_weight}");
-        
+
         if (abs($totalQuantityOut - floatval($request->total_weight)) > 0.01) {
             return redirect()->back()
                 ->withErrors(['total_weight' => "Total weight ({$request->total_weight}) harus sama dengan jumlah quantity out ({$totalQuantityOut})"])
@@ -76,12 +76,12 @@ class PostRoastBlendController extends Controller
         // Validasi stok tersedia dan hitung total cost
         $inventoryDetails = [];
         $totalCost = 0;
-        
+
         foreach ($request->details as $detail) {
             $inventory = DB::table('inventorifinishgood')
                 ->where('id', $detail['inventorifinishgood_id'])
                 ->first();
-            
+
             if (!$inventory) {
                 return redirect()->back()
                     ->withErrors(['details' => 'Inventory tidak ditemukan'])
@@ -91,7 +91,7 @@ class PostRoastBlendController extends Controller
 
             $availableStock = $inventory->jml_masuk - $inventory->jml_keluar;
             Log::info("Inventory ID {$inventory->id}: Available Stock = $availableStock, Requested = {$detail['quantity_out']}");
-            
+
             if (floatval($detail['quantity_out']) > $availableStock) {
                 return redirect()->back()
                     ->withErrors(['details' => "Stok inventory ID {$inventory->id} tidak mencukupi. Tersedia: {$availableStock}, Diminta: {$detail['quantity_out']}"])
@@ -103,7 +103,7 @@ class PostRoastBlendController extends Controller
             $unitCost = $inventory->harga_per_kg ?? 0;
             $itemTotalCost = $unitCost * floatval($detail['quantity_out']);
             $totalCost += $itemTotalCost;
-            
+
             $inventoryDetails[] = [
                 'inventory_id' => $inventory->id,
                 'quantity_out' => floatval($detail['quantity_out']),
@@ -113,7 +113,7 @@ class PostRoastBlendController extends Controller
         }
 
         DB::beginTransaction();
-        
+
         try {
             // Cek apakah tabel ada
             if (!DB::getSchemaBuilder()->hasTable('post_roast_blend')) {
@@ -123,9 +123,9 @@ class PostRoastBlendController extends Controller
             // Generate ID untuk post roast blend
             $todayCount = DB::table('post_roast_blend')
                 ->count();
-            
+
             $blendId = 'PRB-' . date('Ymd') . '-' . str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
-            
+
             Log::info("Generated Blend ID: $blendId");
 
             // Data untuk insert
@@ -143,7 +143,7 @@ class PostRoastBlendController extends Controller
 
             // Insert ke post_roast_blends
             $postRoastBlendId = DB::table('post_roast_blend')->insertGetId($blendData);
-            
+
             if (!$postRoastBlendId) {
                 throw new Exception('Gagal insert ke tabel post_roast_blends');
             }
@@ -171,7 +171,7 @@ class PostRoastBlendController extends Controller
 
                 // Insert detail blend
                 $detailId = DB::table('post_roast_blend_details')->insertGetId($detailData);
-                
+
                 if (!$detailId) {
                     throw new Exception("Gagal insert detail ke-$index");
                 }
@@ -184,13 +184,13 @@ class PostRoastBlendController extends Controller
                 if (!$updated) {
                     throw new Exception("Gagal update inventory ID {$detail['inventorifinishgood_id']}");
                 }
-                
+
 
                 Log::info("Updated inventory ID {$detail['inventorifinishgood_id']}, added {$detail['quantity_out']} to jml_keluar");
             }
 
             // ========== TAMBAHAN: GL POSTING ==========
-            
+
             // Buat GL Header
             $glHeaderId = DB::table('gl_headers')->insertGetId([
                 'ref_module' => 'POST_ROAST_BLEND',
@@ -225,7 +225,7 @@ class PostRoastBlendController extends Controller
                     'memo' => "FG Out - Blend Component Inventory ID {$invDetail['inventory_id']}",
                     'inventory_id' => $invDetail['inventory_id'],
                     'batch_id' => $postRoastBlendId,
-                   
+
                 ];
             }
 
@@ -241,7 +241,7 @@ class PostRoastBlendController extends Controller
                     'memo' => "FG In - Blend Result {$blendId}",
                     'inventory_id' => null, // Tambahkan inventory_id null
                     'batch_id' => $postRoastBlendId,
-                   
+
                 ];
             } else {
                 // Jika cancel, masuk ke WIP atau expense
@@ -254,7 +254,7 @@ class PostRoastBlendController extends Controller
                     'memo' => "Blend WIP/Expense - {$blendId}",
                     'inventory_id' => null, // Tambahkan inventory_id null
                     'batch_id' => $postRoastBlendId,
-                   
+
                 ];
             }
 
@@ -264,7 +264,7 @@ class PostRoastBlendController extends Controller
             Log::info("Created " . count($glLines) . " GL Lines for blend {$blendId}");
 
             // Jika status close, buat entry baru di inventorifinishgood untuk hasil blend
-            
+
 
             DB::commit();
             Log::info('Transaction committed successfully');
@@ -279,7 +279,7 @@ class PostRoastBlendController extends Controller
                 'line' => $e->getLine(),
                 'file' => $e->getFile()
             ]);
-            
+
             return redirect()->back()
                 ->withErrors(['database' => 'Database error: ' . $e->getMessage()])
                 ->withInput()
@@ -339,7 +339,7 @@ class PostRoastBlendController extends Controller
         ->where('post_roast_blend_id',$id)
         ->select('post_roast_blend_details.*','post_roast_blend.catatan as catatan_blend')
         ->get();
-      
+
         return view('post_roast_blend.detail', compact('blend','details'));
     }
 
@@ -348,7 +348,7 @@ class PostRoastBlendController extends Controller
         try {
             // Ambil data blend utama
             $blend = DB::table('post_roast_blend')->where('id', $id)->first();
-            
+
             if (!$blend) {
                 return redirect()->route('post-roast-blends.index')
                     ->with('error', 'Data Post Roast Blend tidak ditemukan');
@@ -362,7 +362,7 @@ class PostRoastBlendController extends Controller
                 return (array) $item;
             });
 
-            
+
 
             // Ambil inventory yang tersedia
             $inventory = DB::table('inventorifinishgood')
@@ -395,8 +395,8 @@ class PostRoastBlendController extends Controller
 
    public function update(Request $request, $id)
     {
-       
-        
+
+
         try {
             // Cek apakah record exists
             $existingBlend = DB::table('post_roast_blend')->where('id', $id)->first();
@@ -440,9 +440,9 @@ class PostRoastBlendController extends Controller
             foreach ($request->details as $detail) {
                 $totalQuantityOut += floatval($detail['quantity_out']);
             }
-            
+
             Log::info("Total Quantity Out: $totalQuantityOut, Total Weight: {$request->total_weight}");
-            
+
             if (abs($totalQuantityOut - floatval($request->total_weight)) > 0.01) {
                 return redirect()->back()
                     ->withErrors(['total_weight' => "Total weight ({$request->total_weight}) harus sama dengan jumlah quantity out ({$totalQuantityOut})"])
@@ -451,10 +451,10 @@ class PostRoastBlendController extends Controller
             }
 
             DB::beginTransaction();
-            
+
             try {
                 // ========== REVERSE PREVIOUS TRANSACTIONS ==========
-                
+
                 // 1. Ambil detail lama untuk di-reverse
                 $oldDetails = DB::table('post_roast_blend_details')
                     ->where('post_roast_blend_id', $id)
@@ -465,7 +465,7 @@ class PostRoastBlendController extends Controller
                     DB::table('inventorifinishgood')
                         ->where('id', $oldDetail->inventorifinishgood_id)
                         ->decrement('jml_keluar', $oldDetail->quantity_out);
-                        
+
                     Log::info("Reversed inventory ID {$oldDetail->inventorifinishgood_id}, reduced jml_keluar by {$oldDetail->quantity_out}");
                 }
 
@@ -486,23 +486,23 @@ class PostRoastBlendController extends Controller
                 Log::info("Deleted old blend details for ID: $id");
 
                 // ========== VALIDATE NEW DATA ==========
-                
+
                 // Validasi stok tersedia dan hitung total cost untuk data baru
                 $inventoryDetails = [];
                 $totalCost = 0;
-                
+
                 foreach ($request->details as $detail) {
                     $inventory = DB::table('inventorifinishgood')
                         ->where('id', $detail['inventorifinishgood_id'])
                         ->first();
-                    
+
                     if (!$inventory) {
                         throw new Exception('Inventory tidak ditemukan: ID ' . $detail['inventorifinishgood_id']);
                     }
 
                     $availableStock = $inventory->jml_masuk - $inventory->jml_keluar;
                     Log::info("Inventory ID {$inventory->id}: Available Stock = $availableStock, Requested = {$detail['quantity_out']}");
-                    
+
                     if (floatval($detail['quantity_out']) > $availableStock) {
                         throw new Exception("Stok inventory ID {$inventory->id} tidak mencukupi. Tersedia: {$availableStock}, Diminta: {$detail['quantity_out']}");
                     }
@@ -511,7 +511,7 @@ class PostRoastBlendController extends Controller
                     $unitCost = $inventory->harga_per_kg ?? 0;
                     $itemTotalCost = $unitCost * floatval($detail['quantity_out']);
                     $totalCost += $itemTotalCost;
-                    
+
                     $inventoryDetails[] = [
                         'inventory_id' => $inventory->id,
                         'quantity_out' => floatval($detail['quantity_out']),
@@ -521,7 +521,7 @@ class PostRoastBlendController extends Controller
                 }
 
                 // ========== UPDATE MAIN RECORD ==========
-                
+
                 $blendData = [
                     'est_expired_date' => $request->expired_date,
                     'cupping_score' => $request->cupping_score ? floatval($request->cupping_score) : null,
@@ -529,7 +529,7 @@ class PostRoastBlendController extends Controller
                     'catatan' => $request->catatan,
                     'berat_total' => floatval($request->total_weight),
                     'status' => $request->status,
-                   
+
                 ];
 
                 Log::info('Updating blend data:', $blendData);
@@ -537,7 +537,7 @@ class PostRoastBlendController extends Controller
                 $updated = DB::table('post_roast_blend')
                     ->where('id', $id)
                     ->update($blendData);
-                
+
                 if (!$updated) {
                     throw new Exception('Gagal update post_roast_blend');
                 }
@@ -545,7 +545,7 @@ class PostRoastBlendController extends Controller
                 Log::info("Updated Post Roast Blend ID: $id");
 
                 // ========== INSERT NEW DETAILS ==========
-                
+
                 foreach ($request->details as $index => $detail) {
                     $detailData = [
                         'post_roast_blend_id' => $id,
@@ -560,7 +560,7 @@ class PostRoastBlendController extends Controller
                     Log::info("Inserting new detail $index:", $detailData);
 
                     $detailId = DB::table('post_roast_blend_details')->insertGetId($detailData);
-                    
+
                     if (!$detailId) {
                         throw new Exception("Gagal insert detail ke-$index");
                     }
@@ -578,10 +578,10 @@ class PostRoastBlendController extends Controller
                 }
 
                 // ========== CREATE NEW GL POSTING ==========
-                
+
                 // Generate blend ID untuk GL reference
                 $blendId = 'PRB-' . date('Ymd') . '-' . str_pad($id, 3, '0', STR_PAD_LEFT);
-                
+
                 // Buat GL Header baru
                 $glHeaderId = DB::table('gl_headers')->insertGetId([
                     'ref_module' => 'POST_ROAST_BLEND',
@@ -662,7 +662,7 @@ class PostRoastBlendController extends Controller
                     'line' => $e->getLine(),
                     'file' => $e->getFile()
                 ]);
-                
+
                 return redirect()->back()
                     ->withErrors(['database' => 'Database error: ' . $e->getMessage()])
                     ->withInput()
