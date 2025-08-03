@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -39,6 +40,8 @@ use App\Http\Controllers\MasterPenerimaanController;
 use App\Http\Controllers\InventoryBahanBakuController;
 use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\BatchProductionResultController;
+use App\Http\Controllers\ProsesController;
+use App\Http\Controllers\PackageSizeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -190,3 +193,7 @@ Route::get('log-mesins/import', [LogMesinController::class, 'import'])->name('lo
 Route::post('log-mesins/import', [LogMesinController::class, 'storeImport'])->name('log-mesins.storeImport');
 Route::resource('log-mesin', LogMesinController::class)
      ->except(['create', 'store', 'edit', 'update']);
+Route::get('log-mesins/export', [LogMesinController::class, 'export'])->name('log-mesins.export');
+
+Route::resource('master_proses', ProsesController::class);
+Route::resource('master_package_size', PackageSizeController::class);
