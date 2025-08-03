@@ -56,7 +56,7 @@
             <div class="container-fluid">
 
                 {{-- Button Tambah --}}
-               <a href="{{route('inventory.create')}}"  class="btn btn-primary mb-3" >
+                <a href="{{ route('inventory.create') }}" class="btn btn-primary mb-3">
                     <i class="fas fa-plus-circle mr-2"></i> Tambah Data
                 </a>
 
@@ -72,7 +72,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Penerimaan</th>
-                                        <th>Kode Karung</th>
+
                                         <th>Kadar Air</th>
                                         <th>Bulk Density</th>
                                         <th>Masuk</th>
@@ -82,22 +82,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($items as $item)
+                                    @foreach ($items as $item)
                                         <tr>
                                             <td>{{ $item->id }}</td>
-                                            <td>{{ $item->id_batch_mp }}</td>
-                                            <th>{{$item->kode_karung}}</th>
-                                            <td>{{ $item->kadar_air }}</td>
-                                            <td>{{ $item->bulk_densitas }}</td>
-                                            <td>{{ $item->debit_qty }}</td>
-                                            <td>{{ $item->credit_qty }}</td>
-                                          <td>{{ number_format($item->debit_qty - $item->credit_qty, 2, ',', '.') }}</td>
+                                            <td>{{ $item->no_inventory }}</td>
 
-                                            
+                                            <td>{{ $item->kadar_air }}</td>
+                                            <td>{{ $item->bulk }}</td>
+                                            <td>{{ $item->masuk }}</td>
+                                            <td>{{ $item->keluar }}</td>
+                                            <td>{{ number_format($item->masuk - $item->keluar, 2, ',', '.') }}</td>
+                                            keluar
+
                                             <td>
                                                 <a href="{{ route('inventory.edit', $item->id) }}"
                                                     class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="">
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        title="Batalkan">
+                                                        <i class="fas fa-ban"></i>
+                                                    </button>
                                                 </a>
                                                 <button type="button" class="btn btn-danger btn-sm delete-btn"
                                                     data-id="{{ $item->id }}" data-toggle="modal"
@@ -110,7 +116,7 @@
                                 </tbody>
                             </table>
                         </div>
-                       
+
                     </div>
                 </div>
 
@@ -178,19 +184,20 @@
         </div>
     </div>
 
-   
-        <script>
-            $(document).ready(function() {
-                $('#inventory-table').DataTable({ responsive: true });
 
-                $('.delete-btn').click(function() {
-                    const id = $(this).data('id');
-                    const url = "{{ route('inventory.destroy', ':id') }}".replace(':id', id);
-                    $('#deleteForm').attr('action', url);
-                });
-
-                setTimeout(() => $('.alert').alert('close'), 5000);
+    <script>
+        $(document).ready(function() {
+            $('#inventory-table').DataTable({
+                responsive: true
             });
-        </script>
-   
+
+            $('.delete-btn').click(function() {
+                const id = $(this).data('id');
+                const url = "{{ route('inventory.destroy', ':id') }}".replace(':id', id);
+                $('#deleteForm').attr('action', url);
+            });
+
+            setTimeout(() => $('.alert').alert('close'), 5000);
+        });
+    </script>
 @endsection

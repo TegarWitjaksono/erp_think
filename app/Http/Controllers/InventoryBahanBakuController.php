@@ -12,9 +12,8 @@ class InventoryBahanBakuController extends Controller
     public function index()
     {
         $items = DB::table('inventory')
-            ->join('master_penerimaan', 'inventory.penerimaan_id', '=', 'master_penerimaan.id_penerimaan')
-            ->join('karung','karung.id','=','inventory.karung_id')
-            ->select('inventory.*', 'master_penerimaan.*','karung.kode_karung')
+            ->join('detail_penerimaan', 'detail_penerimaan.id_detail_penerimaan', '=', 'inventory.id_detail_penerimaan')
+            ->select('inventory.*', 'detail_penerimaan.*')
             ->get();
 
         return view('inventory.raw.index', compact('items'));
@@ -25,7 +24,7 @@ class InventoryBahanBakuController extends Controller
         $penerimaanList = DB::table('master_penerimaan')->get();
         $details = DB::table('detail_penerimaan')->get();
         $karung = DB::table('karung')->get();
-       
+
         return view('inventory.raw.create', compact('penerimaanList','karung','details'));
     }
     public function store(Request $request)
@@ -62,7 +61,7 @@ class InventoryBahanBakuController extends Controller
         $details = DB::table('detail_penerimaan')->get();
         $karung = DB::table('karung')->get();
         $data = DB::table('inventory')->find($id);
-       
+
         return view('inventory.raw.edit', compact('penerimaanList','karung','details','data'));
     }
 
@@ -93,7 +92,96 @@ class InventoryBahanBakuController extends Controller
         return redirect()->route('inventory.raw.index')->with('success', 'Data dinonaktifkan');
     }
 
-    
+
+    public function cancel($id)
+    {
+        // Ambil data detail penerimaan
+        $detail = DB::table('detail_penerimaan')
+            ->where('id_detail_penerimaan', $id)
+            ->first();
+
+        if (!$detail) {
+            return redirect()->back()->with('error', 'Detail penerimaan tidak ditemukan');
+        }
+
+        // Update status menjadi 'batal'
+        DB::table('detail_penerimaan')
+            ->where('id_detail_penerimaan', $id)
+            ->update(['status' => 'batal']);
+
+        // Ambil semua inventory masuk yang terkait
+        $inventories = DB::table('inventory')
+            ->where('id_detail_penerimaan', $id)
+            ->where('keluar', 0) // hanya ambil yang masuk
+            ->get();
+
+        $grandTotal = 0;
+        foreach ($inventories as $inv) {
+            $noInventoryKeluar = $inv->no_inventory . '-CANCEL';
+
+            DB::table('inventory')->insert([
+                'id_detail_penerimaan' => $id,
+                'no_ref' => $inv->no_ref,
+                'masuk' => 0,
+                'keluar' => $inv->masuk,
+                'catatan' => 'Pembatalan - ' . $inv->no_inventory,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'no_inventory' => $noInventoryKeluar
+            ]);
+
+            $grandTotal += $inv->masuk;
+        }
+
+        // Ambil no penerimaan (jika ada di tabel utama)
+        $noPenerimaan = DB::table('penerimaan')
+            ->where('id', $detail->id_penerimaan ?? null)
+            ->value('no_penerimaan') ?? 'UNKNOWN';
+
+        // INSERT JURNAL GL
+        $glHeaderId = DB::table('gl_headers')->insertGetId([
+            'ref_module' => 'PENERIMAAN',
+            'ref_id' => $id,
+            'doc_no' => 'GR-CNL-' . $detail->id_batch_mp . '-' . now()->format('YmdHis'),
+            'doc_date' => now(),
+            'posting_date' => now(),
+            'currency' => 'IDR',
+            'total_debit' => $grandTotal,
+            'total_credit' => $grandTotal,
+            'status' => 'posted',
+            'notes' => 'Pembatalan penerimaan - Batch: ' . $noPenerimaan,
+            'created_by' => auth()->user()->id ?? 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('gl_lines')->insert([
+            [
+                'header_id' => $glHeaderId,
+                'line_no' => 1,
+                'account_id' => 9, // GRNI dikembalikan
+                'debit' => $grandTotal,
+                'credit' => 0,
+                'memo' => 'Pembatalan Hutang GRNI - Batch: ' . $noPenerimaan,
+                'batch_id' => $detail->id_batch_mp,
+            ],
+            [
+                'header_id' => $glHeaderId,
+                'line_no' => 2,
+                'account_id' => 8, // Persediaan bahan baku keluar
+                'debit' => 0,
+                'credit' => $grandTotal,
+                'memo' => 'Pengurangan Persediaan bahan baku - Batch: ' . $noPenerimaan,
+                'batch_id' => $detail->id_batch_mp,
+            ]
+        ]);
+
+        return redirect()->back()->with('success', 'Penerimaan berhasil dibatalkan');
+    }
+
+
+
+
 
     /**
      * Menampilkan laporan inventory
@@ -102,16 +190,16 @@ class InventoryBahanBakuController extends Controller
     {
         $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
-        
+
         // Data untuk tabel laporan
         $reportData = $this->getInventoryReportData($startDate, $endDate);
-        
+
         // Data untuk grafik
         $chartData = $this->getInventoryChartData($startDate, $endDate);
-        
+
         // Summary data
         $summary = $this->getInventorySummary($startDate, $endDate);
-        
+
         return view('inventory.raw.report', compact('reportData', 'chartData', 'summary', 'startDate', 'endDate'));
     }
 
@@ -230,10 +318,10 @@ class InventoryBahanBakuController extends Controller
     {
         $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
-        
+
         $reportData = $this->getInventoryReportData($startDate, $endDate);
         $summary = $this->getInventorySummary($startDate, $endDate);
-        
+
         // Generate Excel using Laravel Excel or similar package
         // This is a placeholder - you'll need to implement the actual Excel export
         return response()->json([
@@ -250,9 +338,9 @@ class InventoryBahanBakuController extends Controller
     {
         $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
         $endDate = $request->get('end_date', Carbon::now()->format('Y-m-d'));
-        
+
         $chartData = $this->getInventoryChartData($startDate, $endDate);
-        
+
         return response()->json($chartData);
     }
 
@@ -274,13 +362,13 @@ class InventoryBahanBakuController extends Controller
                 DB::raw('MAX(i.timestamp) as last_update')
             ])
             ->groupBy('mp.id_batch_mp', 'dp.id_batch', 'mp.keterangan')
-           
+
             ->orderBy('last_update', 'desc')
             ->get();
 
-           
+
         return view('inventory.raw.current-stock', compact('currentStock'));
     }
 
-    
+
 }

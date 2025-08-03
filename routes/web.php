@@ -1,43 +1,44 @@
 <?php
 
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\GlController;
 use App\Http\Controllers\SkuController;
 
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\LoginController;
-
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\KarungController;
+use App\Http\Controllers\MethodController;
 use App\Http\Controllers\OriginController;
+use App\Http\Controllers\JournalController;
 use App\Http\Controllers\LogMesinController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MasterSkuController;
+use App\Http\Controllers\LevelRoastController;
+use App\Http\Controllers\MasterUserController;
 use App\Http\Controllers\MasterJenisController;
+use App\Http\Controllers\RoastProfileController;
+use App\Http\Controllers\PenerimaanControllerNew;
 use App\Http\Controllers\MasterMachinesController;
+
 use App\Http\Controllers\MasterVarietasController;
 use App\Http\Controllers\PostRoastBlendController;
 use App\Http\Controllers\BatchProductionController;
 use App\Http\Controllers\MasterSuppliersController;
 use App\Http\Controllers\DetailPenerimaanController;
 use App\Http\Controllers\FinishedProductsController;
+use App\Http\Controllers\MasterPenerimaanController;
 use App\Http\Controllers\InventoryBahanBakuController;
 use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\BatchProductionResultController;
-use Illuminate\Http\Request;
-
-use App\Http\Controllers\GlController;
-use App\Http\Controllers\JournalController;
-use App\Http\Controllers\KarungController;
-use App\Http\Controllers\LevelRoastController;
-use App\Http\Controllers\MasterPenerimaanController;
-use App\Http\Controllers\MasterUserController;
-use App\Http\Controllers\MethodController;
-use App\Http\Controllers\RoastProfileController;
-use App\Http\Controllers\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,9 +72,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('batch-productions/start/{id}',[BatchProductionController::class,'start'])->name('batch-productions.start');
     Route::post('batch-productions/cancel/{id}',[BatchProductionController::class,'cancel'])->name('batch-productions.cancel');
     Route::post('batch-productions/close{id}',[BatchProductionController::class,'close'])->name('batch-productions.close');
-    
-    
+
+
     Route::get('/batch-production/report', [BatchProductionController::class, 'report'])->name('batch-production.report');
+    Route::get('/batch-production/menu/{id}', [BatchProductionController::class, 'menu'])->name('batch-production.menu');
+    Route::post('/batch-production/store-menu/{id}', [BatchProductionController::class, 'action'])->name('batch-production.store-menu');
 
     Route::resource('roast_profile',RoastProfileController::class);
 
@@ -136,7 +139,7 @@ Route::get('/master_penerimaan/{id}/edit', [App\Http\Controllers\MasterPenerimaa
 Route::put('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'update'])->name('master_penerimaan.update');
 Route::delete('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'destroy'])->name('master_penerimaan.destroy');
 Route::get('/master_penerimaan/create',[MasterPenerimaanController::class,'create'])->name('master_penerimaan.create');
-
+Route::post('/master_penerimaan/store/new',[PenerimaanControllerNew::class,'store'])->name('master_penerimaan.store.new');
 // Detail Penerimaan Routes
 Route::resource('detail_penerimaan', DetailPenerimaanController::class);
 Route::get('get-master-penerimaan/{id}', function($id) {
@@ -144,13 +147,13 @@ Route::get('get-master-penerimaan/{id}', function($id) {
     return response()->json($masterPenerimaan);
 });
 
-
+Route::get('inventory/cancel/{id}', [InventoryBahanBakuController::class, 'cancel'])->name('inventory.cancel');
 
 Route::resource('inventory', InventoryBahanBakuController::class)->except(['show']);
 
 
 Route::prefix('inventory')->name('inventory.')->group(function () {
-   
+
 
     // Report & Data routes
     Route::get('/report', [InventoryBahanBakuController::class, 'report'])->name('report');

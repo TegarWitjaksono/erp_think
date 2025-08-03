@@ -65,44 +65,40 @@
                             <div class="card-header">
                                 <h3 class="card-title">Create Batch Production</h3>
                             </div>
-                            <form action="{{ route('batch-productions.store') }}" method="POST">
+                            <form action="{{ route('batch-production.store-menu', $batch->id) }}" method="POST">
                                 @csrf
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle"></i> ID Batch akan dibuat otomatis dengan format P0001,
                                     P0002, dst.
                                 </div>
 
-
                                 <div class="card-body">
                                     <div class="row">
+                                        {{-- KIRI --}}
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="no_batch">NO Batch</label>
-                                                <input type="text" name="no_batch" id="no_batch"
-                                                    class="form-control @error('no_batch') is-invalid @enderror"
+                                                <input type="text" name="no_batch" id="no_batch" class="form-control"
                                                     value="{{ old('no_batch', $nextBatchId ?? '') }}" readonly required>
-                                                @error('no_batch')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Method</label>
-                                                <select name="method_id" id="method_select" class="form-control">
-                                                    @foreach ($methods as $k)
-                                                        <option value="{{ $k->id }}"
-                                                            {{ old('method_id', $batch->method_id ?? '') == $k->id ? 'selected' : '' }}>
-                                                            {{ $k->deskripsi }}
+                                                <select name="method_id" class="form-control" readonly disabled>
+                                                    @foreach ($methods as $k => $v)
+                                                        <option value="{{ $k }}"
+                                                            {{ old('method_id', $batch->method_id ?? '') == $k ? 'selected' : '' }}>
+                                                            {{ $v }}
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="method_id"
+                                                    value="{{ old('method_id', $batch->method_id ?? '') }}">
                                             </div>
-
-
 
                                             <div class="form-group">
                                                 <label>Roast Profile</label>
-                                                <select name="roast_profile_id" class="form-control">
+                                                <select name="roast_profile_id" class="form-control" readonly disabled>
                                                     @foreach ($profiles as $k => $v)
                                                         <option value="{{ $k }}"
                                                             {{ old('roast_profile_id', $batch->roast_profile_id ?? '') == $k ? 'selected' : '' }}>
@@ -110,11 +106,13 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="roast_profile_id"
+                                                    value="{{ old('roast_profile_id', $batch->roast_profile_id ?? '') }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Mesin</label>
-                                                <select name="id_mesin" class="form-control">
+                                                <select name="id_mesin" class="form-control" readonly disabled>
                                                     @foreach ($machines as $k => $v)
                                                         <option value="{{ $k }}"
                                                             {{ old('id_mesin', $batch->mesin_id ?? '') == $k ? 'selected' : '' }}>
@@ -122,11 +120,13 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="id_mesin"
+                                                    value="{{ old('id_mesin', $batch->mesin_id ?? '') }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Attention</label>
-                                                <select name="attention" class="form-control">
+                                                <select name="attention" class="form-control" readonly disabled>
                                                     @foreach ($attentions as $k => $v)
                                                         <option value="{{ $k }}"
                                                             {{ old('attention', $batch->attention ?? '') == $k ? 'selected' : '' }}>
@@ -134,29 +134,60 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="attention"
+                                                    value="{{ old('attention', $batch->attention ?? '') }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Agtron</label>
+                                                <input type="number" name="agtron" class="form-control"
+                                                    value="{{ old('agtron', $result->agtron ?? '') }}">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Cupping Score</label>
+                                                <input type="number" step="0.01" name="cupping_score"
+                                                    class="form-control"
+                                                    value="{{ old('cupping_score', $result->cupping_score ?? '') }}">
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label>Berat Akhir</label>
+                                                <input type="number" step="0.01" name="berat_akhir" class="form-control"
+                                                    value="{{ old('berat_akhir', $result->berat_akhir ?? '') }}">
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label>Kadar Air</label>
+                                                <input type="number" step="0.01" name="kadar_air"
+                                                    class="form-control"
+                                                    value="{{ old('kadar_air', $result->kadar_air ?? '') }}">
                                             </div>
 
 
                                         </div>
 
-
+                                        {{-- KANAN --}}
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Product</label>
-                                                <select name="id_product" class="form-control">
+                                                <select name="id_product" class="form-control" readonly disabled>
                                                     @foreach ($products as $k)
                                                         <option value="{{ $k->id_barang }}"
                                                             {{ old('id_product', $batch->id_product ?? '') == $k->id_barang ? 'selected' : '' }}>
                                                             {{ $k->nama_barang }}
                                                         </option>
                                                     @endforeach
-
                                                 </select>
+                                                <input type="hidden" name="id_product"
+                                                    value="{{ old('id_product', $batch->id_product ?? '') }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Level Roast</label>
-                                                <select name="level_roast_id" class="form-control">
+                                                <select name="level_roast_id" class="form-control" readonly disabled>
                                                     @foreach ($levels as $k => $v)
                                                         <option value="{{ $k }}"
                                                             {{ old('level_roast_id', $batch->level_roast_id ?? '') == $k ? 'selected' : '' }}>
@@ -164,13 +195,14 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="level_roast_id"
+                                                    value="{{ old('level_roast_id', $batch->level_roast_id ?? '') }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Status</label>
-                                                <select name="status" class="form-control">
-                                                    <option value="open" readonly>Open</option>
-                                                </select>
+                                                <input type="text" name="status" class="form-control" value="open"
+                                                    readonly>
                                             </div>
 
                                             <div class="form-group">
@@ -180,98 +212,39 @@
                                                     value="{{ old('berat_diroasting', $batch->berat_diroasting ?? '') }}">
                                             </div>
 
-
-
-
-
-
                                             <div class="form-group">
                                                 <label>Estimate Expire Date</label>
                                                 <input type="date" name="estimate_expire_date" class="form-control"
-                                                    value="{{ old('estimate_expire_date', $batch->estimate_expire_date ?? '') }}">
+                                                    readonly
+                                                    value="{{ old('estimate_expire_date', isset($batch->estimate_expire_date) ? Carbon\Carbon::parse($batch->estimate_expire_date)->format('Y-m-d') : '') }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Catatan</label>
-                                                <textarea name="catatan" class="form-control">{{ old('catatan', $batch->catatan ?? '') }}</textarea>
+                                                <textarea name="catatan" class="form-control" readonly>{{ old('catatan', $batch->catatan ?? '') }}</textarea>
                                             </div>
 
+                                            <div class="form-group">
+                                                <label>Note Flavour</label>
+                                                <textarea name="note_flavour" class="form-control">{{ old('note_flavour', $result->note_flavour ?? '') }}</textarea>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <h4 class="mt-4">Detail Batch Production</h4>
-
-                                    <table class="table table-bordered" id="detail-rows">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>Inventory</th>
-                                                <th>Kadar Air (%)</th>
-                                                <th>Bulk Densitas</th>
-                                                <th>Qty Out</th>
-                                                <th>Catatan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="detail-row">
-                                                <td>
-                                                    <select name="id_inventory[]" class="form-control inventory-select"
-                                                        required>
-                                                        <option value="">Pilih Inventory</option>
-                                                        @foreach ($inventory as $item)
-                                                            <option value="{{ $item->id }}">{{ $item->catatan }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input step="0.01" type="number" name="kadar_air[]"
-                                                        class="form-control kadar-air-input" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" name="bulk_densitas[]"
-                                                        class="form-control bulk-densitas-input" required>
-                                                </td>
-                                                <td>
-                                                    <input type="number" step="0.01" name="qty_out[]"
-                                                        class="form-control" required>
-                                                </td>
-                                                <td>
-                                                    <textarea name="catatan_detail[]" class="form-control"></textarea>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-
-
-                                    </table>
-                                    <button type="button" class="btn btn-sm btn-success mt-2" id="add-detail">+ Tambah
-                                        Baris</button>
-
-
-
-
-
-
-
                                 </div>
 
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="window.history.back();">Cancel</button>
+                                    <button type="submit" class="btn btn-coffee">Simpan</button>
+                                </div>
+                            </form>
 
                         </div>
-
-
-
                     </div>
-                    <div class="card-footer">
-                        <button type="button" class="btn btn-secondary" onclick="window.history.back();">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-coffee">Simpan</button>
-                    </div>
-                    </form>
                 </div>
             </div>
-    </div>
-    </div>
-    </section>
+        </section>
     </div>
     <script>
         function updateMethodField() {
@@ -279,27 +252,20 @@
             const detailRows = document.querySelectorAll('.detail-row');
 
             if (detailRows.length === 1) {
-                // Disable <select> dan tambahkan hidden input agar value tetap dikirim
-                methodSelect.setAttribute('disabled', true);
-
-                // Tambahkan hidden input jika belum ada
-                if (!document.getElementById('method_id_hidden')) {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'method_id';
-                    hiddenInput.value = methodSelect.value;
-                    hiddenInput.id = 'method_id_hidden';
-                    methodSelect.parentElement.appendChild(hiddenInput);
+                // Otomatis set ke "Single" dan disable (readonly)
+                for (let i = 0; i < methodSelect.options.length; i++) {
+                    if (methodSelect.options[i].text.toLowerCase().includes('single')) {
+                        methodSelect.value = methodSelect.options[i].value;
+                        break;
+                    }
                 }
-
+                methodSelect.setAttribute('disabled', true);
             } else {
-                // Enable <select> dan hapus hidden input jika ada
+                // Jika lebih dari 1 detail, aktifkan pilihan method
                 methodSelect.removeAttribute('disabled');
-
-                const hidden = document.getElementById('method_id_hidden');
-                if (hidden) hidden.remove();
             }
         }
+
         // Saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             updateMethodField();
