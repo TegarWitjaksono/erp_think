@@ -801,8 +801,6 @@
                                 <p>General Ledger Integration</p>
                             </a>
                         </li>
->>>>>>> 6e419daa0d7d4fca964dd8461415345bfc460dd9
-
                         {{-- LAPORAN --}}
                         <li class="nav-header">Laporan</li>
 
