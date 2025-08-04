@@ -43,8 +43,9 @@ class BatchProductionController extends Controller
           $inventory = DB::table('inventory')
           ->join('detail_penerimaan','detail_penerimaan.id_detail_penerimaan','=','inventory.id_detail_penerimaan')
           ->get();
+          $detailPenerimaan = DB::table('detail_penerimaan')->get();
         return view('batch-productions.create', compact(
-            'machines','methods','profiles','levels','statuses','attentions','nextBatchId','inventory','products'
+            'machines','methods','profiles','levels','statuses','attentions','nextBatchId','inventory','products','detailPenerimaan'
         ));
     }
 
@@ -104,6 +105,9 @@ class BatchProductionController extends Controller
             'qty_out.*' => 'required|numeric|min:0',
             'catatan_detail' => 'nullable|array',
             'catatan_detail.*' => 'nullable|string|max:255',
+            'id_detail_penerimaan' => 'array|array|min:1',
+            'id_detail_penerimaan.*' => 'required|integer|exists:detail_penerimaan,id_detail_penerimaan',
+
         ]);
 
         // Validasi total qty_out tidak melebihi berat_diroasting
@@ -143,6 +147,7 @@ class BatchProductionController extends Controller
                 $inputId = DB::table('batchproduction_input')->insertGetId([
                     'batchproduction_id' => $batchId,
                     'inventory_id' => $inventoryId,
+                    'id_detail_penerimaan' => $detailData['id_detail_penerimaan'][$index] ?? null,
                     'kadar_air' => $detailData['kadar_air'][$index],
                     'bulk_densitas' => $detailData['bulk_densitas'][$index],
                     'qty_out' => $qtyOut,
@@ -577,7 +582,7 @@ class BatchProductionController extends Controller
         return view('batch-productions.menu', compact('batch','methods','products','machines','profiles','levels','statuses','attentions'));
     }
 
-       public function action(Request $request, $id)
+      public function action(Request $request, $id)
 {
     $batch = DB::table('batchproduction')->find($id);
     if (!$batch) {
@@ -601,7 +606,7 @@ class BatchProductionController extends Controller
             'agtron' => $request->agtron,
             'cupping_score' => $request->cupping_score,
             'note_flavour' => $request->note_flavour,
-            'estimate_expire_date' => $request->estimate_expire_date, // pastikan name-nya sama di form
+            'estimate_expire_date' => $request->estimate_expire_date,
         ]);
 
         // Ambil inventory input dari batch
@@ -613,8 +618,13 @@ class BatchProductionController extends Controller
                 throw new Exception('Inventory ID ' . $item->inventory_id . ' tidak ditemukan.');
             }
 
-            // Insert ke inventorifinishgood
-            DB::table('inventorifinishgood')->insert([
+            // Cek apakah sudah ada di inventorifinishgood
+            $existing = DB::table('inventorifinishgood')->where([
+                ['id_inventory', '=', $item->inventory_id],
+                ['Id_batch_production', '=', $id],
+            ])->first();
+
+            $data = [
                 'id_inventory' => $item->inventory_id,
                 'Id_product' => $batch->id_product,
                 'timestamp' => now(),
@@ -624,7 +634,17 @@ class BatchProductionController extends Controller
                 'jml_masuk' => $item->qty_out,
                 'jml_keluar' => 0,
                 'catatan' => 'Catatan Batch Production #' . $id,
-            ]);
+            ];
+
+            if ($existing) {
+                // Update
+                DB::table('inventorifinishgood')
+                    ->where('id', $existing->id)
+                    ->update($data);
+            } else {
+                // Insert
+                DB::table('inventorifinishgood')->insert($data);
+            }
         }
 
         DB::commit();
@@ -634,6 +654,7 @@ class BatchProductionController extends Controller
         return redirect()->back()->with('error', 'Gagal menyimpan action batch: ' . $e->getMessage());
     }
 }
+
 
 
 

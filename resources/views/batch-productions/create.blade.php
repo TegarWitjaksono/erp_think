@@ -225,6 +225,11 @@
                                                         placeholder="Pilih Inventory" readonly data-toggle="modal"
                                                         data-target="#inventoryModal">
 
+                                                    <input type="text" class="form-control detail-penerimaan-display"
+                                                        placeholder="Detail Penerimaan terpilih" readonly>
+                                                    <input type="hidden" name="id_detail_penerimaan[]"
+                                                        class="detail-penerimaan-id">
+
                                                     <!-- Modal -->
 
 
@@ -343,13 +348,48 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Pilih Detail Penerimaan -->
+    <div class="modal fade" id="detailPenerimaanModal" tabindex="-1" role="dialog"
+        aria-labelledby="detailPenerimaanLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pilih Detail Penerimaan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Daftar Detail Penerimaan -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No Batch</th>
+                                    <th>Jenis Kemasan</th>
+                                    <th>Kadar Air</th>
+                                    <th>Densitas</th>
+                                    <th>Pilih</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailPenerimaanList">
+                                <!-- Diisi dinamis lewat JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
-
             $('.datatable').DataTable({
                 responsive: true
             });
-            // Pencarian
+
+            // Pencarian Inventory
             $('#inventorySearch').keyup(function() {
                 var value = $(this).val().toLowerCase();
                 $('#inventoryList tr').filter(function() {
@@ -357,16 +397,59 @@
                 });
             });
 
-            // Pilih inventory
+            let inventoryData =
+                @json($inventory); // Semua data inventory (dengan relasi detail_penerimaan)
+
+            // Saat tombol "Pilih" inventory ditekan
             $(document).on('click', '.select-inventory', function() {
-                var id = $(this).data('id');
-                var catatan = $(this).data('catatan');
+                let id = $(this).data('id');
+                let catatan = $(this).data('catatan');
+
+                // Simpan sementara
                 $('.inventory-display').val(catatan);
-                $('#inventoryModal').modal('hide');
                 $('.inventory-id').val(id);
-                console.log('Selected:', id, catatan);
+
+                // Ambil detail_penerimaan berdasarkan inventory id
+                let detailList = inventoryData.filter(i => i.id == id);
+
+                // Render ke tabel detail_penerimaan
+                let html = '';
+                detailList.forEach(item => {
+                    html += `
+                    <tr>
+                        <td>${item.id_batch}</td>
+                        <td>${item.jenis_kemasan}</td>
+                          <td>${item.kadar_air}</td>
+                        <td>${item.jumlah}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-success select-detail"
+                                data-detail-id="${item.id_detail_penerimaan}"
+                                data-detail-label="${item.id_batch} - ${item.jenis_kemasan}">
+                                Pilih
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                });
+
+                $('#detailPenerimaanList').html(html);
+
+                // Tutup modal inventory, buka modal detail
+                $('#inventoryModal').modal('hide');
+                $('#detailPenerimaanModal').modal('show');
             });
 
+            // Saat pilih detail_penerimaan
+            $(document).on('click', '.select-detail', function() {
+                let detailId = $(this).data('detail-id');
+                let detailLabel = $(this).data('detail-label');
+
+                $('.detail-penerimaan-id').val(detailId);
+                $('.detail-penerimaan-display').val(detailLabel);
+
+                $('#detailPenerimaanModal').modal('hide');
+                console.log('Detail selected:', detailId, detailLabel);
+            });
         });
     </script>
     <script>
