@@ -151,13 +151,11 @@
                                     <tbody id="detail-rows">
                                         <tr class="detail-row align-middle">
                                             <td class="p-1" style="min-width: 150px;">
-                                                <input type="text" name="no_batch[]"
-                                                    class="form-control form-control-sm" required>
+                                                <input type="text" name="no_batch[]" class="form-control" required>
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_jenis[]" class="form-control form-control-sm w-100"
-                                                    required>
+                                                <select name="id_jenis[]" class="form-control  w-100" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($jenis as $item)
                                                         <option value="{{ $item->id_jenis }}">{{ $item->deskripsi }}
@@ -167,8 +165,7 @@
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_varietas[]" class="form-control form-control-sm w-100"
-                                                    required>
+                                                <select name="id_varietas[]" class="form-control w-100" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($varietas as $item)
                                                         <option value="{{ $item->id_varietas }}">{{ $item->deskripsi }}
@@ -178,8 +175,7 @@
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_grade[]" class="form-control form-control-sm w-100"
-                                                    required>
+                                                <select name="id_grade[]" class="form-control w-100" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($grade as $item)
                                                         <option value="{{ $item->id_grade }}">{{ $item->deskripsi }}
@@ -198,25 +194,22 @@
 
                                             <td class="p-1">
                                                 <input type="number" step="0.01" name="kadar_air[]"
-                                                    class="form-control form-control-sm" required>
+                                                    class="form-control" required>
                                             </td>
 
                                             <td class="p-1">
-                                                <input type="number" name="size[]" class="form-control form-control-sm"
-                                                    required>
+                                                <input type="number" name="size[]" class="form-control" required>
                                             </td>
 
                                             <td class="p-1">
-                                                <input type="number" name="jumlah[]"
-                                                    class="form-control form-control-sm" required>
+                                                <input type="number" name="jumlah[]" class="form-control" required>
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="proses[]" class="form-control form-control-sm w-100"
-                                                    required>
+                                                <select name="proses[]" class="form-control w-100" required>
                                                     <option value="">Pilih</option>
-                                                    @foreach ($origin as $item)
-                                                        <option value="{{ $item->id_origin }}">{{ $item->deskripsi }}
+                                                    @foreach ($proses as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->nama_proses }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -224,23 +217,21 @@
 
                                             <td class="p-1">
                                                 <input type="number" step="0.01" name="berat_per_karung[]"
-                                                    class="form-control form-control-sm berat" required>
+                                                    class="form-control berat" required>
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="p_size[]" class="form-control form-control-sm w-100"
-                                                    required>
+                                                <select name="p_size[]" class="form-control w-100" required>
                                                     <option value="">Pilih</option>
-                                                    @foreach ($origin as $item)
-                                                        <option value="{{ $item->id_origin }}">{{ $item->deskripsi }}
+                                                    @foreach ($package as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->deskripsi }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_origin[]" class="form-control form-control-sm w-100"
-                                                    required>
+                                                <select name="id_origin[]" class="form-control w-100" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($origin as $item)
                                                         <option value="{{ $item->id_origin }}">{{ $item->deskripsi }}
@@ -250,8 +241,8 @@
                                             </td>
 
                                             <td class="p-1">
-                                                <input type="number" name="harga_per_kg[]"
-                                                    class="form-control form-control-sm harga" required>
+                                                <input type="number" name="harga_per_kg[]" class="form-control harga"
+                                                    required>
                                             </td>
 
                                             <td class="p-1 text-center">

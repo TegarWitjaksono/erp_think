@@ -143,6 +143,7 @@ Route::put('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanCont
 Route::delete('/master_penerimaan/{id}', [App\Http\Controllers\MasterPenerimaanController::class, 'destroy'])->name('master_penerimaan.destroy');
 Route::get('/master_penerimaan/create',[MasterPenerimaanController::class,'create'])->name('master_penerimaan.create');
 Route::post('/master_penerimaan/store/new',[PenerimaanControllerNew::class,'store'])->name('master_penerimaan.store.new');
+Route::put('/master_penerimaan/update/{id}/new', [PenerimaanControllerNew::class, 'update'])->name('master_penerimaan.update.new');
 // Detail Penerimaan Routes
 Route::resource('detail_penerimaan', DetailPenerimaanController::class);
 Route::get('get-master-penerimaan/{id}', function($id) {

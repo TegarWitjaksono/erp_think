@@ -107,7 +107,7 @@ class InventoryBahanBakuController extends Controller
         // Update status menjadi 'batal'
         DB::table('detail_penerimaan')
             ->where('id_detail_penerimaan', $id)
-            ->update(['status' => 'batal']);
+            ->update(['status' => 2]);
 
         // Ambil semua inventory masuk yang terkait
         $inventories = DB::table('inventory')
@@ -134,15 +134,15 @@ class InventoryBahanBakuController extends Controller
         }
 
         // Ambil no penerimaan (jika ada di tabel utama)
-        $noPenerimaan = DB::table('penerimaan')
-            ->where('id', $detail->id_penerimaan ?? null)
-            ->value('no_penerimaan') ?? 'UNKNOWN';
+        $noPenerimaan = DB::table('master_penerimaan')
+            ->where('id_penerimaan', $detail->id_penerimaan ?? null)
+            ->value('id_batch_mp') ?? 'UNKNOWN';
 
         // INSERT JURNAL GL
         $glHeaderId = DB::table('gl_headers')->insertGetId([
             'ref_module' => 'PENERIMAAN',
             'ref_id' => $id,
-            'doc_no' => 'GR-CNL-' . $detail->id_batch_mp . '-' . now()->format('YmdHis'),
+            'doc_no' => 'GR-CNL-' . $detail->id_batch . '-' . now()->format('YmdHis'),
             'doc_date' => now(),
             'posting_date' => now(),
             'currency' => 'IDR',
@@ -163,7 +163,7 @@ class InventoryBahanBakuController extends Controller
                 'debit' => $grandTotal,
                 'credit' => 0,
                 'memo' => 'Pembatalan Hutang GRNI - Batch: ' . $noPenerimaan,
-                'batch_id' => $detail->id_batch_mp,
+                'batch_id' => $detail->id_batch,
             ],
             [
                 'header_id' => $glHeaderId,
@@ -172,7 +172,7 @@ class InventoryBahanBakuController extends Controller
                 'debit' => 0,
                 'credit' => $grandTotal,
                 'memo' => 'Pengurangan Persediaan bahan baku - Batch: ' . $noPenerimaan,
-                'batch_id' => $detail->id_batch_mp,
+                'batch_id' => $detail->id_batch,
             ]
         ]);
 

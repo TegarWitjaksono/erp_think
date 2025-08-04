@@ -59,6 +59,7 @@
 
         <section class="content">
             <div class="container-fluid">
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
@@ -214,15 +215,34 @@
                                         <tbody>
                                             <tr class="detail-row">
                                                 <td>
-                                                    <select name="id_inventory[]" class="form-control inventory-select"
+
+                                                    <!-- Hidden input untuk menyimpan nilai yang dipilih -->
+                                                    <input type="hidden" name="id_inventory[]" class="inventory-id"
                                                         required>
-                                                        <option value="">Pilih Inventory</option>
-                                                        @foreach ($inventory as $item)
-                                                            <option value="{{ $item->id }}">{{ $item->catatan }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+
+                                                    <!-- Input untuk menampilkan teks yang dipilih -->
+                                                    <input type="text" class="form-control inventory-display"
+                                                        placeholder="Pilih Inventory" readonly data-toggle="modal"
+                                                        data-target="#inventoryModal">
+
+                                                    <!-- Modal -->
+
+
+
+
+
                                                 </td>
+
+                                                <!-- CSS tambahan -->
+                                                <style>
+                                                    .inventory-display {
+                                                        background-color: #fff;
+                                                        cursor: pointer;
+                                                    }
+                                                </style>
+
+                                                <!-- JavaScript untuk fungsi pencarian dan pemilihan -->
+
                                                 <td>
                                                     <input step="0.01" type="number" name="kadar_air[]"
                                                         class="form-control kadar-air-input" required>
@@ -269,10 +289,86 @@
                     </form>
                 </div>
             </div>
+
+        </section>
     </div>
+
+    <div class="modal fade" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="inventoryModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="inventoryModalLabel" class="modal-title">Pilih
+                        Inventory</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Search Box -->
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="inventorySearch" placeholder="Cari inventory...">
+                    </div>
+
+                    <!-- Daftar Inventory -->
+                    <div class="table-responsive">
+                        <table class="datatable table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Catatan</th>
+                                    <th>No Inventory</th>
+                                    <th>Pilih</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryList">
+                                @foreach ($inventory as $item)
+                                    <tr>
+                                        <td>{{ $item->catatan }}</td>
+                                        <td>{{ $item->no_inventory }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary select-inventory"
+                                                data-id="{{ $item->id }}" data-catatan="{{ $item->catatan }}">
+                                                Pilih
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
     </div>
-    </section>
-    </div>
+    <script>
+        $(document).ready(function() {
+
+            $('.datatable').DataTable({
+                responsive: true
+            });
+            // Pencarian
+            $('#inventorySearch').keyup(function() {
+                var value = $(this).val().toLowerCase();
+                $('#inventoryList tr').filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            // Pilih inventory
+            $(document).on('click', '.select-inventory', function() {
+                var id = $(this).data('id');
+                var catatan = $(this).data('catatan');
+                $('.inventory-display').val(catatan);
+                $('#inventoryModal').modal('hide');
+                $('.inventory-id').val(id);
+                console.log('Selected:', id, catatan);
+            });
+
+        });
+    </script>
     <script>
         function updateMethodField() {
             const methodSelect = document.getElementById('method_select');

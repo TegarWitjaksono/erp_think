@@ -500,6 +500,7 @@
             border-color: var(--coffee-accent) !important;
         }
     </style>
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -718,48 +719,8 @@
                                     </a>
                                 </li>
                             </ul>
-                            {{-- OPERASIONAL --}}
-                <li class="nav-header">Operasional</li>
-                <li class="nav-item">
-                    <a href="/master_penerimaan" class="nav-link {{ request()->is('master_penerimaan*') ? 'active' : '' }}">
-                        <i class="fas fa-truck-loading"></i><p>Penerimaan Bahan Baku</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/inventory" class="nav-link {{ request()->is('inventory') ? 'active' : '' }}">
-                        <i class="fas fa-warehouse"></i><p>Inventory Bahan Baku</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/batch-productions" class="nav-link {{ request()->is('batch-productions*') ? 'active' : '' }}">
-                        <i class="fas fa-fire"></i><p>Batch Production (Roasting)</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/batch-results" class="nav-link {{ request()->is('batch-results*') ? 'active' : '' }}">
-                        <i class="fas fa-check-circle"></i><p>Batch Production Result</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/inventory_fg" class="nav-link {{ request()->is('inventory_fg*') ? 'active' : '' }}">
-                        <i class="fas fa-box-open"></i><p>Inventory Finish Good</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/post-roast-blends" class="nav-link {{ request()->is('post-roast-blends*') ? 'active' : '' }}">
-                        <i class="fas fa-mortar-pestle"></i><p>Post Roast Blend</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/log-mesin" class="nav-link {{ request()->is('log-mesin*') ? 'active' : '' }}">
-                        <i class="fas fa-microchip"></i><p>Log Mesin (IoT/Import)</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/gl" class="nav-link {{ request()->is('gl*') ? 'active' : '' }}">
-                        <i class="fas fa-book"></i><p>General Ledger Integration</p>
-                    </a>
-                </li>
+
+
 
                         <li class="nav-header">Operasional</li>
                         <li class="nav-item">

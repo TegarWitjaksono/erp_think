@@ -141,21 +141,21 @@
                                             <div class="form-group">
                                                 <label>Agtron</label>
                                                 <input type="number" name="agtron" class="form-control"
-                                                    value="{{ old('agtron', $result->agtron ?? '') }}">
+                                                    value="{{ old('agtron', $batch->agtron ?? '') }}">
                                             </div>
 
                                             <div class="form-group">
                                                 <label>Cupping Score</label>
                                                 <input type="number" step="0.01" name="cupping_score"
                                                     class="form-control"
-                                                    value="{{ old('cupping_score', $result->cupping_score ?? '') }}">
+                                                    value="{{ old('cupping_score', $batch->cupping_score ?? '') }}">
                                             </div>
 
 
                                             <div class="form-group">
                                                 <label>Berat Akhir</label>
                                                 <input type="number" step="0.01" name="berat_akhir" class="form-control"
-                                                    value="{{ old('berat_akhir', $result->berat_akhir ?? '') }}">
+                                                    value="{{ old('berat_akhir', $batch->berat_akhir ?? '') }}">
                                             </div>
 
 
@@ -163,7 +163,7 @@
                                                 <label>Kadar Air</label>
                                                 <input type="number" step="0.01" name="kadar_air"
                                                     class="form-control"
-                                                    value="{{ old('kadar_air', $result->kadar_air ?? '') }}">
+                                                    value="{{ old('kadar_air', $batch->kadar_air ?? '') }}">
                                             </div>
 
 
@@ -226,7 +226,7 @@
 
                                             <div class="form-group">
                                                 <label>Note Flavour</label>
-                                                <textarea name="note_flavour" class="form-control">{{ old('note_flavour', $result->note_flavour ?? '') }}</textarea>
+                                                <textarea name="note_flavour" class="form-control">{{ old('note_flavour', $batch->note_flavour ?? '') }}</textarea>
                                             </div>
                                         </div>
                                     </div>

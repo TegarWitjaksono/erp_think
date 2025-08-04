@@ -30,9 +30,11 @@ class MasterPenerimaanController extends Controller
         $varietas = DB::table('varietas')->get();
         $grade = DB::table('grade')->get();
         $origin = DB::table('origin')->get();
-         
+        $proses = DB::table('m_proses')->get();
+        $package = DB::table('m_package_size')->get();
+
         $inventory = DB::table('inventorifinishgood')->whereRaw('jml_masuk > jml_keluar')->get();
-        return view('master_penerimaan.create',compact('nextBatchId','suppliers','jenis','varietas','grade','origin'));
+        return view('master_penerimaan.create',compact('nextBatchId','suppliers','jenis','varietas','grade','origin','package','proses'));
     }
 
     /**
@@ -64,7 +66,7 @@ class MasterPenerimaanController extends Controller
             'keterangan' => 'required|string|max:255',
             'cdate' => 'required|date',
             'id_batch_mp' => 'required|string|max:50',
-            
+
             // Validasi array detail
             'id_suplier' => 'required|array|min:1',
             'id_suplier.*' => 'required|integer',
@@ -97,28 +99,28 @@ class MasterPenerimaanController extends Controller
         DB::beginTransaction();
 
         try {
-            
+
             $cdate = strtotime($request->cdate);
 
             // 1. Insert Master Penerimaan
             $masterPenerimaanId = DB::table('master_penerimaan')->insertGetId([
-               
+
                 'id_batch_mp' => $request->id_batch_mp,
                 'keterangan' => $request->keterangan,
                 'cdate' => $cdate,
-                
+
             ]);
 
             // 2. Loop untuk setiap detail
             foreach ($request->id_suplier as $index => $supplierId) {
                 // Generate batch ID untuk setiap detail
                 $batchId = $this->generateBatchId();
-                
+
                 // Hitung total berat
                 $jumlahKarung = $request->jumlah_karung[$index];
                 $beratPerKarung = $request->berat_per_karung[$index];
                 $totalBerat = $jumlahKarung * $beratPerKarung;
-                
+
                 // Format bulk
                 $bulk = $request->bulk_value[$index] . ' ' . $request->bulk_unit[$index];
 
@@ -139,12 +141,12 @@ class MasterPenerimaanController extends Controller
                     'jumlah_tot' => $totalBerat,
                     'size' => $request->size[$index],
                     'harga_per_kg' => $request->harga_per_kg[$index],
-                   
+
                 ]);
 
                 // 3. Generate Karung dan Inventory untuk setiap karung
                 $karungIds = [];
-                
+
                 for ($i = 1; $i <= $jumlahKarung; $i++) {
                     // Generate kode karung unik
                     do {
@@ -154,11 +156,11 @@ class MasterPenerimaanController extends Controller
                     // Insert Karung
                     $idKarung = DB::table('karung')->insertGetId([
                         'penerimaan_id' => $masterPenerimaanId,
-                       
+
                         'kode_karung' => $kodeKarung,
                         'berat_masuk' => $beratPerKarung,
                         'catatan' => 'Auto generate - Karung ' . $i,
-                      
+
                     ]);
 
                     $karungIds[] = $idKarung;
@@ -176,7 +178,7 @@ class MasterPenerimaanController extends Controller
                         'debit_qty' => $beratPerKarung,
                         'credit_qty' => 0,
                         'gl_trx_id' => null, // akan diupdate setelah GL
-                       
+
                     ]);
                 }
 
@@ -210,7 +212,7 @@ class MasterPenerimaanController extends Controller
                         'credit' => 0,
                         'memo' => 'Persediaan bahan baku - Batch: ' . $batchId,
                         'batch_id' => $batchId,
-                        
+
                     ],
                     [
                         'header_id' => $glHeaderId,
@@ -220,7 +222,7 @@ class MasterPenerimaanController extends Controller
                         'credit' => $totalNilai,
                         'memo' => 'Hutang GRNI - Batch: ' . $batchId,
                         'batch_id' => $batchId,
-                        
+
                     ]
                 ]);
 
@@ -230,7 +232,7 @@ class MasterPenerimaanController extends Controller
                     ->whereIn('karung_id', $karungIds)
                     ->update([
                         'gl_trx_id' => $glHeaderId,
-                       
+
                     ]);
             }
 
@@ -255,14 +257,14 @@ private function generatePenerimaanId()
     $lastRecord = DB::table('master_penerimaan')
         ->orderBy('id', 'desc')
         ->first();
-    
+
     if ($lastRecord && isset($lastRecord->id_penerimaan)) {
         $lastNumber = (int) substr($lastRecord->id_penerimaan, 1);
         $newNumber = $lastNumber + 1;
     } else {
         $newNumber = 1;
     }
-    
+
     return 'R' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
 }
 
@@ -296,9 +298,12 @@ private function generatePenerimaanId()
         $varietas = DB::table('varietas')->select('id_varietas', 'deskripsi')->get();
         $grade = DB::table('grade')->select('id_grade', 'deskripsi')->get();
         $origin = DB::table('origin')->select('id_origin', 'deskripsi')->get();
+        $proses = DB::table('m_proses')->get();
+        $package = DB::table('m_package_size')->get();
 
         return view('master_penerimaan.edit', compact(
-            'masterPenerimaan', 'details', 'suppliers', 'jenis', 'varietas', 'grade', 'origin'
+            'masterPenerimaan', 'details', 'suppliers', 'jenis', 'varietas', 'grade', 'origin',
+            'proses', 'package'
         ));
     }
 
@@ -317,8 +322,8 @@ private function generatePenerimaanId()
             'keterangan' => 'required|string|max:255',
             'cdate' => 'required|date',
             'id_batch_mp' => 'required|string|max:50',
-            
-            
+
+
             'id_suplier' => 'required|array|min:1',
             'id_suplier.*' => 'required|integer',
             'id_jenis' => 'required|array|min:1',
@@ -367,7 +372,7 @@ private function generatePenerimaanId()
                 ->update([
                     'keterangan' => $request->keterangan,
                     'cdate' => $cdate,
-                    
+
                 ]);
 
             // 2. Get existing detail IDs
@@ -380,7 +385,7 @@ private function generatePenerimaanId()
 
             // 3. Delete details that are not in submitted data
             $detailsToDelete = array_diff($existingDetailIds, $submittedDetailIds);
-            
+
             foreach ($detailsToDelete as $detailId) {
                 $this->deleteDetailAndRelatedData($detailId);
             }
@@ -388,12 +393,12 @@ private function generatePenerimaanId()
             // 4. Process each detail (update existing or create new)
             foreach ($request->id_suplier as $index => $supplierId) {
                 $detailId = $request->detail_ids[$index] ?? null;
-                
+
                 // Hitung total berat
                 $jumlahKarung = $request->jumlah_karung[$index];
                 $beratPerKarung = $request->berat_per_karung[$index];
                 $totalBerat = $jumlahKarung * $beratPerKarung;
-                
+
                 // Format bulk
                 $bulk = $request->bulk_value[$index] . ' ' . $request->bulk_unit[$index];
 
@@ -411,7 +416,7 @@ private function generatePenerimaanId()
                     'jumlah_tot' => $totalBerat,
                     'size' => $request->size[$index],
                     'harga_per_kg' => $request->harga_per_kg[$index],
-                    
+
                 ];
 
                 if ($detailId && in_array($detailId, $existingDetailIds)) {
@@ -422,14 +427,14 @@ private function generatePenerimaanId()
 
                     // Update related data
                     $this->updateDetailRelatedData($id, $jumlahKarung, $beratPerKarung, $request->kadar_air[$index], $request->bulk_value[$index], $request->harga_per_kg[$index], $totalBerat);
-                
+
                 } else {
                     // Create new detail
                     $batchId = $this->generateBatchId();
-                    
+
                     $detailData['id_penerimaan'] = $masterPenerimaan->id_penerimaan;
                     $detailData['id_batch'] = $batchId;
-                   
+
                     $newDetailId = DB::table('detail_penerimaan')->insertGetId($detailData);
 
                     // Generate karung dan inventory untuk detail baru
@@ -512,7 +517,7 @@ private function generatePenerimaanId()
      */
     private function deleteDetailAndRelatedData($detailId)
     {
-        
+
         // Get GL transaction IDs
         $glTransactionIds = DB::table('inventory')
             ->where('id_detail_penerimaan', $detailId)
@@ -554,7 +559,7 @@ private function generatePenerimaanId()
         if ($jumlahKarung > $existingKarungCount) {
             // Add new karung
             $detail = DB::table('detail_penerimaan')->where('id_detail_penerimaan', $detailId)->first();
-            
+
             for ($i = $existingKarungCount + 1; $i <= $jumlahKarung; $i++) {
                 // Generate kode karung unik
                 do {
@@ -564,11 +569,11 @@ private function generatePenerimaanId()
                 // Insert Karung
                 $idKarung = DB::table('karung')->insertGetId([
                     'penerimaan_id' => $detail->id_penerimaan,
-                    
+
                     'kode_karung' => $kodeKarung,
                     'berat_masuk' => $beratPerKarung,
                     'catatan' => 'Auto generate - Karung ' . $i,
-                   
+
                 ]);
 
                 // Insert Inventory
@@ -584,14 +589,14 @@ private function generatePenerimaanId()
                     'debit_qty' => $beratPerKarung,
                     'credit_qty' => 0,
                     'gl_trx_id' => null,
-                    
+
                 ]);
             }
 
         } elseif ($jumlahKarung < $existingKarungCount) {
             // Remove excess karung
             $karungToDelete = $existingKarung->slice($jumlahKarung);
-            
+
             foreach ($karungToDelete as $karung) {
                 DB::table('inventory')->where('karung_id', $karung->id)->delete();
                 DB::table('karung')->where('id', $karung->id)->delete();
@@ -609,7 +614,7 @@ private function generatePenerimaanId()
                 ->where('id', $karung->id)
                 ->update([
                     'berat_masuk' => $beratPerKarung,
-                    
+
                 ]);
 
             DB::table('inventory')
@@ -618,14 +623,14 @@ private function generatePenerimaanId()
                     'kadar_air' => $kadarAir,
                     'bulk_densitas' => $bulkValue,
                     'debit_qty' => $beratPerKarung,
-                    
+
                 ]);
         }
 
         // Update GL entries
         $totalNilai = $totalBerat * $hargaPerKg;
         $detail = DB::table('detail_penerimaan')->where('id_detail_penerimaan', $detailId)->first();
-        
+
         $glHeaderIds = DB::table('inventory')
             ->where('id_detail_penerimaan', $detailId)
             ->whereNotNull('gl_trx_id')
@@ -660,7 +665,7 @@ private function generatePenerimaanId()
     private function generateKarungAndInventory($idPenerimaan, $idDetail, $jumlahKarung, $beratPerKarung, $kadarAir, $bulkValue)
     {
         $karungIds = [];
-        
+
         for ($i = 1; $i <= $jumlahKarung; $i++) {
             // Generate kode karung unik
             do {
@@ -673,7 +678,7 @@ private function generatePenerimaanId()
                 'kode_karung' => $kodeKarung,
                 'berat_masuk' => $beratPerKarung,
                 'catatan' => 'Auto generate - Karung ' . $i,
-                
+
             ]);
 
             $karungIds[] = $idKarung;
@@ -691,7 +696,7 @@ private function generatePenerimaanId()
                 'debit_qty' => $beratPerKarung,
                 'credit_qty' => 0,
                 'gl_trx_id' => null, // akan diupdate setelah GL
-               
+
             ]);
         }
 
@@ -730,7 +735,7 @@ private function generatePenerimaanId()
                 'credit' => 0,
                 'memo' => 'Persediaan bahan baku - Batch: ' . $batchId,
                 'batch_id' => $batchId,
-               
+
             ],
             [
                 'header_id' => $glHeaderId,
@@ -740,7 +745,7 @@ private function generatePenerimaanId()
                 'credit' => $totalNilai,
                 'memo' => 'Hutang GRNI - Batch: ' . $batchId,
                 'batch_id' => $batchId,
-             
+
             ]
         ]);
 
@@ -755,7 +760,7 @@ private function generatePenerimaanId()
             ->whereIn('karung_id', $karungIds)
             ->update([
                 'gl_trx_id' => $glHeaderId,
-               
+
             ]);
 
         return $glHeaderId;
@@ -769,16 +774,16 @@ private function generatePenerimaanId()
         $lastRecord = DB::table('master_penerimaan')
             ->orderBy('id_penerimaan', 'desc')
             ->first();
-        
+
         if ($lastRecord && isset($lastRecord->id_batch_mp)) {
             $lastNumber = (int) substr($lastRecord->id_batch_mp, 1);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;
         }
-        
+
         return 'MP' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
-    
+
 }

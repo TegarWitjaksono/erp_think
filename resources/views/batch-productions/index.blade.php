@@ -56,7 +56,8 @@
             <div class="container-fluid">
 
                 {{-- Button Tambah --}}
-                <a href="{{ route('batch-productions.create') }}" class="btn btn-coffee mb-3"><i class="fas fa-plus-circle mr-2"></i> Tambah Batch</a>
+                <a href="{{ route('batch-productions.create') }}" class="btn btn-coffee mb-3"><i
+                        class="fas fa-plus-circle mr-2"></i> Tambah Batch</a>
 
                 {{-- Data Table Card --}}
                 <div class="card shadow-sm">
@@ -113,8 +114,8 @@
                                                 </a>
 
                                                 <a href="{{ route('batch-production.menu', $item->id) }}"
-                                                    class="btn btn-info btn-sm" title="Menu Action">
-                                                    <i class="fas fa-list"></i>
+                                                    class="btn btn-secondary btn-sm" title="Menu Action">
+                                                    <i class="fas fa-industry"></i>
                                                 </a>
 
                                                 <!-- Edit -->

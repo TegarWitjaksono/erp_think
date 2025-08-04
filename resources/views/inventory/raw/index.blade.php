@@ -92,14 +92,14 @@
                                             <td>{{ $item->masuk }}</td>
                                             <td>{{ $item->keluar }}</td>
                                             <td>{{ number_format($item->masuk - $item->keluar, 2, ',', '.') }}</td>
-                                            keluar
+
 
                                             <td>
                                                 <a href="{{ route('inventory.edit', $item->id) }}"
                                                     class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="">
+                                                <a href="{{ route('inventory.cancel', $item->id_detail_penerimaan) }}">
                                                     <button type="button" class="btn btn-secondary btn-sm"
                                                         title="Batalkan">
                                                         <i class="fas fa-ban"></i>

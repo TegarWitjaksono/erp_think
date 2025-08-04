@@ -41,6 +41,7 @@ class BatchProductionController extends Controller
         $attentions    = ['normal'=>'Normal','priority'=>'Priority'];
          $nextBatchId = $this->generateBatchId();
           $inventory = DB::table('inventory')
+          ->join('detail_penerimaan','detail_penerimaan.id_detail_penerimaan','=','inventory.id_detail_penerimaan')
           ->get();
         return view('batch-productions.create', compact(
             'machines','methods','profiles','levels','statuses','attentions','nextBatchId','inventory','products'
@@ -317,6 +318,7 @@ class BatchProductionController extends Controller
         $idBatch = base64_decode($id);
         $batch = DB::table('batchproduction')->find($idBatch);
 
+        $products = DB::table('master_barang')->get();
         $machines      = DB::table('machines')->pluck('merk','id');
         $methods       = DB::table('method')->pluck('deskripsi','id');
         $profiles      = DB::table('roast_profile')->pluck('deskripsi','id');
@@ -329,7 +331,7 @@ class BatchProductionController extends Controller
         $details = DB::table('batchproduction_input')->where('batchproduction_id',$idBatch)->get();
 
         return view('batch-productions.edit', compact(
-            'batch','machines','methods','profiles','levels','statuses','attentions','nextBatchId','details','inventory'
+            'batch','machines','methods','profiles','levels','statuses','attentions','nextBatchId','details','inventory','products'
         ));
     }
 
