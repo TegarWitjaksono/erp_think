@@ -142,10 +142,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <form action="{{ route('roast_profile.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-
                         <div class="form-group">
                             <label for="deskripsi">Deskripsi</label>
                             <textarea name="deskripsi" id="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi') }}</textarea>
@@ -154,63 +154,38 @@
                             @enderror
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="charge_temp">Charge Temp (°C)</label>
-                                <input type="number" step="0.01" name="charge_temp" id="charge_temp"
-                                    class="form-control" value="{{ old('charge_temp') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="tp_temp">Turning Point Temp (°C)</label>
-                                <input type="number" step="0.01" name="tp_temp" id="tp_temp" class="form-control"
-                                    value="{{ old('tp_temp') }}">
-                            </div>
+                        <!-- Table Input -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Phase</th>
+                                        <th>Temperatur (°C)</th>
+                                        <th>Waktu (sec)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $phases = ['charge', 'tp', 'de', 'fc', 'sc', 'drop'];
+                                        $phase_labels = ['Charge', 'TP', 'DE', 'FC', 'SC', 'Drop'];
+                                    @endphp
+                                    @foreach ($phases as $index => $phase)
+                                        <tr>
+                                            <td>{{ $phase_labels[$index] }}</td>
+                                            <td>
+                                                <input type="number" step="0.01" name="{{ $phase }}_temp"
+                                                    class="form-control" value="{{ old($phase . '_temp') }}">
+                                            </td>
+                                            <td>
+                                                <input type="number" name="{{ $phase }}_time_sec"
+                                                    class="form-control" value="{{ old($phase . '_time_sec') }}">
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="tp_time_sec">TP Time (sec)</label>
-                                <input type="number" name="tp_time_sec" id="tp_time_sec" class="form-control"
-                                    value="{{ old('tp_time_sec') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="de_temp">Dry End Temp (°C)</label>
-                                <input type="number" step="0.01" name="de_temp" id="de_temp" class="form-control"
-                                    value="{{ old('de_temp') }}">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="de_time_sec">DE Time (sec)</label>
-                                <input type="number" name="de_time_sec" id="de_time_sec" class="form-control"
-                                    value="{{ old('de_time_sec') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="fcs_temp">First Crack Start Temp (°C)</label>
-                                <input type="number" step="0.01" name="fcs_temp" id="fcs_temp"
-                                    class="form-control" value="{{ old('fcs_temp') }}">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label for="fcs_time_sec">FCS Time (sec)</label>
-                                <input type="number" name="fcs_time_sec" id="fcs_time_sec" class="form-control"
-                                    value="{{ old('fcs_time_sec') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="drop_temp">Drop Temp (°C)</label>
-                                <input type="number" step="0.01" name="drop_temp" id="drop_temp"
-                                    class="form-control" value="{{ old('drop_temp') }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="drop_time_sec">Drop Time (sec)</label>
-                            <input type="number" name="drop_time_sec" id="drop_time_sec" class="form-control"
-                                value="{{ old('drop_time_sec') }}">
-                        </div>
+                        <!-- End Table Input -->
 
                     </div>
                     <div class="modal-footer">
@@ -222,6 +197,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Delete Modal -->
 

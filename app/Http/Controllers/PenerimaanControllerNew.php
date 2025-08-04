@@ -313,6 +313,7 @@ class PenerimaanControllerNew extends Controller
                     'no_batch' => $request->no_batch[$i],
                     'id_proses' => $request->proses[$i],
                     'id_p_size' => $request->p_size[$i],
+                    'status' => 1, // Assuming status is always 1 for active
                 ];
 
                 $detailId = null;

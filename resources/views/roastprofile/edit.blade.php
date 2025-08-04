@@ -41,86 +41,93 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Edit Machine</h3>
+                                <h3 class="card-title">Edit Roast Profile</h3>
                             </div>
                             <form action="{{ route('roast_profile.update', $data->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div class="modal-body">
 
+                                <div class="modal-body">
                                     <div class="form-group">
                                         <label for="deskripsi">Deskripsi</label>
-                                        <textarea name="deskripsi" id="deskripsi"
-                                            class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi', $data->deskripsi) }}</textarea>
+                                        <textarea name="deskripsi" id="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror">{{ old('deskripsi', $data->deskripsi) }}</textarea>
                                         @error('deskripsi')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="charge_temp">Charge Temp (°C)</label>
-                                            <input type="number" step="0.01" name="charge_temp" id="charge_temp" class="form-control"
-                                                value="{{ old('charge_temp', $data->charge_temp) }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="tp_temp">Turning Point Temp (°C)</label>
-                                            <input type="number" step="0.01" name="tp_temp" id="tp_temp" class="form-control"
-                                                value="{{ old('tp_temp', $data->tp_temp) }}">
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Phase</th>
+                                                    <th>Temperatur (°C)</th>
+                                                    <th>Waktu (detik)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Charge</td>
+                                                    <td><input type="number" step="0.01" name="charge_temp"
+                                                            class="form-control"
+                                                            value="{{ old('charge_temp', $data->charge_temp) }}"></td>
+                                                    <td><input type="number" name="charge_time_sec" class="form-control"
+                                                            value="{{ old('charge_time_sec', $data->charge_time_sec ?? 0) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>TP</td>
+                                                    <td><input type="number" step="0.01" name="tp_temp"
+                                                            class="form-control"
+                                                            value="{{ old('tp_temp', $data->tp_temp) }}"></td>
+                                                    <td><input type="number" name="tp_time_sec" class="form-control"
+                                                            value="{{ old('tp_time_sec', $data->tp_time_sec) }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>DE</td>
+                                                    <td><input type="number" step="0.01" name="de_temp"
+                                                            class="form-control"
+                                                            value="{{ old('de_temp', $data->de_temp) }}"></td>
+                                                    <td><input type="number" name="de_time_sec" class="form-control"
+                                                            value="{{ old('de_time_sec', $data->de_time_sec) }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>FC</td>
+                                                    <td><input type="number" step="0.01" name="fc_temp"
+                                                            class="form-control"
+                                                            value="{{ old('fc_temp', $data->fc_temp ?? $data->fcs_temp) }}">
+                                                    </td>
+                                                    <td><input type="number" name="fc_time_sec" class="form-control"
+                                                            value="{{ old('fc_time_sec', $data->fc_time_sec ?? $data->fcs_time_sec) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SC</td>
+                                                    <td><input type="number" step="0.01" name="sc_temp"
+                                                            class="form-control"
+                                                            value="{{ old('sc_temp', $data->sc_temp) }}"></td>
+                                                    <td><input type="number" name="sc_time_sec" class="form-control"
+                                                            value="{{ old('sc_time_sec', $data->sc_time_sec) }}"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Drop</td>
+                                                    <td><input type="number" step="0.01" name="drop_temp"
+                                                            class="form-control"
+                                                            value="{{ old('drop_temp', $data->drop_temp) }}"></td>
+                                                    <td><input type="number" name="drop_time_sec" class="form-control"
+                                                            value="{{ old('drop_time_sec', $data->drop_time_sec) }}"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="tp_time_sec">TP Time (sec)</label>
-                                            <input type="number" name="tp_time_sec" id="tp_time_sec" class="form-control"
-                                                value="{{ old('tp_time_sec', $data->tp_time_sec) }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="de_temp">Dry End Temp (°C)</label>
-                                            <input type="number" step="0.01" name="de_temp" id="de_temp" class="form-control"
-                                                value="{{ old('de_temp', $data->de_temp) }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="de_time_sec">DE Time (sec)</label>
-                                            <input type="number" name="de_time_sec" id="de_time_sec" class="form-control"
-                                                value="{{ old('de_time_sec', $data->de_time_sec) }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="fcs_temp">First Crack Start Temp (°C)</label>
-                                            <input type="number" step="0.01" name="fcs_temp" id="fcs_temp" class="form-control"
-                                                value="{{ old('fcs_temp', $data->fcs_temp) }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="fcs_time_sec">FCS Time (sec)</label>
-                                            <input type="number" name="fcs_time_sec" id="fcs_time_sec" class="form-control"
-                                                value="{{ old('fcs_time_sec', $data->fcs_time_sec) }}">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="drop_temp">Drop Temp (°C)</label>
-                                            <input type="number" step="0.01" name="drop_temp" id="drop_temp" class="form-control"
-                                                value="{{ old('drop_temp', $data->drop_temp) }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="drop_time_sec">Drop Time (sec)</label>
-                                        <input type="number" name="drop_time_sec" id="drop_time_sec" class="form-control"
-                                            value="{{ old('drop_time_sec', $data->drop_time_sec) }}">
-                                    </div>
-
                                 </div>
+
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-coffee">Update</button>
                                 </div>
                             </form>
+
 
 
                         </div>
