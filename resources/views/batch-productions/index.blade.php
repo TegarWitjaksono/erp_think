@@ -94,7 +94,7 @@
                                                 {{ $item->method_deskripsi }}
                                             </td>
                                             <td>
-                                                {{ $item->keluar ?? 'Belum ada' }}
+                                                {{ $item->berat_diroasting ?? 'Belum ada' }}
                                             </td>
                                             <td>
                                                 @if ($item->status === 'open')

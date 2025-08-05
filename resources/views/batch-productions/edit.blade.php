@@ -77,8 +77,7 @@
                                     <i class="fas fa-edit mr-2"></i>Edit Batch Production
                                 </h3>
                             </div>
-                            <form action="{{ route('batch-productions.update', base64_encode($batch->id)) }}"
-                                method="POST">
+                            <form action="{{ route('batch-productions.update', base64_encode($batch->id)) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
@@ -234,7 +233,7 @@
                                                 <label>Estimate Expire Date</label>
                                                 <input type="date" name="estimate_expire_date"
                                                     class="form-control @error('estimate_expire_date') is-invalid @enderror"
-                                                    value="{{ old('estimate_expire_date', $batch->estimate_expire_date) }}">
+                                                    value="{{ old('estimate_expire_date', \Carbon\Carbon::parse($batch->estimate_expire_date)->format('Y-m-d')) }}">
                                                 @error('estimate_expire_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -424,23 +423,54 @@
             // Add detail row
             document.getElementById('add-detail').addEventListener('click', function() {
                 const container = document.getElementById('detail-rows');
-                const firstRow = container.querySelector('.detail-row');
-                const newRow = firstRow.cloneNode(true);
+                const existingRows = container.querySelectorAll('.detail-row');
+                
+                // Ambil row template atau clone dari row pertama
+                let templateRow;
+                if (existingRows.length > 0) {
+                    templateRow = existingRows[0].cloneNode(true);
+                } else {
+                    // Jika tidak ada row, buat row baru
+                    templateRow = createNewRow();
+                }
 
-                // Reset hidden input untuk detail baru
-                newRow.querySelector('input[name="detail_ids[]"]').value = '';
+                // Reset hidden input untuk detail baru (set ke empty string agar dianggap sebagai new record)
+                const hiddenInput = templateRow.querySelector('input[name="detail_ids[]"]');
+                if (hiddenInput) {
+                    hiddenInput.value = '';
+                } else {
+                    // Jika tidak ada hidden input, buat yang baru
+                    const newHiddenInput = document.createElement('input');
+                    newHiddenInput.type = 'hidden';
+                    newHiddenInput.name = 'detail_ids[]';
+                    newHiddenInput.value = '';
+                    templateRow.insertBefore(newHiddenInput, templateRow.firstChild);
+                }
 
                 // Reset semua input dan select
-                newRow.querySelectorAll('input:not([name="detail_ids[]"])').forEach(input => input.value =
-                    '');
-                newRow.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-                newRow.querySelectorAll('textarea').forEach(textarea => textarea.value = '');
+                templateRow.querySelectorAll('input:not([name="detail_ids[]"])').forEach(input => {
+                    input.value = '';
+                });
+                templateRow.querySelectorAll('select').forEach(select => {
+                    select.selectedIndex = 0;
+                });
+                templateRow.querySelectorAll('textarea').forEach(textarea => {
+                    textarea.value = '';
+                });
 
-                container.appendChild(newRow);
+                container.appendChild(templateRow);
 
                 // Tambahkan event ke input qty_out baru
-                newRow.querySelector('input[name="qty_out[]"]').addEventListener('input',
-                    hitungTotalQtyOut);
+                const qtyOutInput = templateRow.querySelector('input[name="qty_out[]"]');
+                if (qtyOutInput) {
+                    qtyOutInput.addEventListener('input', hitungTotalQtyOut);
+                }
+
+                // Tambahkan event untuk inventory select baru jika ada fungsi auto-fill
+                const inventorySelect = templateRow.querySelector('select[name="id_inventory[]"]');
+                if (inventorySelect && typeof setupInventorySelectEvent === 'function') {
+                    setupInventorySelectEvent(inventorySelect);
+                }
 
                 updateMethodField();
                 updateTotalDetails();
@@ -461,7 +491,110 @@
                     }
                 }
             });
+
+            // Setup form submission dengan validasi
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const rows = document.querySelectorAll('.detail-row');
+                    if (rows.length === 0) {
+                        e.preventDefault();
+                        alert('Minimal harus ada 1 detail batch production!');
+                        return false;
+                    }
+
+                    // Validasi setiap row
+                    let hasError = false;
+                    rows.forEach((row, index) => {
+                        const inventorySelect = row.querySelector('select[name="id_inventory[]"]');
+                        const kadarAirInput = row.querySelector('input[name="kadar_air[]"]');
+                        const bulkDensitasInput = row.querySelector('input[name="bulk_densitas[]"]');
+                        const qtyOutInput = row.querySelector('input[name="qty_out[]"]');
+
+                        if (!inventorySelect.value) {
+                            hasError = true;
+                            inventorySelect.focus();
+                            alert(`Baris ${index + 1}: Inventory harus dipilih`);
+                            return;
+                        }
+
+                        if (!kadarAirInput.value || parseFloat(kadarAirInput.value) < 0) {
+                            hasError = true;
+                            kadarAirInput.focus();
+                            alert(`Baris ${index + 1}: Kadar Air harus diisi dengan nilai yang valid`);
+                            return;
+                        }
+
+                        if (!bulkDensitasInput.value || parseFloat(bulkDensitasInput.value) < 0) {
+                            hasError = true;
+                            bulkDensitasInput.focus();
+                            alert(`Baris ${index + 1}: Bulk Densitas harus diisi dengan nilai yang valid`);
+                            return;
+                        }
+
+                        if (!qtyOutInput.value || parseFloat(qtyOutInput.value) <= 0) {
+                            hasError = true;
+                            qtyOutInput.focus();
+                            alert(`Baris ${index + 1}: Qty Out harus diisi dengan nilai yang lebih dari 0`);
+                            return;
+                        }
+                    });
+
+                    if (hasError) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
         });
+
+        // Fungsi untuk membuat row baru jika tidak ada template
+        function createNewRow() {
+            const tr = document.createElement('tr');
+            tr.className = 'detail-row';
+            
+            tr.innerHTML = `
+                <input type="hidden" name="detail_ids[]" value="">
+                <td>
+                    <select name="id_inventory[]" class="form-control inventory-select" required>
+                        <option value="">Pilih Inventory</option>
+                        <!-- Options akan diisi dari PHP -->
+                    </select>
+                </td>
+                <td>
+                    <input step="0.01" type="number" name="kadar_air[]" class="form-control kadar-air-input" required>
+                </td>
+                <td>
+                    <input type="number" step="0.01" name="bulk_densitas[]" class="form-control bulk-densitas-input" required>
+                </td>
+                <td>
+                    <input type="number" step="0.01" name="qty_out[]" class="form-control qty-out-input" required>
+                </td>
+                <td>
+                    <textarea name="catatan_detail[]" class="form-control" rows="2"></textarea>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm remove-row">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            return tr;
+        }
+
+        // Fungsi untuk setup event pada inventory select (opsional)
+        function setupInventorySelectEvent(selectElement) {
+            // Implementasi auto-fill jika diperlukan
+            selectElement.addEventListener('change', function() {
+                const selectedValue = this.value;
+                const row = this.closest('tr');
+                
+                // Contoh: auto-fill kadar air dan bulk densitas berdasarkan inventory yang dipilih
+                // Implementasi sesuai kebutuhan
+                console.log('Inventory selected:', selectedValue);
+            });
+        }
     </script>
 
 @endsection

@@ -71,6 +71,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('master_sku', MasterSkuController::class);
     Route::resource('sku', SkuController::class);
 
+    Route::resource('batch-productions', BatchProductionController::class);
     Route::resource('batch-productions',BatchProductionController::class)->except(['show']);
     Route::post('batch-productions/start/{id}',[BatchProductionController::class,'start'])->name('batch-productions.start');
     Route::post('batch-productions/cancel/{id}',[BatchProductionController::class,'cancel'])->name('batch-productions.cancel');
