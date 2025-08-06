@@ -321,10 +321,10 @@ class BatchProductionController extends Controller
     {
         // Decode base64 ID
         $decodedId = base64_decode($id);
-        
+
         // Ambil data batch production
         $batch = DB::table('batchproduction')->find($decodedId);
-        
+
         if (!$batch) {
             return redirect()->route('batch-productions.index')->with('error', 'Batch production tidak ditemukan.');
         }
@@ -336,10 +336,18 @@ class BatchProductionController extends Controller
         $levels = DB::table('level_roast')->pluck('name','id');
         $statuses = ['open'=>'Open','on process'=>'On Process','closing'=>'Closing','cancel'=>'Cancel'];
         $attentions = ['normal'=>'Normal','priority'=>'Priority'];
-        $inventory = DB::table('inventory')->get();
+        $inventory = DB::table('inventory')
+          ->join('detail_penerimaan','detail_penerimaan.id_detail_penerimaan','=','inventory.id_detail_penerimaan')
+          ->get();
+          $detailPenerimaan = DB::table('detail_penerimaan')->get();
 
         // Ambil detail batch production input
-        $details = DB::table('batchproduction_input')->where('batchproduction_id', $decodedId)->get();
+        $details = DB::table('batchproduction_input')
+        ->leftJoin('inventory', 'batchproduction_input.inventory_id', '=', 'inventory.id')
+        ->leftJoin('detail_penerimaan', 'batchproduction_input.id_detail_penerimaan', '=', 'detail_penerimaan.id_detail_penerimaan')
+        ->where('batchproduction_id', $decodedId)->get();
+
+
 
         return view('batch-productions.edit', compact(
             'batch','machines','methods','profiles','levels','statuses','attentions','details','inventory','products'
@@ -350,7 +358,7 @@ class BatchProductionController extends Controller
     {
         // Decode base64 ID yang diterima dari route
         $decodedId = base64_decode($id);
-        
+
         // Cek apakah batch production ada
         $existingBatch = DB::table('batchproduction')->find($decodedId);
         if (!$existingBatch) {
@@ -360,7 +368,7 @@ class BatchProductionController extends Controller
         // Validasi data utama batch production
         $batchData = $request->validate([
             'id_mesin' => 'required|integer',
-            'method_id' => 'required|integer', 
+            'method_id' => 'required|integer',
             'roast_profile_id' => 'required|integer',
             'level_roast_id' => 'required|integer',
             'berat_diroasting' => 'required|numeric|min:0',
@@ -380,6 +388,8 @@ class BatchProductionController extends Controller
                 'detail_ids.*' => 'nullable|integer',
                 'id_inventory' => 'required|array|min:1',
                 'id_inventory.*' => 'required|integer|exists:inventory,id',
+                'id_detail_penerimaan' => 'array|array|min:1',
+                'id_detail_penerimaan.*' => 'required|integer|exists:detail_penerimaan,id_detail_penerimaan',
                 'kadar_air' => 'required|array|min:1',
                 'kadar_air.*' => 'required|numeric|min:0',
                 'bulk_densitas' => 'required|array|min:1',
@@ -420,10 +430,10 @@ class BatchProductionController extends Controller
             // 2. Update detail inputs jika ada
             if (!empty($detailData)) {
                 $detailIds = $request->get('detail_ids', []);
-                
+
                 // Collect existing detail IDs that were submitted
                 $submittedDetailIds = [];
-                
+
                 // Process setiap detail
                 foreach ($detailData['id_inventory'] as $index => $inventoryId) {
                     $qtyOut = $detailData['qty_out'][$index];
@@ -433,6 +443,7 @@ class BatchProductionController extends Controller
                     $detailInputData = [
                         'batchproduction_id' => $decodedId,
                         'inventory_id' => $inventoryId,
+                        'id_detail_penerimaan' => $detailData['id_detail_penerimaan'][$index] ?? null,
                         'kadar_air' => $detailData['kadar_air'][$index],
                         'bulk_densitas' => $detailData['bulk_densitas'][$index],
                         'qty_out' => $qtyOut,
@@ -445,29 +456,29 @@ class BatchProductionController extends Controller
                             ->where('id', $detailId)
                             ->where('batchproduction_id', $decodedId)
                             ->update($detailInputData);
-                        
+
                         $submittedDetailIds[] = $detailId;
-                        
+
                         // Update GL entries jika perlu
                         // Hapus GL lama
                         $glHeaders = DB::table('gl_headers')
                             ->where('ref_module', 'batch_pic_raw')
                             ->where('ref_id', $detailId)
                             ->pluck('id');
-                        
+
                         if ($glHeaders->isNotEmpty()) {
                             DB::table('gl_lines')->whereIn('header_id', $glHeaders)->delete();
                             DB::table('gl_headers')->whereIn('id', $glHeaders)->delete();
                         }
-                        
+
                         // Buat GL baru
                         $this->createGLEntries($detailId, $qtyOut, $decodedId, $inventoryId);
-                        
+
                     } else {
                         // Insert new detail
                         $inputId = DB::table('batchproduction_input')->insertGetId($detailInputData);
                         $submittedDetailIds[] = $inputId;
-                        
+
                         // Create GL entries untuk detail baru
                         $this->createGLEntries($inputId, $qtyOut, $decodedId, $inventoryId);
                     }
@@ -510,7 +521,7 @@ class BatchProductionController extends Controller
             }
 
             // PERBAIKAN: Redirect ke halaman list detail setelah update
-            return redirect()->route('batch.list', $decodedId)->with('success', $message);
+            return redirect()->route('batch-productions.index')->with('success', $message);
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -1319,7 +1330,7 @@ class BatchProductionController extends Controller
     private function createGLEntries($inputId, $qtyOut, $batchId, $inventoryId, $isUpdate = true)
     {
         $docPrefix = $isUpdate ? 'GL-PICK-UPD-' : 'GL-PICK-';
-        
+
         $glHeaderId = DB::table('gl_headers')->insertGetId([
             'ref_module' => 'batch_pic_raw',
             'ref_id' => $inputId,

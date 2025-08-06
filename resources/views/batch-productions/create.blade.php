@@ -400,56 +400,60 @@
             let inventoryData =
                 @json($inventory); // Semua data inventory (dengan relasi detail_penerimaan)
 
+            let currentRow = null;
+
+            $(document).on('click', '.inventory-display', function() {
+                currentRow = $(this).closest('tr');
+            })
+
             // Saat tombol "Pilih" inventory ditekan
             $(document).on('click', '.select-inventory', function() {
                 let id = $(this).data('id');
                 let catatan = $(this).data('catatan');
 
-                // Simpan sementara
-                $('.inventory-display').val(catatan);
-                $('.inventory-id').val(id);
+                // Isi hanya di baris yang aktif
+                currentRow.find('.inventory-display').val(catatan);
+                currentRow.find('.inventory-id').val(id);
 
-                // Ambil detail_penerimaan berdasarkan inventory id
                 let detailList = inventoryData.filter(i => i.id == id);
-
-                // Render ke tabel detail_penerimaan
                 let html = '';
+
                 detailList.forEach(item => {
                     html += `
-                    <tr>
-                        <td>${item.id_batch}</td>
-                        <td>${item.jenis_kemasan}</td>
-                          <td>${item.kadar_air}</td>
-                        <td>${item.jumlah}</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-success select-detail"
-                                data-detail-id="${item.id_detail_penerimaan}"
-                                data-detail-label="${item.id_batch} - ${item.jenis_kemasan}">
-                                Pilih
-                            </button>
-                        </td>
-                    </tr>
-                `;
+            <tr>
+                <td>${item.id_batch}</td>
+                <td>${item.jenis_kemasan}</td>
+                <td>${item.kadar_air}</td>
+                <td>${item.jumlah}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-success select-detail"
+                        data-detail-id="${item.id_detail_penerimaan}"
+                        data-detail-label="${item.id_batch} - ${item.jenis_kemasan}">
+                        Pilih
+                    </button>
+                </td>
+            </tr>
+        `;
                 });
 
                 $('#detailPenerimaanList').html(html);
 
-                // Tutup modal inventory, buka modal detail
                 $('#inventoryModal').modal('hide');
                 $('#detailPenerimaanModal').modal('show');
             });
+
 
             // Saat pilih detail_penerimaan
             $(document).on('click', '.select-detail', function() {
                 let detailId = $(this).data('detail-id');
                 let detailLabel = $(this).data('detail-label');
 
-                $('.detail-penerimaan-id').val(detailId);
-                $('.detail-penerimaan-display').val(detailLabel);
+                currentRow.find('.detail-penerimaan-id').val(detailId);
+                currentRow.find('.detail-penerimaan-display').val(detailLabel);
 
                 $('#detailPenerimaanModal').modal('hide');
-                console.log('Detail selected:', detailId, detailLabel);
             });
+
         });
     </script>
     <script>
