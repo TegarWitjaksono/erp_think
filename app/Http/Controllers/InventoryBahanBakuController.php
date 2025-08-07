@@ -13,8 +13,12 @@ class InventoryBahanBakuController extends Controller
     {
         $items = DB::table('inventory')
             ->join('detail_penerimaan', 'detail_penerimaan.id_detail_penerimaan', '=', 'inventory.id_detail_penerimaan')
-            ->select('inventory.*', 'detail_penerimaan.*')
+            ->join('master_penerimaan', 'master_penerimaan.id_penerimaan', '=', 'detail_penerimaan.id_penerimaan')
+            ->join('suppliers','suppliers.id', '=', 'master_penerimaan.id_supplier')
+            ->select('inventory.*', 'detail_penerimaan.*','suppliers.name as nama_supplier','master_penerimaan.id_batch_mp as no_batch_penerimaan')
+            ->orderBy('inventory.created_at','asc')
             ->get();
+
 
         return view('inventory.raw.index', compact('items'));
     }

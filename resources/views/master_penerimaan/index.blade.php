@@ -25,7 +25,8 @@
                                 <ol class="breadcrumb bg-transparent p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="/home" style="color: #79523B;"><i
                                                 class="fas fa-home"></i> Home</a></li>
-                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Penerimaan Bahan Baku
+                                    <li class="breadcrumb-item active font-weight-bold" aria-current="page">Penerimaan Bahan
+                                        Baku
                                     </li>
                                 </ol>
                             </nav>
@@ -50,7 +51,7 @@
 
         <section class="content">
             <div class="container-fluid">
-                <a href="{{route('master_penerimaan.create')}}" class="btn btn-coffee mb-3">
+                <a href="{{ route('master_penerimaan.create') }}" class="btn btn-coffee mb-3">
                     <i class="fas fa-plus-circle mr-2"></i> Add Penerimaan
                 </a>
 
@@ -65,10 +66,11 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                       
+
                                         <th>No Penerimaan</th> <!-- Tambahkan ini -->
                                         <th>Keterangan</th>
                                         <th>Tanggal</th>
+                                        <th>Supplier</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -77,10 +79,11 @@
                                     @foreach ($data as $item)
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                          
+
                                             <td>{{ $item->id_batch_mp ?? '-' }}</td> <!-- Tampilkan batch -->
                                             <td>{{ $item->keterangan }}</td>
                                             <td>{{ date('Y-m-d', $item->cdate) }}</td>
+                                            <td>{{ $item->name }}</td>
                                             <td>
                                                 <a href="{{ route('detail_penerimaan.index', ['id_penerimaan' => $item->id_penerimaan]) }}"
                                                     class="btn btn-info btn-sm" title="Detail">
@@ -134,7 +137,8 @@
 
     <!-- Add Penerimaan Modal -->
     <!-- Add Penerimaan Modal -->
-    <div class="modal fade" id="addModalPenerimaan" tabindex="-1" aria-labelledby="addModalPenerimaanLabel" aria-hidden="true">
+    <div class="modal fade" id="addModalPenerimaan" tabindex="-1" aria-labelledby="addModalPenerimaanLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -147,7 +151,8 @@
                     @csrf
                     <div class="modal-body">
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> ID Batch akan dibuat otomatis dengan format P0001, P0002, dst.
+                            <i class="fas fa-info-circle"></i> ID Batch akan dibuat otomatis dengan format P0001, P0002,
+                            dst.
                         </div>
                         <div class="form-group">
                             <label for="keterangan">Keterangan</label>
@@ -158,7 +163,9 @@
                         </div>
                         <div class="form-group">
                             <label for="cdate">Tanggal</label>
-                            <input type="date" name="cdate" id="cdate" class="form-control @error('cdate') is-invalid @enderror" value="{{ old('cdate', date('Y-m-d')) }}" required>
+                            <input type="date" name="cdate" id="cdate"
+                                class="form-control @error('cdate') is-invalid @enderror"
+                                value="{{ old('cdate', date('Y-m-d')) }}" required>
                             @error('cdate')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -172,7 +179,7 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-coffee">Save</button>
@@ -182,7 +189,7 @@
         </div>
     </div>
 
-    @section('script')
+@section('script')
     <script type="text/javascript">
         $(document).ready(function() {
             $('.datatable').DataTable({
@@ -196,5 +203,5 @@
             });
         });
     </script>
-    @endsection
+@endsection
 @endsection

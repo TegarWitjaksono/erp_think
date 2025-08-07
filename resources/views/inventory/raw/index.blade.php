@@ -70,9 +70,10 @@
                             <table id="inventory-table" class="table datatable table-hover text-nowrap table-striped">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Penerimaan</th>
-
+                                        <th>No</th>
+                                        <th>No Batch</th>
+                                        <th>No Inventory</th>
+                                        <th>Supplier</th>
                                         <th>Kadar Air</th>
                                         <th>Bulk Density</th>
                                         <th>Masuk</th>
@@ -82,11 +83,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $no = 1;
+                                    @endphp
                                     @foreach ($items as $item)
                                         <tr>
-                                            <td>{{ $item->id }}</td>
+                                            <td>{{ $no++ }}</td>
+                                            <td>{{ $item->no_batch_penerimaan }}</td>
                                             <td>{{ $item->no_inventory }}</td>
-
+                                            <td>{{ $item->nama_supplier }}</td>
                                             <td>{{ $item->kadar_air }}</td>
                                             <td>{{ $item->bulk }}</td>
                                             <td>{{ $item->masuk }}</td>

@@ -18,7 +18,9 @@ class MasterPenerimaanController extends Controller
      */
     public function index()
     {
-        $data = DB::table('master_penerimaan')->get();
+        $data = DB::table('master_penerimaan')
+        ->join('suppliers', 'master_penerimaan.id_supplier', '=', 'suppliers.id')
+        ->get();
         $nextBatchId = $this->generateBatchId();
         return view('master_penerimaan.index', compact('data', 'nextBatchId'));
     }

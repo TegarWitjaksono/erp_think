@@ -38,89 +38,105 @@
                                 <i class="fas fa-info-circle"></i> No Penerimaan akan dibuat otomatis dengan format P0001,
                                 P0002, dst.
                             </div>
-                            <div class="form-group">
-                                <label for="id_batch_mp">NO PENERIMAAN</label>
-                                <input type="text" name="id_batch_mp" id="id_batch_mp"
-                                    class="form-control @error('id_batch_mp') is-invalid @enderror"
-                                    value="{{ old('id_batch_mp', $nextBatchId ?? '') }}" readonly required>
-                                @error('id_batch_mp')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label for="cdate">TANGGAL</label>
-                                <input type="date" name="cdate" id="cdate"
-                                    class="form-control @error('cdate') is-invalid @enderror"
-                                    value="{{ old('cdate', date('Y-m-d')) }}" required>
-                                @error('cdate')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="id_batch_mp">NO PENERIMAAN</label>
+                                        <input type="text" name="id_batch_mp" id="id_batch_mp"
+                                            class="form-control @error('id_batch_mp') is-invalid @enderror"
+                                            value="{{ old('id_batch_mp', $nextBatchId ?? '') }}" readonly required>
+                                        @error('id_batch_mp')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cdate">TANGGAL</label>
+                                        <input type="date" name="cdate" id="cdate"
+                                            class="form-control @error('cdate') is-invalid @enderror"
+                                            value="{{ old('cdate', date('Y-m-d')) }}" required>
+                                        @error('cdate')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="id_suplier">SUPPLIER</label>
+                                        <select name="id_suplier" class="form-control" required>
+                                            <option value="">Pilih Supplier</option>
+                                            @foreach ($suppliers as $item)
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="no_po">NO PO</label>
+                                        <input type="text" name="no_po" id="no_po"
+                                            class="form-control @error('no_po') is-invalid @enderror"
+                                            value="{{ old('no_po') }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="no_do">NO DO</label>
+                                        <input type="text" name="no_do" id="no_do"
+                                            class="form-control @error('no_do') is-invalid @enderror"
+                                            value="{{ old('no_do') }}" required>
+                                        @error('no_do')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="no_invoice">NO INVOICE</label>
+                                        <input type="text" name="no_invoice" id="no_invoice"
+                                            class="form-control @error('no_invoice') is-invalid @enderror"
+                                            value="{{ old('no_invoice') }}" required>
+                                        @error('no_invoice')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="jumlah_tagihan">JUMLAH TAGIHAN</label>
+                                        <input type="text" name="jumlah_tagihan" id="jumlah_tagihan"
+                                            class="form-control @error('jumlah_tagihan') is-invalid @enderror"
+                                            value="{{ old('jumlah_tagihan') }}" required readonly>
+                                        @error('jumlah_tagihan')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="biaya-lain">BIAYA LAIN - LAIN</label>
+                                        <input type="text" name="biaya-lain" id="biaya-lain"
+                                            class="form-control @error('biaya-lain') is-invalid @enderror"
+                                            value="{{ old('biaya-lain') }}" required>
+                                        @error('biaya-lain')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="keterangan">Keterangan</label>
+                                        <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" required>{{ old('keterangan') }}</textarea>
+                                        @error('keterangan')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+
                             </div>
 
-                            <div class="form-group">
-                                <label for="id_suplier">SUPPLIER</label>
-                                <select name="id_suplier" class="form-control" required>
-                                    <option value="">Pilih Supplier</option>
-                                    @foreach ($suppliers as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="no_po">NO PO</label>
-                                <input type="text" name="no_po" id="no_po"
-                                    class="form-control @error('no_po') is-invalid @enderror" value="{{ old('no_po') }}"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label for="no_do">NO DO</label>
-                                <input type="text" name="no_do" id="no_do"
-                                    class="form-control @error('no_do') is-invalid @enderror" value="{{ old('no_do') }}"
-                                    required>
-                                @error('no_do')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
 
-                            <div class="form-group">
-                                <label for="no_invoice">NO INVOICE</label>
-                                <input type="text" name="no_invoice" id="no_invoice"
-                                    class="form-control @error('no_invoice') is-invalid @enderror"
-                                    value="{{ old('no_invoice') }}" required>
-                                @error('no_invoice')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
 
-                            <div class="form-group">
-                                <label for="jumlah_tagihan">JUMLAH TAGIHAN</label>
-                                <input type="text" name="jumlah_tagihan" id="jumlah_tagihan"
-                                    class="form-control @error('jumlah_tagihan') is-invalid @enderror"
-                                    value="{{ old('jumlah_tagihan') }}" required readonly>
-                                @error('jumlah_tagihan')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-
-                            </div>
-
-                            <div class="form-group">
-                                <label for="biaya-lain">BIAYA LAIN - LAIN</label>
-                                <input type="text" name="biaya-lain" id="biaya-lain"
-                                    class="form-control @error('biaya-lain') is-invalid @enderror"
-                                    value="{{ old('biaya-lain') }}" required>
-                                @error('biaya-lain')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="keterangan">Keterangan</label>
-                                <textarea name="keterangan" id="keterangan" class="form-control @error('keterangan') is-invalid @enderror" required>{{ old('keterangan') }}</textarea>
-                                @error('keterangan')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
 
 
                             <h4 class="mt-4">Detail Penerimaan</h4>
