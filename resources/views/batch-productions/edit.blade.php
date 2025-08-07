@@ -279,6 +279,16 @@
                                                             value="{{ $detail->id }}">
                                                         <td>
 
+
+                                                            <input type="text"
+                                                                class="form-control detail-penerimaan-display"
+                                                                data-toggle="modal" data-target="#detailModal"
+                                                                placeholder="Detail Penerimaan terpilih" readonly
+                                                                value="{{ $detail->id_batch }} - {{ $detail->jenis_kemasan }}">
+                                                            <input type="hidden" name="id_detail_penerimaan[]"
+                                                                class="detail-penerimaan-id"
+                                                                value="{{ $detail->id_detail_penerimaan }}" required>
+
                                                             <!-- Hidden input untuk menyimpan nilai yang dipilih -->
                                                             <input type="hidden" name="id_inventory[]"
                                                                 class="inventory-id" value="{{ $detail->inventory_id }}"
@@ -286,17 +296,8 @@
 
                                                             <!-- Input untuk menampilkan teks yang dipilih -->
                                                             <input type="text" class="form-control inventory-display"
-                                                                placeholder="Pilih Inventory" readonly data-toggle="modal"
-                                                                data-target="#inventoryModal"
+                                                                placeholder="Pilih Inventory" readonly
                                                                 value="{{ $detail->catatan }}">
-
-                                                            <input type="text"
-                                                                class="form-control detail-penerimaan-display"
-                                                                placeholder="Detail Penerimaan terpilih" readonly
-                                                                value="{{ $detail->id_batch }} - {{ $detail->jenis_kemasan }}">
-                                                            <input type="hidden" name="id_detail_penerimaan[]"
-                                                                class="detail-penerimaan-id"
-                                                                value="{{ $detail->id_detail_penerimaan }}" required>
 
                                                             <!-- Modal -->
 
@@ -391,13 +392,13 @@
     </div>
 
 
-    <div class="modal fade" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="inventoryModalLabel"
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 id="inventoryModalLabel" class="modal-title">Pilih
-                        Inventory</h5>
+                    <h5 id="detailModalLabel" class="modal-title">Pilih
+                        Detail Penerimaan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -405,7 +406,8 @@
                 <div class="modal-body">
                     <!-- Search Box -->
                     <div class="form-group">
-                        <input type="text" class="form-control" id="inventorySearch" placeholder="Cari inventory...">
+                        <input type="text" class="form-control" id="detailSearch"
+                            placeholder="Cari Detail Penerimaan...">
                     </div>
 
                     <!-- Daftar Inventory -->
@@ -413,19 +415,24 @@
                         <table class="datatable table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Catatan</th>
-                                    <th>No Inventory</th>
+                                    <th>Jenis</th>
+                                    <th>No Batch</th>
+                                    <th>Berat</th>
+                                    <th>Jumlah</th>
                                     <th>Pilih</th>
                                 </tr>
                             </thead>
-                            <tbody id="inventoryList">
-                                @foreach ($inventory as $item)
+                            <tbody id="detailList">
+                                @foreach ($detailPenerimaan as $item)
                                     <tr>
-                                        <td>{{ $item->catatan }}</td>
-                                        <td>{{ $item->no_inventory }}</td>
+                                        <td>{{ $item->jenis_kemasan }}</td>
+                                        <td>{{ $item->id_batch }}</td>
+                                        <td>{{ $item->berat }}</td>
+                                        <td>{{ $item->jumlah }}</td>
                                         <td>
-                                            <button type="button" class="btn btn-sm btn-primary select-inventory"
-                                                data-id="{{ $item->id }}" data-catatan="{{ $item->catatan }}">
+                                            <button type="button" class="btn btn-sm btn-primary select-detail"
+                                                data-id="{{ $item->id_detail_penerimaan }}"
+                                                data-catatan="{{ $item->id_batch }}">
                                                 Pilih
                                             </button>
                                         </td>
@@ -442,13 +449,13 @@
         </div>
     </div>
 
-    <!-- Modal Pilih Detail Penerimaan -->
-    <div class="modal fade" id="detailPenerimaanModal" tabindex="-1" role="dialog"
-        aria-labelledby="detailPenerimaanLabel" aria-hidden="true">
+    <!-- Modal Pilih Inventory -->
+    <div class="modal fade" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="inventoryModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Pilih Detail Penerimaan</h5>
+                    <h5 class="modal-title">Pilih Inventory</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -456,17 +463,17 @@
                 <div class="modal-body">
                     <!-- Daftar Detail Penerimaan -->
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover datatable">
                             <thead>
                                 <tr>
-                                    <th>No Batch</th>
-                                    <th>Jenis Kemasan</th>
-                                    <th>Kadar Air</th>
-                                    <th>Densitas</th>
+                                    <th>No Inventory</th>
+                                    <th>Catatan</th>
+                                    <th>Masuk</th>
+                                    <th>Keluar</th>
                                     <th>Pilih</th>
                                 </tr>
                             </thead>
-                            <tbody id="detailPenerimaanList">
+                            <tbody id="detailInventory">
                                 <!-- Diisi dinamis lewat JS -->
                             </tbody>
                         </table>
@@ -483,45 +490,45 @@
             });
 
             // Pencarian Inventory
-            $('#inventorySearch').keyup(function() {
+            $('#detailSearch').keyup(function() {
                 var value = $(this).val().toLowerCase();
-                $('#inventoryList tr').filter(function() {
+                $('#detailInventory tr').filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
 
-            let inventoryData =
-                @json($inventory); // Semua data inventory (dengan relasi detail_penerimaan)
+            let detailData =
+                @json($detailPenerimaan); // Semua data inventory (dengan relasi detail_penerimaan)
 
             let currentRow = null;
 
-            $(document).on('click', '.inventory-display', function() {
+            $(document).on('click', '.detail-penerimaan-display', function() {
                 currentRow = $(this).closest('tr');
             })
 
             // Saat tombol "Pilih" inventory ditekan
-            $(document).on('click', '.select-inventory', function() {
+            $(document).on('click', '.select-detail', function() {
                 let id = $(this).data('id');
                 let catatan = $(this).data('catatan');
 
                 // Isi hanya di baris yang aktif
-                currentRow.find('.inventory-display').val(catatan);
-                currentRow.find('.inventory-id').val(id);
+                currentRow.find('.detail-penerimaan-display').val(catatan);
+                currentRow.find('.detail-penerimaan-id').val(id);
 
-                let detailList = inventoryData.filter(i => i.id == id);
+                let detailList = detailData.filter(i => i.id_detail_penerimaan == id);
                 let html = '';
 
                 detailList.forEach(item => {
                     html += `
             <tr>
-                <td>${item.id_batch}</td>
-                <td>${item.jenis_kemasan}</td>
-                <td>${item.kadar_air}</td>
-                <td>${item.jumlah}</td>
+                <td>${item.no_inventory}</td>
+                <td>${item.catatan}</td>
+                <td>${item.keluar}</td>
+                <td>${item.masuk}</td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-success select-detail"
-                        data-detail-id="${item.id_detail_penerimaan}"
-                        data-detail-label="${item.id_batch} - ${item.jenis_kemasan}">
+                    <button type="button" class="btn btn-sm btn-success select-inventory"
+                        data-inventory-id="${item.id}"
+                        data-inventory-label="${item.no_inventory} - ${item.catatan}">
                         Pilih
                     </button>
                 </td>
@@ -529,22 +536,22 @@
         `;
                 });
 
-                $('#detailPenerimaanList').html(html);
+                $('#detailInventory').html(html);
 
-                $('#inventoryModal').modal('hide');
-                $('#detailPenerimaanModal').modal('show');
+                $('#detailModal').modal('hide');
+                $('#inventoryModal').modal('show');
             });
 
 
             // Saat pilih detail_penerimaan
-            $(document).on('click', '.select-detail', function() {
-                let detailId = $(this).data('detail-id');
-                let detailLabel = $(this).data('detail-label');
+            $(document).on('click', '.select-inventory', function() {
+                let idInventory = $(this).data('inventory-id');
+                let LabelInventory = $(this).data('inventory-label');
 
-                currentRow.find('.detail-penerimaan-id').val(detailId);
-                currentRow.find('.detail-penerimaan-display').val(detailLabel);
+                currentRow.find('.inventory-id').val(idInventory);
+                currentRow.find('.inventory-display').val(LabelInventory);
 
-                $('#detailPenerimaanModal').modal('hide');
+                $('#inventoryModal').modal('hide');
             });
 
         });
@@ -748,26 +755,30 @@
                 <input type="hidden" name="detail_ids[]" value="">
                <td>
 
-                                                            <!-- Hidden input untuk menyimpan nilai yang dipilih -->
-                                                            <input type="hidden" name="id_inventory[]"
-                                                                class="inventory-id"
-                                                                required>
 
-                                                            <!-- Input untuk menampilkan teks yang dipilih -->
-                                                            <input type="text" class="form-control inventory-display"
-                                                                placeholder="Pilih Inventory" readonly data-toggle="modal"
-                                                                data-target="#inventoryModal"
-                                                                >
 
                                                             <input type="text"
                                                                 class="form-control detail-penerimaan-display"
-                                                                placeholder="Detail Penerimaan terpilih" readonly
+                                                                placeholder="Pilih Detail Penerimaan"
+                                                                 data-toggle="modal"
+                                                                data-target="#detailModal"
+                                                                 readonly
                                                                >
                                                             <input type="hidden" name="id_detail_penerimaan[]"
                                                                 class="detail-penerimaan-id"
                                                                required>
 
                                                             <!-- Modal -->
+
+                                                             <!-- Hidden input untuk menyimpan nilai yang dipilih -->
+                                                            <input type="hidden" name="id_inventory[]"
+                                                                class="inventory-id"
+                                                                required>
+
+                                                            <!-- Input untuk menampilkan teks yang dipilih -->
+                                                            <input type="text" class="form-control inventory-display"
+                                                                placeholder="Inventory Terpilih" readonly
+                                                                >
 
 
 

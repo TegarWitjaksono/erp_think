@@ -43,7 +43,10 @@ class BatchProductionController extends Controller
           $inventory = DB::table('inventory')
           ->join('detail_penerimaan','detail_penerimaan.id_detail_penerimaan','=','inventory.id_detail_penerimaan')
           ->get();
-          $detailPenerimaan = DB::table('detail_penerimaan')->get();
+          $detailPenerimaan = DB::table('detail_penerimaan')
+          ->join('inventory','inventory.id_detail_penerimaan','=','detail_penerimaan.id_detail_penerimaan')
+          ->get();
+
         return view('batch-productions.create', compact(
             'machines','methods','profiles','levels','statuses','attentions','nextBatchId','inventory','products','detailPenerimaan'
         ));
@@ -339,7 +342,9 @@ class BatchProductionController extends Controller
         $inventory = DB::table('inventory')
           ->join('detail_penerimaan','detail_penerimaan.id_detail_penerimaan','=','inventory.id_detail_penerimaan')
           ->get();
-          $detailPenerimaan = DB::table('detail_penerimaan')->get();
+             $detailPenerimaan = DB::table('detail_penerimaan')
+          ->join('inventory','inventory.id_detail_penerimaan','=','detail_penerimaan.id_detail_penerimaan')
+          ->get();
 
         // Ambil detail batch production input
         $details = DB::table('batchproduction_input')
@@ -350,7 +355,8 @@ class BatchProductionController extends Controller
 
 
         return view('batch-productions.edit', compact(
-            'batch','machines','methods','profiles','levels','statuses','attentions','details','inventory','products'
+            'batch','machines','methods','profiles','levels','statuses','attentions','details','inventory','products',
+            'detailPenerimaan'
         ));
     }
 

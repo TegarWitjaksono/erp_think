@@ -79,7 +79,7 @@
                                             <div class="form-group">
                                                 <label for="no_batch">NO Batch</label>
                                                 <input type="text" name="no_batch" id="no_batch" class="form-control"
-                                                    value="{{ old('no_batch', $nextBatchId ?? '') }}" readonly required>
+                                                    value="{{ old('no_batch', $batch->no_batch) }}" readonly required>
                                             </div>
 
                                             <div class="form-group">
