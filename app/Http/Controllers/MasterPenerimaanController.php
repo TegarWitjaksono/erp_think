@@ -22,6 +22,7 @@ class MasterPenerimaanController extends Controller
         ->join('suppliers', 'master_penerimaan.id_supplier', '=', 'suppliers.id')
         ->get();
         $nextBatchId = $this->generateBatchId();
+
         return view('master_penerimaan.index', compact('data', 'nextBatchId'));
     }
 
@@ -34,9 +35,21 @@ class MasterPenerimaanController extends Controller
         $origin = DB::table('origin')->get();
         $proses = DB::table('m_proses')->get();
         $package = DB::table('m_package_size')->get();
+        $data = DB::table('master_rm')
+                ->join('origin','origin.id_origin','=','master_rm.id_origin')
+                ->join('jenis','jenis.id_jenis','=','master_rm.id_jenis')
+                ->join('varietas','varietas.id_varietas','=','master_rm.id_varietas')
+               ->join('m_proses','m_proses.id','=','master_rm.id_proses')
+               ->select('master_rm.*','origin.deskripsi as origin_desc',
+               'varietas.deskripsi as varietas_desc',
+               'jenis.deskripsi as jenis_desc',
+               'm_proses.nama_proses as nama_proses',
+               'm_proses.id as id_proses'
+               )
+               ->get();
 
         $inventory = DB::table('inventorifinishgood')->whereRaw('jml_masuk > jml_keluar')->get();
-        return view('master_penerimaan.create',compact('nextBatchId','suppliers','jenis','varietas','grade','origin','package','proses'));
+        return view('master_penerimaan.create',compact('nextBatchId','suppliers','jenis','varietas','grade','origin','package','proses','data'));
     }
 
     /**
@@ -303,9 +316,23 @@ private function generatePenerimaanId()
         $proses = DB::table('m_proses')->get();
         $package = DB::table('m_package_size')->get();
 
+         $data = DB::table('master_rm')
+                ->join('origin','origin.id_origin','=','master_rm.id_origin')
+                ->join('jenis','jenis.id_jenis','=','master_rm.id_jenis')
+                ->join('varietas','varietas.id_varietas','=','master_rm.id_varietas')
+               ->join('m_proses','m_proses.id','=','master_rm.id_proses')
+               ->select('master_rm.*','origin.deskripsi as origin_desc',
+               'varietas.deskripsi as varietas_desc',
+               'jenis.deskripsi as jenis_desc',
+               'm_proses.nama_proses as nama_proses',
+               'm_proses.id as id_proses'
+               )
+               ->get();
+
+
         return view('master_penerimaan.edit', compact(
             'masterPenerimaan', 'details', 'suppliers', 'jenis', 'varietas', 'grade', 'origin',
-            'proses', 'package'
+            'proses', 'package','data'
         ));
     }
 

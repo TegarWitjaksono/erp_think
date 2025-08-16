@@ -15,7 +15,16 @@ class InventoryBahanBakuController extends Controller
             ->join('detail_penerimaan', 'detail_penerimaan.id_detail_penerimaan', '=', 'inventory.id_detail_penerimaan')
             ->join('master_penerimaan', 'master_penerimaan.id_penerimaan', '=', 'detail_penerimaan.id_penerimaan')
             ->join('suppliers','suppliers.id', '=', 'master_penerimaan.id_supplier')
-            ->select('inventory.*', 'detail_penerimaan.*','suppliers.name as nama_supplier','master_penerimaan.id_batch_mp as no_batch_penerimaan')
+            ->join('master_rm','master_rm.id','=','detail_penerimaan.id_rm')
+           ->join('origin','origin.id_origin','=','detail_penerimaan.id_origin')
+                ->join('jenis','jenis.id_jenis','=','detail_penerimaan.id_jenis')
+                ->join('varietas','varietas.id_varietas','=','detail_penerimaan.id_varietas')
+               ->join('m_proses','m_proses.id','=','detail_penerimaan.id_proses')
+            ->select('inventory.*', 'detail_penerimaan.*','suppliers.name as nama_supplier','master_penerimaan.id_batch_mp as no_batch_penerimaan','master_rm.nama as nama_rm','origin.deskripsi as origin_desc',
+            'varietas.deskripsi as varietas_desc',
+               'jenis.deskripsi as jenis_desc',
+               'm_proses.nama_proses as nama_proses'
+            )
             ->orderBy('inventory.created_at','asc')
             ->get();
 

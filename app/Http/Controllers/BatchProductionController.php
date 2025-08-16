@@ -45,7 +45,21 @@ class BatchProductionController extends Controller
           ->get();
           $detailPenerimaan = DB::table('detail_penerimaan')
           ->join('inventory','inventory.id_detail_penerimaan','=','detail_penerimaan.id_detail_penerimaan')
-          ->get();
+          ->join('master_rm','master_rm.id','=','detail_penerimaan.id_rm')
+           ->join('origin','origin.id_origin','=','detail_penerimaan.id_origin')
+            ->join('jenis','jenis.id_jenis','=','detail_penerimaan.id_jenis')
+            ->join('varietas','varietas.id_varietas','=','detail_penerimaan.id_varietas')
+        ->join('m_proses','m_proses.id','=','detail_penerimaan.id_proses')
+       ->select(
+        'detail_penerimaan.*',
+        'inventory.*',
+        'master_rm.nama as nama_rm',
+        'origin.deskripsi as origin_desc',
+        'varietas.deskripsi as varietas_desc',
+               'jenis.deskripsi as jenis_desc',
+               'm_proses.nama_proses as nama_proses'
+    )
+    ->get();
 
         return view('batch-productions.create', compact(
             'machines','methods','profiles','levels','statuses','attentions','nextBatchId','inventory','products','detailPenerimaan'
@@ -90,7 +104,6 @@ class BatchProductionController extends Controller
             'berat_diroasting' => 'required|numeric|min:0',
             'status' => 'required|string',
             'attention' => 'required|string',
-            'estimate_expire_date' => 'required|date',
             'catatan' => 'nullable|string|max:255',
             'no_batch' => 'required|string|unique:batchproduction,no_batch',
             'id_product' => 'nullable|integer|exists:master_barang,id_barang',
@@ -127,7 +140,7 @@ class BatchProductionController extends Controller
             $batchId = DB::table('batchproduction')->insertGetId([
                 'timestamp' => now(),
                 'datetime' => now(),
-                'estimate_expire_date' => $batchData['estimate_expire_date'],
+                'estimate_expire_date' => null,
                 'id_mesin' => $batchData['id_mesin'],
                 'id_method' => $batchData['method_id'],
                 'id_roastprofile' => $batchData['roast_profile_id'],
@@ -380,7 +393,7 @@ class BatchProductionController extends Controller
             'berat_diroasting' => 'required|numeric|min:0',
             'status' => 'required|string',
             'attention' => 'required|string',
-            'estimate_expire_date' => 'required|date',
+            'estimate_expire_date' => 'nullable|date',
             'catatan' => 'nullable|string|max:255',
             'no_batch' => 'required|string|unique:batchproduction,no_batch,' . $decodedId,
             'id_product' => 'nullable|integer|exists:master_barang,id_barang',
@@ -419,7 +432,7 @@ class BatchProductionController extends Controller
         try {
             // 1. Update batch production utama
             DB::table('batchproduction')->where('id', $decodedId)->update([
-                'estimate_expire_date' => $batchData['estimate_expire_date'],
+
                 'id_mesin' => $batchData['id_mesin'],
                 'id_method' => $batchData['method_id'],
                 'id_roastprofile' => $batchData['roast_profile_id'],

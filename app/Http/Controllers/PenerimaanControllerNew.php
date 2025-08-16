@@ -108,7 +108,8 @@ class PenerimaanControllerNew extends Controller
                     'size' => $request->size[$i],
                     'no_batch' => $request->no_batch[$i],
                     'id_proses' => $request->proses[$i],
-                    'id_p_size' => $request->p_size[$i],
+                    'p_size' => $request->p_size[$i],
+                    'id_rm' => $request->id_rm[$i] ?? null
                 ]);
 
                 // Insert ke inventory per karung
@@ -221,8 +222,7 @@ class PenerimaanControllerNew extends Controller
             'id_grade.*' => 'required|integer',
             'bulk_value' => 'required|array',
             'bulk_value.*' => 'required|numeric',
-            'bulk_unit' => 'required|array',
-            'bulk_unit.*' => 'required|string|in:kg,liter',
+
             'kadar_air' => 'required|array',
             'kadar_air.*' => 'required|string|max:30',
             'size' => 'required|array',
@@ -232,7 +232,7 @@ class PenerimaanControllerNew extends Controller
             'berat_per_karung' => 'required|array',
             'berat_per_karung.*' => 'required|numeric',
             'p_size' => 'required|array',
-            'p_size.*' => 'required|integer',
+            'p_size.*' => 'required',
             'origin' => 'required|array',
             'origin.*' => 'required|integer',
             'harga_per_kg' => 'required|array',
@@ -301,7 +301,7 @@ class PenerimaanControllerNew extends Controller
                     'id_grade' => $request->id_grade[$i],
                     'id_origin' => $request->origin[$i],
                     'kadar_air' => $request->kadar_air[$i],
-                    'bulk' => $request->bulk_value[$i] . ' ' . $request->bulk_unit[$i],
+                    'bulk' => $request->bulk_value[$i],
                     'harga_per_kg' => $hargaPerKg,
                     'jenis_kemasan' => 'Karung',
                     'berat_per_kemasan' => $beratPerKemasan,
@@ -312,8 +312,9 @@ class PenerimaanControllerNew extends Controller
                     'size' => $request->size[$i],
                     'no_batch' => $request->no_batch[$i],
                     'id_proses' => $request->proses[$i],
-                    'id_p_size' => $request->p_size[$i],
+                    'p_size' => $request->p_size[$i],
                     'status' => 1, // Assuming status is always 1 for active
+                    'id_rm' => $request->id_rm[$i]
                 ];
 
                 $detailId = null;
@@ -376,7 +377,6 @@ class PenerimaanControllerNew extends Controller
                         'total_debit' => $grandTotal,
                         'total_credit' => $grandTotal,
                         'notes' => 'Updated from Master Penerimaan - Batch: ' . $masterPenerimaan->id_batch_mp,
-                        'updated_by' => auth()->user()->id ?? 1,
                         'updated_at' => now(),
                     ]);
 

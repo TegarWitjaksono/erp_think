@@ -147,31 +147,43 @@
                                     id="detail-table">
                                     <thead class="table-light text-center">
                                         <tr>
-                                            <th>NO BATCH</th>
+                                            <th>No Batch Supplier</th>
+                                            <th>Aksi</th>
                                             <th>Jenis</th>
-                                            <th>Varietas</th>
-                                            <th>Grade</th>
-                                            <th>Densitas</th>
-                                            <th>Kadar Air (kg)</th>
-                                            <th>Size</th>
-                                            <th>Jumlah Karung</th>
-                                            <th>Proses</th>
-                                            <th>Berat Diterima</th>
-                                            <th>Package Size</th>
                                             <th>Origin</th>
+                                            <th>Varietas</th>
+                                            <th>Proses</th>
+                                            <th>Grade</th>
+                                            <th>Densitas(g/l)</th>
+                                            <th>KA(%)</th>
+                                            <th>Size</th>
+                                            <th>Berat Diterima</th>
+                                            <th>Jumlah Karung</th>
+
+
+                                            <th>Package Size</th>
+
                                             <th>Harga</th>
 
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="detail-rows">
-                                        <tr class="detail-row align-middle">
+                                        <tr class="detail-row align-items-center">
+                                            <input type="hidden" name="id_rm[]" class="id_rm">
                                             <td class="p-1" style="min-width: 150px;">
                                                 <input type="text" name="no_batch[]" class="form-control" required>
                                             </td>
+                                            <td class="p-1">
+                                                <button type="button" class="btn btn-secondary btn-cari"
+                                                    data-toggle="modal" data-target="#cariModal">
+                                                    Cari
+                                                </button>
+                                            </td>
 
-                                            <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_jenis[]" class="form-control  w-100" required>
+                                            <td class="p-1" style="min-width: 120px;">
+                                                <select name="id_jenis[]" id="id_jenis"
+                                                    class="form-control  w-100 id_jenis" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($jenis as $item)
                                                         <option value="{{ $item->id_jenis }}">{{ $item->deskripsi }}
@@ -181,7 +193,20 @@
                                             </td>
 
                                             <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_varietas[]" class="form-control w-100" required>
+                                                <select name="id_origin[]" id="id_origin"
+                                                    class="form-control w-100 id_origin" required>
+                                                    <option value="">Pilih</option>
+                                                    @foreach ($origin as $item)
+                                                        <option value="{{ $item->id_origin }}">{{ $item->deskripsi }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+
+
+                                            <td class="p-1" style="min-width: 120px;">
+                                                <select name="id_varietas[]" id="id_varietas"
+                                                    class="form-control w-100 id_varietas" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($varietas as $item)
                                                         <option value="{{ $item->id_varietas }}">{{ $item->deskripsi }}
@@ -190,7 +215,17 @@
                                                 </select>
                                             </td>
 
-                                            <td class="p-1" style="min-width: 150px;">
+                                            <td class="p-1" style="min-width: 120px;">
+                                                <select name="proses[]" id="proses" class="form-control w-100 proses"
+                                                    required>
+                                                    <option value="">Pilih</option>
+                                                    @foreach ($proses as $item)
+                                                        <option value="{{ $item->id }}">{{ $item->nama_proses }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </td>
+                                            <td class="p-1" style="min-width: 120px;">
                                                 <select name="id_grade[]" class="form-control w-100" required>
                                                     <option value="">Pilih</option>
                                                     @foreach ($grade as $item)
@@ -200,7 +235,7 @@
                                                 </select>
                                             </td>
 
-                                            <td class="p-1" style="min-width: 180px;">
+                                            <td class="p-1" style="min-width: 100px;">
                                                 <div class="input-group input-group-sm">
                                                     <input type="number" step="0.01" name="bulk_value[]"
                                                         class="form-control" required
@@ -208,55 +243,35 @@
                                                 </div>
                                             </td>
 
-                                            <td class="p-1">
+                                            <td class="p-1" style="min-width: 90px ;">
                                                 <input type="number" step="0.01" name="kadar_air[]"
                                                     class="form-control" required>
                                             </td>
 
-                                            <td class="p-1">
+                                            <td class="p-1" style="min-width: 90px ;">
                                                 <input type="number" name="size[]" class="form-control" required>
                                             </td>
+
+                                            <td class="p-1" style="min-width: 90px ;">
+                                                <input type="number" step="0.01" name="berat_per_karung[]"
+                                                    class="form-control berat" required>
+                                            </td>
+
 
                                             <td class="p-1">
                                                 <input type="number" name="jumlah[]" class="form-control" required>
                                             </td>
 
-                                            <td class="p-1" style="min-width: 150px;">
-                                                <select name="proses[]" class="form-control w-100" required>
-                                                    <option value="">Pilih</option>
-                                                    @foreach ($proses as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->nama_proses }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+
+
+
+                                            <td class="p-1" style="min-width: 120px;">
+                                                <input type="text" name="p_size[]" class="form-control" required>
                                             </td>
 
-                                            <td class="p-1">
-                                                <input type="number" step="0.01" name="berat_per_karung[]"
-                                                    class="form-control berat" required>
-                                            </td>
 
-                                            <td class="p-1" style="min-width: 150px;">
-                                                <select name="p_size[]" class="form-control w-100" required>
-                                                    <option value="">Pilih</option>
-                                                    @foreach ($package as $item)
-                                                        <option value="{{ $item->id }}">{{ $item->deskripsi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
 
-                                            <td class="p-1" style="min-width: 150px;">
-                                                <select name="id_origin[]" class="form-control w-100" required>
-                                                    <option value="">Pilih</option>
-                                                    @foreach ($origin as $item)
-                                                        <option value="{{ $item->id_origin }}">{{ $item->deskripsi }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-
-                                            <td class="p-1">
+                                            <td class="p-1" style="min-width: 120px ;">
                                                 <input type="number" name="harga_per_kg[]" class="form-control harga"
                                                     required>
                                             </td>
@@ -294,6 +309,65 @@
     </div>
     </section>
     </div>
+
+    <div class="modal fade" id="cariModal" tabindex="-1" role="dialog" aria-labelledby="cariModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cariModalLabel">Pencarian Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table id="products-table" class="table datatable table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>Origin</th>
+                                    <th>Jenis</th>
+                                    <th>Varietas</th>
+                                    <th>Proses</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $no = 1; @endphp
+                                @foreach ($data as $rm)
+                                    <tr>
+                                        <td>{{ $no++ }}</td>
+                                        <td>{{ $rm->nama ?? 'Belum ada' }}</td>
+                                        <td>{{ $rm->origin_desc ?? 'Belum ada' }}</td>
+                                        <td>{{ $rm->jenis_desc ?? 'Belum ada' }}</td>
+                                        <td>{{ $rm->varietas_desc }}</td>
+                                        <td>{{ $rm->nama_proses }}</td>
+                                        <!-- Modify the actions column to include a detail button -->
+                                        <td>
+
+                                            <button type="button" class="btn btn-sm btn-primary pilihRM"
+                                                data-id="{{ $rm->id }}" data-jenis="{{ $rm->id_jenis }}"
+                                                data-origin="{{ $rm->id_origin }}"
+                                                data-varietas="{{ $rm->id_varietas }}"
+                                                data-proses="{{ $rm->id_proses }}">
+                                                Select
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.datatable').DataTable({
@@ -305,6 +379,36 @@
                 const id = $(this).data('id');
                 $('#deleteForm').attr('action', `{{ url('master_penerimaan') }}/${id}`);
             });
+        });
+    </script>
+
+    <script>
+        // Klik tombol Select di modal
+        $(document).on("click", ".pilihRM", function() {
+            let id = $(this).data("id"); // id RM dari modal
+            let jenis = $(this).data("jenis");
+            let origin = $(this).data("origin");
+            let varietas = $(this).data("varietas");
+            let proses = $(this).data("proses");
+
+            // cari row aktif
+            let row = $("#detail-rows .detail-row.active-row");
+
+            // isi field di row itu
+            row.find(".id_rm").val(id);
+            row.find(".id_jenis").val(jenis);
+            row.find(".id_origin").val(origin);
+            row.find(".id_varietas").val(varietas);
+            row.find(".proses").val(proses);
+
+            // tutup modal
+            $("#cariModal").modal("hide");
+        });
+
+        // saat tombol Cari ditekan, tandai row mana yang sedang aktif
+        $(document).on("click", ".btn-cari", function() {
+            $("#detail-rows .detail-row").removeClass("active-row");
+            $(this).closest("tr").addClass("active-row");
         });
     </script>
     <script>

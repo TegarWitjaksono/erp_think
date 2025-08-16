@@ -40,6 +40,7 @@ use App\Http\Controllers\MasterPenerimaanController;
 use App\Http\Controllers\InventoryBahanBakuController;
 use App\Http\Controllers\InventoryFinishGoodController;
 use App\Http\Controllers\BatchProductionResultController;
+use App\Http\Controllers\MasterRawMaterials;
 use App\Http\Controllers\ProsesController;
 use App\Http\Controllers\PackageSizeController;
 
@@ -97,6 +98,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('roles',RoleController::class);
     Route::resource('users',MasterUserController::class);
+
+    Route::resource('master_raw',MasterRawMaterials::class);
     Route::get('gl',[JournalController::class,'index']);
     Route::get('/logout', [LoginController::class, 'actionLogout'])->name('actionLogout');
 });

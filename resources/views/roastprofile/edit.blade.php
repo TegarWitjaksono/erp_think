@@ -43,10 +43,22 @@
                             <div class="card-header">
                                 <h3 class="card-title">Edit Roast Profile</h3>
                             </div>
-                            <form action="{{ route('roast_profile.update', $data->id) }}" method="POST">
+
+                            <!-- Form untuk Update -->
+                            <form id="updateForm" action="{{ route('roast_profile.update', $data->id) }}" method="POST"
+                                style="display: none;">
                                 @csrf
                                 @method('PUT')
+                            </form>
 
+                            <!-- Form untuk Save As -->
+                            <form id="saveAsForm" action="{{ route('roast_profile.store') }}" method="POST"
+                                style="display: none;">
+                                @csrf
+                            </form>
+
+                            <!-- Form utama untuk input data -->
+                            <form id="mainForm">
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label for="deskripsi">Deskripsi</label>
@@ -123,17 +135,83 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-coffee">Update</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="window.history.back()">Batal</button>
+                                    <button type="button" class="btn btn-info" onclick="saveAs()">
+                                        <i class="fas fa-copy"></i> Save As New
+                                    </button>
+                                    <button type="button" class="btn btn-coffee" onclick="updateProfile()">
+                                        <i class="fas fa-save"></i> Update
+                                    </button>
                                 </div>
                             </form>
-
-
-
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+
+    <script>
+        function updateProfile() {
+            // Konfirmasi update
+            if (confirm('Apakah Anda yakin ingin mengupdate roast profile ini?')) {
+                // Copy semua data dari form utama ke form update
+                copyFormData('updateForm');
+
+                // Submit form update
+                document.getElementById('updateForm').submit();
+            }
+        }
+
+        function saveAs() {
+
+            copyFormData('saveAsForm');
+            let saveAsForm = document.getElementById('saveAsForm');
+            let deskripsiInput = saveAsForm.querySelector('[name="deskripsi"]');
+            // Submit form save as
+            saveAsForm.submit();
+        }
+
+        function copyFormData(targetFormId) {
+            const mainForm = document.getElementById('mainForm');
+            const targetForm = document.getElementById(targetFormId);
+
+            // Hapus input lama kecuali _token dan _method
+            targetForm.querySelectorAll('input[name]:not([name="_token"]):not([name="_method"]), textarea[name]').forEach(
+                input => {
+                    input.remove();
+                });
+
+            // Copy semua input dari mainForm
+            const inputs = mainForm.querySelectorAll('input[name], textarea[name]');
+            inputs.forEach(input => {
+                const clonedInput = input.cloneNode(true);
+                clonedInput.style.display = 'none';
+                targetForm.appendChild(clonedInput);
+            });
+        }
+    </script>
+
+    <style>
+        .btn-coffee {
+            background-color: #79523B;
+            border-color: #79523B;
+            color: white;
+        }
+
+        .btn-coffee:hover {
+            background-color: #5d3e2d;
+            border-color: #5d3e2d;
+            color: white;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 1rem;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
 @endsection

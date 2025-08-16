@@ -101,9 +101,20 @@
 
 
 
+
                                             <div class="form-group">
                                                 <label>Roast Profile</label>
-                                                <select name="roast_profile_id" class="form-control">
+                                                <!-- Tombol untuk buka modal -->
+                                                <div class="pb-2">
+                                                    <button type="button" class="btn btn-primary btn-sm"
+                                                        data-toggle="modal" data-target="#modalRoastProfile">
+                                                        Pilih Roast Profile
+                                                    </button>
+
+                                                </div>
+
+                                                <!-- Hidden select (tetap ada biar ikut form submit) -->
+                                                <select id="roast_profile_id" class="form-control" readonly>
                                                     @foreach ($profiles as $k => $v)
                                                         <option value="{{ $k }}"
                                                             {{ old('roast_profile_id', $batch->roast_profile_id ?? '') == $k ? 'selected' : '' }}>
@@ -111,6 +122,9 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+
+                                                <input type="hidden" id="roast_profile_to" name="roast_profile_id"
+                                                    value="{{ old('roast_profile_id', $batch->roast_profile_id ?? '') }}">
                                             </div>
 
                                             <div class="form-group">
@@ -186,11 +200,11 @@
 
 
 
-                                            <div class="form-group">
+                                            {{-- <div class="form-group">
                                                 <label>Estimate Expire Date</label>
                                                 <input type="date" name="estimate_expire_date" class="form-control"
                                                     value="{{ old('estimate_expire_date', $batch->estimate_expire_date ?? '') }}">
-                                            </div>
+                                            </div> --}}
 
                                             <div class="form-group">
                                                 <label>Catatan</label>
@@ -210,11 +224,12 @@
                                                 <th>Bulk Densitas</th>
                                                 <th>Qty Out</th>
                                                 <th>Catatan</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr class="detail-row">
-                                                <td>
+                                                <td style="width: 500px ;">
 
                                                     <!-- Hidden input untuk menyimpan nilai yang dipilih -->
                                                     <input type="hidden" name="id_detail_penerimaan[]" class="detail-id"
@@ -261,6 +276,10 @@
                                                 </td>
                                                 <td>
                                                     <textarea name="catatan_detail[]" class="form-control"></textarea>
+                                                </td>
+                                                <td>
+                                                    <button type="button"
+                                                        class="btn btn-danger btn-sm remove-row">Hapus</button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -320,24 +339,25 @@
                         <table class="datatable table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Jenis</th>
-                                    <th>No Batch</th>
+                                    <th>Nama Barang</th>
                                     <th>Berat</th>
-                                    <th>Jumlah</th>
+                                    <th>Harga</th>
                                     <th>Pilih</th>
                                 </tr>
                             </thead>
                             <tbody id="detailList">
                                 @foreach ($detailPenerimaan as $item)
                                     <tr>
-                                        <td>{{ $item->jenis_kemasan }}</td>
-                                        <td>{{ $item->id_batch }}</td>
+                                        <td style="width: 200px ;">
+                                            {{ $item->nama_rm . ' - ' . $item->origin_desc . ' - ' . $item->varietas_desc . ' - ' . $item->jenis_desc . '-' . $item->nama_proses }}
+                                        </td>
+
                                         <td>{{ $item->berat }}</td>
-                                        <td>{{ $item->jumlah }}</td>
+                                        <td>{{ $item->harga_per_kg }}</td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-primary select-detail "
                                                 data-id="{{ $item->id_detail_penerimaan }}"
-                                                data-catatan="{{ $item->id_batch }}">
+                                                data-catatan="{{ $item->nama_rm . ' - ' . $item->origin_desc . ' - ' . $item->varietas_desc . ' - ' . $item->jenis_desc . '-' . $item->nama_proses }}">
                                                 Pilih
                                             </button>
                                         </td>
@@ -371,10 +391,10 @@
                         <table class="table table-hover datatable">
                             <thead>
                                 <tr>
+                                    <th>Nama Barang</th>
                                     <th>No Inventory</th>
-                                    <th>Catatan</th>
-                                    <th>Masuk</th>
-                                    <th>Keluar</th>
+
+                                    <th>Sisa</th>
                                     <th>Pilih</th>
                                 </tr>
                             </thead>
@@ -387,6 +407,576 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalRoastProfile" tabindex="-1" role="dialog"
+        aria-labelledby="modalRoastProfileLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pilih Roast Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus"></i> Tambah Profile Baru
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="profileTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Profile</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($profiles as $k => $v)
+                                    <tr data-id="{{ $k }}">
+                                        <td>{{ $k }}</td>
+                                        <td>{{ $v }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-success pilih-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-check"></i> Pilih
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-warning edit-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-info save-as-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-copy"></i> Save As
+                                            </button>
+
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form - Tambah/Edit Profile -->
+    <div class="modal fade" id="modalFormProfile" tabindex="-1" role="dialog" aria-labelledby="modalFormProfileLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFormTitle">Tambah Roast Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <form id="profileForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="profile_id" name="id" value="">
+                        <input type="hidden" id="form_action" value="add"> <!-- add, edit, save_as -->
+
+                        <div class="form-group">
+                            <label for="profile_deskripsi">Deskripsi Profile</label>
+                            <textarea id="profile_deskripsi" name="deskripsi" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Phase</th>
+                                        <th>Temperatur (°C)</th>
+                                        <th>Waktu (detik)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Charge</td>
+                                        <td><input type="number" step="0.01" name="charge_temp" id="charge_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="charge_time_sec" id="charge_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>TP</td>
+                                        <td><input type="number" step="0.01" name="tp_temp" id="tp_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="tp_time_sec" id="tp_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>DE</td>
+                                        <td><input type="number" step="0.01" name="de_temp" id="de_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="de_time_sec" id="de_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FC</td>
+                                        <td><input type="number" step="0.01" name="fc_temp" id="fc_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="fc_time_sec" id="fc_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SC</td>
+                                        <td><input type="number" step="0.01" name="sc_temp" id="sc_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="sc_time_sec" id="sc_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Drop</td>
+                                        <td><input type="number" step="0.01" name="drop_temp" id="drop_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="drop_time_sec" id="drop_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Utama - Pilih Roast Profile -->
+    <div class="modal fade" id="modalRoastProfile" tabindex="-1" role="dialog"
+        aria-labelledby="modalRoastProfileLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pilih Roast Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus"></i> Tambah Profile Baru
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="profileTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Profile</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($profiles as $k => $v)
+                                    <tr data-id="{{ $k }}">
+                                        <td>{{ $k }}</td>
+                                        <td>{{ $v }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-success pilih-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-check"></i> Pilih
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-warning edit-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-info save-as-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-copy"></i> Save As
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger delete-profile"
+                                                data-id="{{ $k }}" data-nama="{{ $v }}">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form - Tambah/Edit Profile -->
+    <div class="modal fade" id="modalFormProfile" tabindex="-1" role="dialog" aria-labelledby="modalFormProfileLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFormTitle">Tambah Roast Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <form id="profileForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="profile_id" name="id" value="">
+                        <input type="hidden" id="form_action" value="add"> <!-- add, edit, save_as -->
+
+                        <div class="form-group">
+                            <label for="profile_deskripsi">Deskripsi Profile</label>
+                            <textarea id="profile_deskripsi" name="deskripsi" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Phase</th>
+                                        <th>Temperatur (°C)</th>
+                                        <th>Waktu (detik)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Charge</td>
+                                        <td><input type="number" step="0.01" name="charge_temp" id="charge_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="charge_time_sec" id="charge_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>TP</td>
+                                        <td><input type="number" step="0.01" name="tp_temp" id="tp_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="tp_time_sec" id="tp_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>DE</td>
+                                        <td><input type="number" step="0.01" name="de_temp" id="de_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="de_time_sec" id="de_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FC</td>
+                                        <td><input type="number" step="0.01" name="fc_temp" id="fc_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="fc_time_sec" id="fc_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SC</td>
+                                        <td><input type="number" step="0.01" name="sc_temp" id="sc_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="sc_time_sec" id="sc_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Drop</td>
+                                        <td><input type="number" step="0.01" name="drop_temp" id="drop_temp"
+                                                class="form-control" placeholder="0.00"></td>
+                                        <td><input type="number" name="drop_time_sec" id="drop_time_sec"
+                                                class="form-control" placeholder="0"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .btn-coffee {
+            background-color: #79523B;
+            border-color: #79523B;
+            color: white;
+        }
+
+        .btn-coffee:hover {
+            background-color: #5d3e2d;
+            border-color: #5d3e2d;
+            color: white;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .modal-xl {
+            max-width: 90%;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            const select = $('#roast_profile_id');
+            const hidden = $('#roast_profile_to');
+
+            // Set default value dari option pertama kalau hidden belum ada value
+            if (!hidden.val()) {
+                const firstVal = select.find('option:first').val();
+                hidden.val(firstVal);
+                select.val(firstVal);
+            }
+            // Event handler untuk pilih profile
+            $(document).on('click', '.pilih-profile', function() {
+                let id = $(this).data('id');
+                let nama = $(this).data('nama');
+
+                // Set nilai ke form utama (sesuaikan dengan field yang ada)
+                if ($('#roast_profile_id').length) {
+                    $('#roast_profile_id').val(id);
+                    $('#roast_profile_to').val(id);
+                }
+                if ($('#roast_profile_name').length) {
+                    $('#roast_profile_name').val(nama);
+                }
+
+                $('#modalRoastProfile').modal('hide');
+
+                // Optional: tampilkan notifikasi
+                showNotification('Profile berhasil dipilih: ' + nama, 'success');
+            });
+
+            // Event handler untuk edit profile
+            $(document).on('click', '.edit-profile', function() {
+                let id = $(this).data('id');
+                let nama = $(this).data('nama');
+
+                openEditModal(id, nama);
+            });
+
+            // Event handler untuk save as profile
+            $(document).on('click', '.save-as-profile', function() {
+                let id = $(this).data('id');
+                let nama = $(this).data('nama');
+
+                openSaveAsModal(id, nama);
+            });
+
+            // Event handler untuk delete profile
+            $(document).on('click', '.delete-profile', function() {
+                let id = $(this).data('id');
+                let nama = $(this).data('nama');
+
+                if (confirm('Apakah Anda yakin ingin menghapus profile "' + nama + '"?')) {
+                    deleteProfile(id);
+                }
+            });
+
+            // Submit form handler
+            $('#profileForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let formAction = $('#form_action').val();
+                let formData = new FormData(this);
+
+                // Validasi
+                if (!validateProfileForm()) {
+                    return false;
+                }
+
+                // Tentukan URL dan method berdasarkan aksi
+                let url, method;
+                if (formAction === 'add') {
+                    url = '{{ route('roast_profile.store') }}';
+                    method = 'POST';
+                } else if (formAction === 'edit') {
+                    url = '{{ route('roast_profile.update', ':id') }}'.replace(':id', $('#profile_id')
+                        .val());
+                    method = 'POST';
+                    formData.append('_method', 'PUT');
+                } else if (formAction === 'save_as') {
+                    url = '{{ route('roast_profile.store') }}';
+                    method = 'POST';
+                    formData.delete('id'); // Hapus ID untuk create new
+                }
+
+                // Add CSRF token
+                formData.append('_token', '{{ csrf_token() }}');
+
+                // Submit via AJAX
+                $.ajax({
+                    url: url,
+                    method: method,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#modalFormProfile').modal('hide');
+                        showNotification('Profile berhasil disimpan!', 'success');
+
+                        // Refresh table atau redirect
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        let errors = xhr.responseJSON?.errors;
+                        if (errors) {
+                            showValidationErrors(errors);
+                        } else {
+                            showNotification('Terjadi kesalahan saat menyimpan profile',
+                                'error');
+                        }
+                    }
+                });
+            });
+        });
+
+        // Function untuk membuka modal tambah
+        function openAddModal() {
+            resetForm();
+            $('#modalFormTitle').text('Tambah Roast Profile Baru');
+            $('#form_action').val('add');
+            $('#submitBtn').text('Simpan');
+            $('#modalFormProfile').modal('show');
+        }
+
+        // Function untuk membuka modal edit
+        function openEditModal(id, nama) {
+            resetForm();
+            $('#modalFormTitle').text('Edit Roast Profile');
+            $('#form_action').val('edit');
+            $('#profile_id').val(id);
+            $('#submitBtn').text('Update');
+
+            // Load data profile via AJAX
+            loadProfileData(id);
+
+            $('#modalFormProfile').modal('show');
+        }
+
+        // Function untuk membuka modal save as
+        function openSaveAsModal(id, nama) {
+            resetForm();
+            $('#modalFormTitle').text('Save As New Profile');
+            $('#form_action').val('save_as');
+            $('#profile_deskripsi').val(nama + ' - Copy');
+            $('#submitBtn').text('Save As New');
+
+            // Load data profile via AJAX
+            loadProfileData(id);
+
+            $('#modalFormProfile').modal('show');
+        }
+
+        // Function untuk load data profile
+        function loadProfileData(id) {
+            $.ajax({
+                url: '{{ route('roast_profile.show', ':id') }}'.replace(':id', id),
+                method: 'GET',
+                success: function(data) {
+                    // Populate form dengan data
+                    $('#profile_deskripsi').val(data.deskripsi);
+                    $('#charge_temp').val(data.charge_temp);
+                    $('#charge_time_sec').val(data.charge_time_sec);
+                    $('#tp_temp').val(data.tp_temp);
+                    $('#tp_time_sec').val(data.tp_time_sec);
+                    $('#de_temp').val(data.de_temp);
+                    $('#de_time_sec').val(data.de_time_sec);
+                    $('#fc_temp').val(data.fc_temp);
+                    $('#fc_time_sec').val(data.fc_time_sec);
+                    $('#sc_temp').val(data.sc_temp);
+                    $('#sc_time_sec').val(data.sc_time_sec);
+                    $('#drop_temp').val(data.drop_temp);
+                    $('#drop_time_sec').val(data.drop_time_sec);
+                },
+                error: function() {
+                    showNotification('Gagal memuat data profile', 'error');
+                }
+            });
+        }
+
+        // Function untuk delete profile
+        function deleteProfile(id) {
+            $.ajax({
+                url: '{{ route('roast_profile.destroy', ':id') }}'.replace(':id', id),
+                method: 'POST',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    '_method': 'DELETE'
+                },
+                success: function() {
+                    $('tr[data-id="' + id + '"]').remove();
+                    showNotification('Profile berhasil dihapus', 'success');
+                },
+                error: function() {
+                    showNotification('Gagal menghapus profile', 'error');
+                }
+            });
+        }
+
+        // Function untuk reset form
+        function resetForm() {
+            $('#profileForm')[0].reset();
+            $('#profile_id').val('');
+            $('#form_action').val('add');
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+        }
+
+        // Function untuk validasi form
+        function validateProfileForm() {
+            let isValid = true;
+            let deskripsi = $('#profile_deskripsi').val().trim();
+
+            if (deskripsi === '') {
+                showFieldError('#profile_deskripsi', 'Deskripsi wajib diisi');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Function untuk menampilkan error di field
+        function showFieldError(fieldSelector, message) {
+            $(fieldSelector).addClass('is-invalid');
+            if ($(fieldSelector).next('.invalid-feedback').length === 0) {
+                $(fieldSelector).after('<div class="invalid-feedback">' + message + '</div>');
+            }
+        }
+
+        // Function untuk menampilkan validation errors
+        function showValidationErrors(errors) {
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
+
+            $.each(errors, function(field, messages) {
+                let fieldSelector = '#profile_' + field;
+                if ($(fieldSelector).length === 0) {
+                    fieldSelector = '#' + field;
+                }
+
+                if ($(fieldSelector).length > 0) {
+                    showFieldError(fieldSelector, messages[0]);
+                }
+            });
+        }
+
+        // Function untuk menampilkan notifikasi
+        function showNotification(message, type = 'info') {
+            // Implementasi sesuai dengan notification library yang digunakan
+            // Contoh dengan alert (ganti dengan library yang lebih baik)
+            if (type === 'success') {
+                alert('✅ ' + message);
+            } else if (type === 'error') {
+                alert('❌ ' + message);
+            } else {
+                alert('ℹ️ ' + message);
+            }
+        }
+    </script>
+
 
     <script>
         $(document).ready(function() {
@@ -426,10 +1016,11 @@
                 detailList.forEach(item => {
                     html += `
             <tr>
+                  <td style='width : 200px ;'>${item.nama_rm} - ${item.origin_desc} - ${item.varietas_desc} - ${item.jenis_desc} - ${item.nama_proses}</td>
                 <td>${item.no_inventory}</td>
-                <td>${item.catatan}</td>
-                <td>${item.keluar}</td>
-                <td>${item.masuk}</td>
+
+                <td>${item.masuk - item.keluar}</td>
+
                 <td>
                     <button type="button" class="btn btn-sm btn-success select-inventory"
                         data-inventory-id="${item.id}"
@@ -466,28 +1057,32 @@
             const methodSelect = document.getElementById('method_select');
             const detailRows = document.querySelectorAll('.detail-row');
 
+            // pastikan select selalu disabled (readonly look)
+            methodSelect.setAttribute('disabled', true);
+
+            // pastikan hidden input ada
+            let hidden = document.getElementById('method_id_hidden');
+            if (!hidden) {
+                hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'method_id';
+                hidden.id = 'method_id_hidden';
+                methodSelect.parentElement.appendChild(hidden);
+            }
+
             if (detailRows.length === 1) {
-                // Disable <select> dan tambahkan hidden input agar value tetap dikirim
-                methodSelect.setAttribute('disabled', true);
-
-                // Tambahkan hidden input jika belum ada
-                if (!document.getElementById('method_id_hidden')) {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'method_id';
-                    hiddenInput.value = methodSelect.value;
-                    hiddenInput.id = 'method_id_hidden';
-                    methodSelect.parentElement.appendChild(hiddenInput);
-                }
-
+                // Kirim sesuai value select
+                hidden.value = methodSelect.value;
             } else {
-                // Enable <select> dan hapus hidden input jika ada
-                methodSelect.removeAttribute('disabled');
+                // Kirim fix 2
+                hidden.value = "2";
 
-                const hidden = document.getElementById('method_id_hidden');
-                if (hidden) hidden.remove();
+                // Optional: biar visual select juga keliatan "2"
+                methodSelect.value = "2";
             }
         }
+
+
         // Saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             updateMethodField();

@@ -69,7 +69,7 @@
                             <table id="inventory-table" class="table datatable table-hover text-nowrap table-striped">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
+                                        <th>No</th>
                                         <th>No Batch</th>
                                         <th>Mesin</th>
                                         <th>Method</th>
@@ -79,10 +79,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $no = 1;
+                                    @endphp
                                     @foreach ($items as $item)
                                         <tr>
                                             <td>
-                                                {{ $item->id }}
+                                                {{ $no++ }}
                                             </td>
                                             <td>
                                                 {{ $item->no_batch ?? 'Belum ada no batch !' }}
@@ -108,15 +111,9 @@
                                             </td>
                                             <td>
                                                 <!-- Detail -->
-                                                <a href="{{ route('batch.list', $item->id) }}" class="btn btn-info btn-sm"
-                                                    title="Detail">
-                                                    <i class="fas fa-list"></i>
-                                                </a>
 
-                                                <a href="{{ route('batch-production.menu', $item->id) }}"
-                                                    class="btn btn-secondary btn-sm" title="Menu Action">
-                                                    <i class="fas fa-industry"></i>
-                                                </a>
+
+
 
                                                 <!-- Edit -->
                                                 <a href="{{ route('batch-productions.edit', base64_encode($item->id)) }}"

@@ -769,12 +769,20 @@
                                 </li>
 
                                 <li class="nav-item">
+                                    <a href="/master_raw"
+                                        class="nav-link {{ request()->is('master_raw*') ? 'active' : '' }}">
+                                        <i class="fas fa-project-diagram"></i>
+                                        <p>Master Raw Materials</p>
+                                    </a>
+                                </li>
+
+                                {{-- <li class="nav-item">
                                     <a href="/master_package_size"
                                         class="nav-link {{ request()->is('master_package_size*') ? 'active' : '' }}">
                                         <i class="fas fa-box"></i>
                                         <p>Master Package Size</p>
                                     </a>
-                                </li>
+                                </li> --}}
                             </ul>
 
 

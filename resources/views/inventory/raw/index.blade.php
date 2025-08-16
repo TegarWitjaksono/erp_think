@@ -71,7 +71,7 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>No Batch</th>
+                                        <th>Nama Nickname</th>
                                         <th>No Inventory</th>
                                         <th>Supplier</th>
                                         <th>Kadar Air</th>
@@ -79,7 +79,7 @@
                                         <th>Masuk</th>
                                         <th>Keluar</th>
                                         <th>Sisa</th>
-                                        <th>Aksi</th>
+                                        {{-- <th>Aksi</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -89,7 +89,9 @@
                                     @foreach ($items as $item)
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                            <td>{{ $item->no_batch_penerimaan }}</td>
+                                            <td>{{ $item->nama_rm . ' - ' . $item->origin_desc . ' - ' . $item->varietas_desc . ' - ' . $item->jenis_desc . '-' . $item->nama_proses }}
+                                            </td>
+
                                             <td>{{ $item->no_inventory }}</td>
                                             <td>{{ $item->nama_supplier }}</td>
                                             <td>{{ $item->kadar_air }}</td>
@@ -99,7 +101,7 @@
                                             <td>{{ number_format($item->masuk - $item->keluar, 2, ',', '.') }}</td>
 
 
-                                            <td>
+                                            {{-- <td>
                                                 <a href="{{ route('inventory.edit', $item->id) }}"
                                                     class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
@@ -115,7 +117,7 @@
                                                     data-target="#deleteModal" title="Hapus">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>

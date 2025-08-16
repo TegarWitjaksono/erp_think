@@ -85,10 +85,10 @@
                                             <td>{{ date('Y-m-d', $item->cdate) }}</td>
                                             <td>{{ $item->name }}</td>
                                             <td>
-                                                <a href="{{ route('detail_penerimaan.index', ['id_penerimaan' => $item->id_penerimaan]) }}"
+                                                {{-- <a href="{{ route('detail_penerimaan.index', ['id_penerimaan' => $item->id_penerimaan]) }}"
                                                     class="btn btn-info btn-sm" title="Detail">
                                                     <i class="fas fa-list"></i>
-                                                </a>
+                                                </a> --}}
                                                 <a href="{{ route('master_penerimaan.edit', $item->id_penerimaan) }}"
                                                     class="btn btn-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
