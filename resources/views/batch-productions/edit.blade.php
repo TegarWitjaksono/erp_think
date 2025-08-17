@@ -299,7 +299,7 @@
                                                                 <tr class="detail-row">
                                                                     <td>
                                                                         <input type="hidden" name="detail_ids[]"
-                                                                            value="{{ $detail->id }}">
+                                                                            value="{{ $detail->detail_id }}">
 
 
                                                                         <input type="text"
@@ -323,7 +323,7 @@
                                                                         <input type="text"
                                                                             class="form-control inventory-display"
                                                                             placeholder="Pilih Inventory" readonly
-                                                                            value="{{ $detail->catatan }}">
+                                                                            value="{{ $detail->inventory_catatan }}">
 
                                                                         <!-- Modal -->
 
@@ -367,7 +367,7 @@
                                                                             required>
                                                                     </td>
                                                                     <td>
-                                                                        <textarea name="catatan_detail[]" class="form-control" rows="2">{{ old('catatan_detail.' . $index, $detail->catatan) }}</textarea>
+                                                                        <textarea name="catatan_detail[]" class="form-control" rows="2">{{ old('catatan_detail.' . $index, $detail->detail_catatan) }}</textarea>
                                                                     </td>
                                                                     <td class="text-center">
                                                                         <button type="button"
