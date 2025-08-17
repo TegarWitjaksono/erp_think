@@ -360,10 +360,20 @@ class BatchProductionController extends Controller
           ->get();
 
         // Ambil detail batch production input
+        // Gunakan select terpisah agar kolom tidak saling menimpa ketika nama kolom sama
         $details = DB::table('batchproduction_input')
-        ->leftJoin('inventory', 'batchproduction_input.inventory_id', '=', 'inventory.id')
-        ->leftJoin('detail_penerimaan', 'batchproduction_input.id_detail_penerimaan', '=', 'detail_penerimaan.id_detail_penerimaan')
-        ->where('batchproduction_id', $decodedId)->get();
+            ->leftJoin('inventory', 'batchproduction_input.inventory_id', '=', 'inventory.id')
+            ->leftJoin('detail_penerimaan', 'batchproduction_input.id_detail_penerimaan', '=', 'detail_penerimaan.id_detail_penerimaan')
+            ->where('batchproduction_id', $decodedId)
+            ->select([
+                'batchproduction_input.*',
+                DB::raw('batchproduction_input.id as detail_id'),
+                DB::raw('batchproduction_input.catatan as detail_catatan'),
+                DB::raw('inventory.catatan as inventory_catatan'),
+                'detail_penerimaan.id_batch',
+                'detail_penerimaan.jenis_kemasan',
+            ])
+            ->get();
 
 
 
