@@ -297,9 +297,9 @@
                                                         <tbody id="detail-rows">
                                                             @foreach ($details as $index => $detail)
                                                                 <tr class="detail-row">
-                                                                    <input type="hidden" name="detail_ids[]"
-                                                                        value="{{ $detail->id }}">
                                                                     <td>
+                                                                        <input type="hidden" name="detail_ids[]"
+                                                                            value="{{ $detail->id }}">
 
 
                                                                         <input type="text"
@@ -1572,39 +1572,25 @@
             tr.className = 'detail-row';
 
             tr.innerHTML = `
-                <input type="hidden" name="detail_ids[]" value="">
-               <td>
+                <td>
+                    <input type="hidden" name="detail_ids[]" value="">
+                    <input type="text"
+                        class="form-control detail-penerimaan-display"
+                        placeholder="Pilih Detail Penerimaan"
+                        data-toggle="modal"
+                        data-target="#detailModal"
+                        readonly>
+                    <input type="hidden" name="id_detail_penerimaan[]"
+                        class="detail-penerimaan-id" required>
 
+                    <!-- Hidden input untuk menyimpan nilai yang dipilih -->
+                    <input type="hidden" name="id_inventory[]"
+                        class="inventory-id" required>
 
-
-                                                            <input type="text"
-                                                                class="form-control detail-penerimaan-display"
-                                                                placeholder="Pilih Detail Penerimaan"
-                                                                 data-toggle="modal"
-                                                                data-target="#detailModal"
-                                                                 readonly
-                                                               >
-                                                            <input type="hidden" name="id_detail_penerimaan[]"
-                                                                class="detail-penerimaan-id"
-                                                               required>
-
-                                                            <!-- Modal -->
-
-                                                             <!-- Hidden input untuk menyimpan nilai yang dipilih -->
-                                                            <input type="hidden" name="id_inventory[]"
-                                                                class="inventory-id"
-                                                                required>
-
-                                                            <!-- Input untuk menampilkan teks yang dipilih -->
-                                                            <input type="text" class="form-control inventory-display"
-                                                                placeholder="Inventory Terpilih" readonly
-                                                                >
-
-
-
-
-
-                                                        </td>
+                    <!-- Input untuk menampilkan teks yang dipilih -->
+                    <input type="text" class="form-control inventory-display"
+                        placeholder="Inventory Terpilih" readonly>
+                </td>
                 <td>
                     <input step="0.01" type="number" name="kadar_air[]" class="form-control kadar-air-input" required>
                 </td>
